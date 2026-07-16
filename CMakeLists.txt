@@ -1,0 +1,92 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(ugreenctl VERSION 0.1.0 LANGUAGES C)
+
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  message(FATAL_ERROR "ugreenctl directly accesses Linux x86 I/O ports and can only be built on Linux.")
+endif()
+
+if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|i[3-6]86)$")
+  message(FATAL_ERROR "ugreenctl currently supports x86/x86_64 UGREEN NAS hardware only.")
+endif()
+
+include(GNUInstallDirs)
+include(CTest)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
+add_library(ugreenctl_core STATIC
+  core/loader.c
+)
+target_include_directories(ugreenctl_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_definitions(ugreenctl_core PRIVATE
+  UGREENCTL_DEFAULT_MODEL_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/ugreenctl/models"
+)
+target_link_libraries(ugreenctl_core PRIVATE dl)
+set_target_properties(ugreenctl_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_library(ugreenctl_hardware STATIC
+  superio/it86x.c
+  fan/it8613_fan.c
+  power/it8613_power.c
+  led/led.c
+  ec/ec.c
+)
+target_include_directories(ugreenctl_hardware PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+set_target_properties(ugreenctl_hardware PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_executable(ugreenctl core/main.c)
+target_include_directories(ugreenctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(ugreenctl PRIVATE ugreenctl_core dl)
+
+foreach(target ugreenctl_core ugreenctl_hardware ugreenctl)
+  target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+endforeach()
+
+function(add_model_plugin target source)
+  add_library(${target} MODULE ${source})
+  target_include_directories(${target} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_link_libraries(${target} PRIVATE ugreenctl_hardware)
+  target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+  set_target_properties(${target} PROPERTIES
+    PREFIX ""
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/models"
+  )
+endfunction()
+
+add_model_plugin(dxp4800plus models/dxp4800plus.c)
+add_model_plugin(dxp2800 models/unsupported_model.c)
+target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
+add_model_plugin(dxp4800 models/unsupported_model.c)
+target_compile_definitions(dxp4800 PRIVATE MODEL_ID="dxp4800" MODEL_NAME="UGREEN DXP4800" MODEL_DMI_NAME="DXP4800")
+add_model_plugin(dxp6800pro models/unsupported_model.c)
+target_compile_definitions(dxp6800pro PRIVATE MODEL_ID="dxp6800pro" MODEL_NAME="UGREEN DXP6800 Pro" MODEL_DMI_NAME="DXP6800 Pro")
+add_model_plugin(dxp8800plus models/unsupported_model.c)
+target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
+
+install(TARGETS ugreenctl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS dxp2800 dxp4800 dxp4800plus dxp6800pro dxp8800plus
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
+)
+install(FILES
+  README.md
+  README.zh-CN.md
+  docs/HARDWARE_SUPPORT.md
+  docs/COMPATIBILITY.md
+  docs/COMPATIBILITY.zh-CN.md
+  docs/NEW_MODEL_TEMPLATE.md
+  models/compatibility.json
+  DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
+
+if(BUILD_TESTING)
+  add_test(NAME cli-help COMMAND ugreenctl --help)
+endif()

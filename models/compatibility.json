@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "support_levels": [
+      "profile-only",
+      "read-only",
+      "supported",
+      "blocked"
+    ],
+    "capability_states": [
+      "verified",
+      "unverified",
+      "blocked"
+    ],
+    "notice": "This catalog describes compatibility claims. Only a compiled model plugin can expose a runtime operation."
+  },
+  "models": [
+    {
+      "id": "dxp4800plus",
+      "plugin": "dxp4800plus.so",
+      "marketing_names": [
+        "UGREEN DXP4800 Plus",
+        "UGREEN DXP4800 Pro"
+      ],
+      "dmi_product_names": [
+        "DXP4800 Plus",
+        "DXP4800 Pro"
+      ],
+      "support_level": "supported",
+      "controller": {
+        "transport": "Super I/O",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613"
+      },
+      "capabilities": {
+        "fan": "verified",
+        "led": "unverified",
+        "power_recovery": "verified"
+      },
+      "known_conflicts": [
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently."
+      ],
+      "evidence": [
+        {
+          "firmware": "1.17.0.95",
+          "method": "Clean-room observation of the vendor module interface and validation of the IT8613 identity/access sequence.",
+          "scope": "CPU and system fan PWM/status; AC recovery startup policy."
+        }
+      ]
+    },
+    {
+      "id": "dxp2800",
+      "plugin": "dxp2800.so",
+      "marketing_names": [
+        "UGREEN DXP2800"
+      ],
+      "dmi_product_names": [
+        "DXP2800"
+      ],
+      "support_level": "profile-only",
+      "controller": {
+        "transport": "unverified",
+        "chip": "unverified"
+      },
+      "capabilities": {
+        "fan": "unverified",
+        "led": "unverified",
+        "power_recovery": "unverified"
+      },
+      "known_conflicts": [],
+      "evidence": []
+    },
+    {
+      "id": "dxp4800",
+      "plugin": "dxp4800.so",
+      "marketing_names": [
+        "UGREEN DXP4800"
+      ],
+      "dmi_product_names": [
+        "DXP4800"
+      ],
+      "support_level": "profile-only",
+      "controller": {
+        "transport": "unverified",
+        "chip": "unverified"
+      },
+      "capabilities": {
+        "fan": "unverified",
+        "led": "unverified",
+        "power_recovery": "unverified"
+      },
+      "known_conflicts": [],
+      "evidence": []
+    },
+    {
+      "id": "dxp6800pro",
+      "plugin": "dxp6800pro.so",
+      "marketing_names": [
+        "UGREEN DXP6800 Pro"
+      ],
+      "dmi_product_names": [
+        "DXP6800 Pro"
+      ],
+      "support_level": "profile-only",
+      "controller": {
+        "transport": "unverified",
+        "chip": "unverified"
+      },
+      "capabilities": {
+        "fan": "unverified",
+        "led": "unverified",
+        "power_recovery": "unverified"
+      },
+      "known_conflicts": [],
+      "evidence": []
+    },
+    {
+      "id": "dxp8800plus",
+      "plugin": "dxp8800plus.so",
+      "marketing_names": [
+        "UGREEN DXP8800 Plus"
+      ],
+      "dmi_product_names": [
+        "DXP8800 Plus"
+      ],
+      "support_level": "profile-only",
+      "controller": {
+        "transport": "unverified",
+        "chip": "unverified"
+      },
+      "capabilities": {
+        "fan": "unverified",
+        "led": "unverified",
+        "power_recovery": "unverified"
+      },
+      "known_conflicts": [],
+      "evidence": []
+    }
+  ]
+}
