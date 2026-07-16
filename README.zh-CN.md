@@ -13,7 +13,7 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 | 机型插件 | 状态 | 已验证能力 |
 | --- | --- | --- |
 | dxp4800plus | 已支持 | CPU/系统风扇状态与 PWM、交流电恢复后的启动策略 |
-| dxp480tplus | 固件逆向完成 | CPU、sysfan1、sysfan2 转速；CPU/全部风扇 PWM 与来电启动策略需 --force --apply |
+| dxp480tplus | 已支持 | CPU、sysfan1、sysfan2 转速/PWM/模式；CPU/全部风扇 PWM 与来电启动策略需 --apply |
 | dxp2800、dxp4800、dxp6800pro、dxp8800plus | 仅机型档案 | 暂无 |
 
 dxp4800plus 同时匹配 DMI 产品名 DXP4800 Plus 和 DXP4800 Pro。该插件针对在
@@ -59,14 +59,15 @@ run.sh 会在 build/ 中构建程序，并自动传入正确的插件目录。
 匹配、原厂驱动冲突、IT8613 芯片 ID 和最低 PWM 的安全检查，仅供充分验证硬件后的
 调试使用。
 
-DXP480T Plus 的写入路径已从原厂固件中恢复，但尚未完成实机验证，因此写命令额外要求
---force。插件仍会保留原厂驱动冲突和 IT8613 芯片身份检查：
+DXP480T Plus 的固件逆向写入路径已经完成实机验证。正常写入只需 --apply，并继续保留
+精确 DMI 匹配、原厂驱动冲突、IT8613 芯片身份和最低 PWM 检查：
 
-    sudo ugreenctl --force --apply fan set cpu 120
-    sudo ugreenctl --force --apply fan set all 120
+    sudo ugreenctl --apply fan set cpu 120
+    sudo ugreenctl --apply fan set all 120
 
-all 对应原厂 set 命令，按原厂顺序写入已观察到的 3 个 PWM 通道。在实机确认系统风扇
-转速与 PWM 通道的逐一对应关系前，插件不会开放单独的系统风扇写操作。
+all 对应原厂 set 命令，按原厂顺序写入 3 个 PWM 通道。状态读取会从相同通道返回三路
+PWM 以及自动/手动模式。插件仍不会开放单独的系统风扇写操作，只提供 CPU 或原厂全部
+风扇操作。
 
 ## 安全说明
 

@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #define UGREENCTL_PLUGIN_ABI_V2 2U
+#define UGREENCTL_PLUGIN_ABI_V3 3U
 #define UGREENCTL_MAX_FANS 8U
 #define UGREENCTL_MAX_LEDS 16U
 
@@ -76,6 +77,9 @@ struct ugreenctl_plugin {
     int (*set_led)(const struct ugreenctl_request *request,
                    const char *led_id, enum ugreenctl_led_state state,
                    char *error, size_t error_size);
+    int (*set_fan_mode)(const struct ugreenctl_request *request,
+                        const char *fan_id, bool automatic,
+                        char *error, size_t error_size);
 };
 
 typedef const struct ugreenctl_plugin *(*ugreenctl_plugin_entrypoint)(void);

@@ -59,10 +59,10 @@
       "dmi_product_names": [
         "DXP480T Plus"
       ],
-      "support_level": "reverse-engineered",
+      "support_level": "supported",
       "write_requirements": [
-        "--force",
         "--apply",
+        "exact DMI product name DXP480T Plus",
         "IT8613 identity check",
         "vendor /proc/it86 driver must be inactive"
       ],
@@ -72,12 +72,13 @@
         "chip_id": "0x8613"
       },
       "capabilities": {
-        "fan_cpu": "reverse-engineered",
-        "fan_all": "reverse-engineered",
+        "fan_cpu": "verified",
+        "fan_all": "verified",
         "fan_system_individual": "unverified",
-        "fan_rpm": "reverse-engineered",
+        "fan_rpm": "verified",
+        "fan_pwm_readback": "verified",
         "led": "unverified",
-        "power_recovery": "reverse-engineered"
+        "power_recovery": "verified"
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently."
@@ -87,6 +88,11 @@
           "firmware": "1.17.0.95",
           "method": "Static clean-room reverse engineering of the DXP480T Plus branch in ug_it86x-cpufan.ko.",
           "scope": "CPU, sysfan1, and sysfan2 tachometer paths; CPU and all-fans PWM paths; AC recovery path."
+        },
+        {
+          "firmware": "1.17.0.95",
+          "method": "Physical DXP480T Plus validation reported by the LLLED_FPK project user on 2026-07-16.",
+          "scope": "CPU and vendor all-fans PWM writes, three-fan status, and AC recovery control."
         },
         {
           "firmware": "1.17.0.95",

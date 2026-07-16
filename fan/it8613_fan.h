@@ -11,5 +11,7 @@ int it8613_read_fans(bool force, struct ugreenctl_fan_status *fans, size_t *fan_
                      char *error, size_t error_size);
 int it8613_set_fan_pwm(bool force, const char *fan_id, uint8_t pwm,
                        char *error, size_t error_size);
+int it8613_set_fan_mode(bool force, const char *fan_id, bool automatic,
+                        char *error, size_t error_size);
 
 #endif

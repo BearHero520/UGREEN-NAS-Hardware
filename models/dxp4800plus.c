@@ -43,6 +43,30 @@ static int set_startup_policy(const struct ugreenctl_request *request,
     return it8613_set_startup_policy(request->force, policy, error, error_size);
 }
 
+static int set_fan_mode(const struct ugreenctl_request *request,
+                        const char *fan_id, bool automatic,
+                        char *error, size_t error_size)
+{
+    return it8613_set_fan_mode(request->force, fan_id, automatic, error, error_size);
+}
+
+const struct ugreenctl_plugin *ugreenctl_plugin_v3(void)
+{
+    static const struct ugreenctl_plugin plugin = {
+        .abi_version = UGREENCTL_PLUGIN_ABI_V3,
+        .id = "dxp4800plus",
+        .display_name = "UGREEN DXP4800 Plus / DXP4800 Pro",
+        .dmi_product_names = product_names,
+        .capabilities = UGREENCTL_CAP_FAN | UGREENCTL_CAP_POWER,
+        .read_status = read_status,
+        .set_fan_pwm = set_fan_pwm,
+        .set_startup_policy = set_startup_policy,
+        .set_led = NULL,
+        .set_fan_mode = set_fan_mode
+    };
+    return &plugin;
+}
+
 const struct ugreenctl_plugin *ugreenctl_plugin_v2(void)
 {
     static const struct ugreenctl_plugin plugin = {
@@ -54,7 +78,8 @@ const struct ugreenctl_plugin *ugreenctl_plugin_v2(void)
         .read_status = read_status,
         .set_fan_pwm = set_fan_pwm,
         .set_startup_policy = set_startup_policy,
-        .set_led = NULL
+        .set_led = NULL,
+        .set_fan_mode = NULL
     };
     return &plugin;
 }

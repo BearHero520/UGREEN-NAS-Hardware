@@ -26,6 +26,7 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] info\n"
                   "  ugreenctl [options] fan status\n"
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
+                  "  ugreenctl [options] fan mode <fan-id> <auto|manual>\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
                   "  ugreenctl [options] led list\n\n"
@@ -327,6 +328,37 @@ int main(int argc, char **argv)
                 result = EXIT_SUCCESS;
             } else {
                 result = report_plugin_error("set fan PWM", result, error);
+            }
+        }
+    } else if (strcmp(argv[arg], "fan") == 0 && arg + 4 == argc &&
+               strcmp(argv[arg + 1], "mode") == 0) {
+        bool automatic;
+        bool valid_mode = true;
+        if (strcmp(argv[arg + 3], "auto") == 0) {
+            automatic = true;
+        } else if (strcmp(argv[arg + 3], "manual") == 0) {
+            automatic = false;
+        } else {
+            automatic = false;
+            valid_mode = false;
+        }
+        if (!valid_mode || plugin->abi_version < UGREENCTL_PLUGIN_ABI_V3 ||
+            plugin->set_fan_mode == NULL) {
+            (void)fprintf(stderr,
+                          "error: fan mode control is not available for %s; use auto or manual\n",
+                          plugin->id);
+            result = EXIT_FAILURE;
+        } else if (require_apply(&options, "change the fan control mode") != 0) {
+            result = EXIT_SUCCESS;
+        } else {
+            result = plugin->set_fan_mode(&request, argv[arg + 2], automatic,
+                                          error, sizeof(error));
+            if (result == 0) {
+                (void)printf("%s fan mode set to %s\n", argv[arg + 2],
+                             automatic ? "auto" : "manual");
+                result = EXIT_SUCCESS;
+            } else {
+                result = report_plugin_error("set fan mode", result, error);
             }
         }
     } else if (strcmp(argv[arg], "power") == 0 && arg + 2 < argc &&

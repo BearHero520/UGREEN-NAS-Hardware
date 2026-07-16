@@ -14,7 +14,7 @@ the models/ directory is not a claim that its controls work.
 | Model plugin | State | Verified functions |
 | --- | --- | --- |
 | dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy |
-| dxp480tplus | firmware-reversed | CPU, sysfan1, sysfan2 RPM; CPU/all fan PWM and AC recovery require --force --apply |
+| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM/PWM/mode; CPU/all fan PWM and AC recovery with --apply |
 | dxp2800, dxp4800, dxp6800pro, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
@@ -70,17 +70,17 @@ unavailable. --force bypasses DMI matching, the active vendor-driver guard,
 the IT8613 identity check, and the safe minimum PWM guard; it is for hardware
 investigation only.
 
-For DXP480T Plus, the write paths were recovered from firmware but not yet
-validated on a physical device. Its writes additionally require --force while
-the plugin still enforces the vendor-driver and IT8613 identity safeguards:
+For DXP480T Plus, the firmware-recovered write paths have been validated on a
+physical device. Normal writes require --apply and retain exact DMI matching,
+the vendor-driver conflict guard, the IT8613 identity check, and the PWM floor:
 
-    sudo ugreenctl --force --apply fan set cpu 120
-    sudo ugreenctl --force --apply fan set all 120
+    sudo ugreenctl --apply fan set cpu 120
+    sudo ugreenctl --apply fan set all 120
 
 The all target follows the vendor's set command and writes its three observed
-PWM channels in vendor order. The plugin intentionally does not expose
-independent system-fan writes until their controller-to-tach mapping has been
-confirmed on hardware.
+PWM channels in vendor order. Status reads the PWM and automatic/manual mode
+from those same three channels. Independent system-fan writes remain hidden;
+only CPU or the vendor all-fans operation is exposed.
 
 ## Safety
 

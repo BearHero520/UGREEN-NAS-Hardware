@@ -84,3 +84,43 @@ int it8613_set_fan_pwm(bool force, const char *fan_id, uint8_t pwm,
     it86x_close(&device);
     return 0;
 }
+
+int it8613_set_fan_mode(bool force, const char *fan_id, bool automatic,
+                        char *error, size_t error_size)
+{
+    struct it86x_device device;
+    uint8_t control_reg;
+    uint8_t pwm_reg;
+    uint8_t control;
+    uint8_t pwm;
+    int result;
+
+    if (strcmp(fan_id, "cpu") == 0) {
+        control_reg = 0x16;
+        pwm_reg = 0x6b;
+    } else if (strcmp(fan_id, "sys") == 0) {
+        control_reg = 0x17;
+        pwm_reg = 0x73;
+    } else {
+        (void)snprintf(error, error_size, "unknown fan '%s' (expected cpu or sys)", fan_id);
+        return -EINVAL;
+    }
+
+    result = it86x_open(&device, force, error, error_size);
+    if (result != 0) {
+        return result;
+    }
+    pwm = it86x_hwm_read(pwm_reg);
+    if (!automatic && pwm < 40 && !force) {
+        (void)snprintf(error, error_size,
+                       "refusing manual mode with unsafe current PWM %u; set PWM to 40-255 first",
+                       pwm);
+        it86x_close(&device);
+        return -EPERM;
+    }
+    control = it86x_hwm_read(control_reg);
+    it86x_hwm_write(control_reg, automatic ? (uint8_t)(control | 0x80)
+                                           : (uint8_t)(control & 0x7f));
+    it86x_close(&device);
+    return 0;
+}

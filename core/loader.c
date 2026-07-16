@@ -56,6 +56,7 @@ int ugreenctl_plugins_open(const char *directory, struct ugreenctl_plugin_set *s
         void *handle;
         ugreenctl_plugin_entrypoint entrypoint;
         const struct ugreenctl_plugin *plugin;
+        unsigned int expected_abi;
 
         if (!has_shared_object_suffix(entry->d_name)) {
             continue;
@@ -79,14 +80,23 @@ int ugreenctl_plugins_open(const char *directory, struct ugreenctl_plugin_set *s
             continue;
         }
         dlerror();
-        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v2");
-        if (dlerror() != NULL || entrypoint == NULL) {
-            (void)fprintf(stderr, "warning: skipping %s: missing ugreenctl_plugin_v2\n", path);
-            (void)dlclose(handle);
-            continue;
+        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v3");
+        if (dlerror() == NULL && entrypoint != NULL) {
+            expected_abi = UGREENCTL_PLUGIN_ABI_V3;
+        } else {
+            dlerror();
+            entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v2");
+            if (dlerror() != NULL || entrypoint == NULL) {
+                (void)fprintf(stderr,
+                              "warning: skipping %s: missing ugreenctl_plugin_v3/v2\n",
+                              path);
+                (void)dlclose(handle);
+                continue;
+            }
+            expected_abi = UGREENCTL_PLUGIN_ABI_V2;
         }
         plugin = entrypoint();
-        if (plugin == NULL || plugin->abi_version != UGREENCTL_PLUGIN_ABI_V2 ||
+        if (plugin == NULL || plugin->abi_version != expected_abi ||
             plugin->id == NULL || plugin->display_name == NULL) {
             (void)fprintf(stderr, "warning: skipping %s: incompatible plugin\n", path);
             (void)dlclose(handle);

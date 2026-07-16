@@ -35,15 +35,18 @@ ug_it86x-cpufan module.
   7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0
 - Fan RPM registers: CPU 0x1a/0x0f, system fan 1 0x19/0x0e, system fan 2
   0x81/0x80
-- CPU fan control: 0x16 and 0x6b
+- Fan mode/PWM registers: CPU 0x16/0x6b, system fan 1 0x17/0x73, system fan 2
+  0x1e/0x7b
 - Vendor all-fans command: 0x16/0x6b, 0x1e/0x7b, then 0x17/0x73
 - AC recovery policy: Super I/O registers 0xf2 and 0xf4
 - LED hardware: N76E003 MCU via an I2C/SMBus driver; no ugreenctl LED write
   operation is exposed
 
-This is reverse-engineered support, not physical validation. DXP480T writes
-require both --force and --apply. The implementation deliberately preserves
-the active vendor-driver and IT8613 identity checks even with --force.
+The firmware-recovered CPU/all-fans PWM and AC recovery paths have been
+validated on a physical DXP480T Plus. Writes require --apply. Exact DMI
+matching, the active vendor-driver guard, the IT8613 identity check, and the
+minimum PWM guard remain mandatory. Independent system-fan writes are not
+exposed.
 
 ## Adding a model
 
