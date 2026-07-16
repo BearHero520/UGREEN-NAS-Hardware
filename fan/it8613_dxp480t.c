@@ -64,7 +64,7 @@ int it8613_dxp480t_read_fans(struct ugreenctl_fan_status *fans, size_t *fan_coun
                               char *error, size_t error_size)
 {
     struct it86x_device device;
-    int result = it86x_open(&device, false, error, error_size);
+    int result = it86x_open(&device, error, error_size);
 
     if (result != 0) {
         return result;
@@ -88,7 +88,7 @@ int it8613_dxp480t_set_fan_mode(const char *fan_id, bool automatic,
                        "unknown DXP480T fan target '%s' (expected cpu or all)", fan_id);
         return -EINVAL;
     }
-    result = it86x_open(&device, false, error, error_size);
+    result = it86x_open(&device, error, error_size);
     if (result != 0) {
         return result;
     }
@@ -142,7 +142,7 @@ int it8613_dxp480t_set_fan_pwm(const char *fan_id, uint8_t pwm,
                        "unknown DXP480T fan target '%s' (expected cpu or all)", fan_id);
         return -EINVAL;
     }
-    result = it86x_open(&device, false, error, error_size);
+    result = it86x_open(&device, error, error_size);
     if (result != 0) {
         return result;
     }

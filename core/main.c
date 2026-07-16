@@ -34,11 +34,11 @@ static void usage(FILE *stream)
                   "  --model <id>        use a specific model plugin\n"
                   "  --plugin-dir <dir>  directory containing model .so files\n"
                   "  --apply             perform a requested write (writes are dry runs otherwise)\n"
-                  "  --force             bypass model/driver/chip safeguards\n"
+                  "  --force             acknowledge an experimental model write\n"
                   "  --version           print the version\n"
                   "  --help              print this help\n\n"
-                  "The supported DXP4800 Plus model uses direct Super I/O access and requires\n"
-                  "root or CAP_SYS_RAWIO. The vendor /proc/it86 driver must be unloaded.\n",
+                  "Direct Super I/O access requires root or CAP_SYS_RAWIO. The exact DMI name\n"
+                  "and IT8613 identity must match, and the vendor /proc/it86 driver must be unloaded.\n",
                   UGREENCTL_VERSION);
 }
 
@@ -118,7 +118,7 @@ static int choose_plugin(const struct ugreenctl_plugin_set *set,
             (void)fprintf(stderr, "error: model plugin '%s' was not found\n", options->model_id);
             return -ENOENT;
         }
-        if (!options->force && dmi_result == 0) {
+        if (dmi_result == 0) {
             const char * const *name;
             bool matches = false;
             for (name = plugin->dmi_product_names; name != NULL && *name != NULL; ++name) {
@@ -130,18 +130,24 @@ static int choose_plugin(const struct ugreenctl_plugin_set *set,
             if (!matches) {
                 (void)fprintf(stderr,
                               "error: selected model '%s' does not match DMI product '%s'; "
-                              "use --force only after checking the hardware\n",
+                              "hardware writes require an exact DMI match\n",
                               plugin->id, product_name);
                 return -ENODEV;
             }
+        }
+        if (dmi_result != 0) {
+            (void)fprintf(stderr,
+                          "error: cannot verify the exact DMI product name for model '%s'\n",
+                          plugin->id);
+            return dmi_result;
         }
         *chosen = plugin;
         return 0;
     }
     if (dmi_result != 0) {
         (void)fprintf(stderr,
-                      "error: cannot determine DMI product name; pass --model <id> after "
-                      "verifying your hardware\n");
+                      "error: cannot determine the exact DMI product name; hardware access "
+                      "is disabled\n");
         return dmi_result;
     }
     plugin = ugreenctl_match_product(set, product_name);

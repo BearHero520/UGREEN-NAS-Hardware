@@ -37,7 +37,10 @@ int it8613_read_fans(bool force, struct ugreenctl_fan_status *fans, size_t *fan_
                      char *error, size_t error_size)
 {
     struct it86x_device device;
-    int result = it86x_open(&device, force, error, error_size);
+    int result;
+
+    (void)force;
+    result = it86x_open(&device, error, error_size);
 
     if (result != 0) {
         return result;
@@ -68,13 +71,14 @@ int it8613_set_fan_pwm(bool force, const char *fan_id, uint8_t pwm,
         (void)snprintf(error, error_size, "unknown fan '%s' (expected cpu or sys)", fan_id);
         return -EINVAL;
     }
-    if (pwm < 40 && !force) {
+    (void)force;
+    if (pwm < 40) {
         (void)snprintf(error, error_size,
-                       "refusing unsafe PWM %u; use a value of 40-255 or add --force", pwm);
+                       "refusing unsafe PWM %u; choose a value of 40-255", pwm);
         return -EPERM;
     }
 
-    result = it86x_open(&device, force, error, error_size);
+    result = it86x_open(&device, error, error_size);
     if (result != 0) {
         return result;
     }
@@ -106,12 +110,13 @@ int it8613_set_fan_mode(bool force, const char *fan_id, bool automatic,
         return -EINVAL;
     }
 
-    result = it86x_open(&device, force, error, error_size);
+    (void)force;
+    result = it86x_open(&device, error, error_size);
     if (result != 0) {
         return result;
     }
     pwm = it86x_hwm_read(pwm_reg);
-    if (!automatic && pwm < 40 && !force) {
+    if (!automatic && pwm < 40) {
         (void)snprintf(error, error_size,
                        "refusing manual mode with unsafe current PWM %u; set PWM to 40-255 first",
                        pwm);

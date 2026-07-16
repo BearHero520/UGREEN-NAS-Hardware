@@ -24,7 +24,10 @@ int it8613_read_startup_policy(bool force, enum ugreenctl_startup_policy *policy
                                char *error, size_t error_size)
 {
     struct it86x_device device;
-    int result = it86x_open(&device, force, error, error_size);
+    int result;
+
+    (void)force;
+    result = it86x_open(&device, error, error_size);
 
     if (result != 0) {
         return result;
@@ -42,7 +45,8 @@ int it8613_set_startup_policy(bool force, enum ugreenctl_startup_policy policy,
     uint8_t f4;
     int result;
 
-    result = it86x_open(&device, force, error, error_size);
+    (void)force;
+    result = it86x_open(&device, error, error_size);
     if (result != 0) {
         return result;
     }

@@ -23,6 +23,25 @@ static void set_error(char *error, size_t error_size, const char *format, const 
     }
 }
 
+static const char *active_controller_owner(void)
+{
+    static const char * const paths[] = {
+        "/proc/it86",
+        "/sys/module/ug_it86x_sio",
+        "/sys/module/ug_it86x_cpufan",
+        "/sys/module/it87",
+        NULL
+    };
+    const char * const *path;
+
+    for (path = paths; *path != NULL; ++path) {
+        if (access(*path, F_OK) == 0) {
+            return *path;
+        }
+    }
+    return NULL;
+}
+
 static void sio_enter(void)
 {
     outb(0x87, SIO_INDEX);
@@ -61,15 +80,17 @@ void it86x_hwm_write(uint8_t reg, uint8_t value)
     outb(value, HWM_DATA);
 }
 
-int it86x_open(struct it86x_device *device, bool force, char *error, size_t error_size)
+int it86x_open(struct it86x_device *device, char *error, size_t error_size)
 {
+    const char *owner;
     uint8_t active;
 
     memset(device, 0, sizeof(*device));
     device->lock_fd = -1;
-    if (!force && access("/proc/it86", F_OK) == 0) {
+    owner = active_controller_owner();
+    if (owner != NULL) {
         set_error(error, error_size,
-                  "vendor /proc/it86 driver is active; unload it first or use --force: %s", "");
+                  "controller owner is active; unload it before direct access: %s", owner);
         return -EBUSY;
     }
 
@@ -115,7 +136,7 @@ int it86x_open(struct it86x_device *device, bool force, char *error, size_t erro
         set_error(error, error_size, "IT86x hardware-monitor logical device is disabled: %s", "");
         return -ENODEV;
     }
-    if (!force && device->chip_id != IT8613_ID) {
+    if (device->chip_id != IT8613_ID) {
         char found[32];
         (void)snprintf(found, sizeof(found), "found IT%04x, expected IT8613", device->chip_id);
         it86x_close(device);

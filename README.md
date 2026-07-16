@@ -6,14 +6,17 @@ NAS systems.
 [中文文档](README.zh-CN.md) · [Compatibility catalog](docs/COMPATIBILITY.md) ·
 [中文兼容性目录](docs/COMPATIBILITY.zh-CN.md)
 
-Only a model with a verified hardware map receives write support. A profile in
-the models/ directory is not a claim that its controls work.
+Verified models receive normal write support. A firmware-reversed model can
+expose only guarded writes with explicit acknowledgement while physical
+validation is pending. A profile in the models/ directory is not a claim that
+its controls work.
 
 ## Support matrix
 
 | Model plugin | State | Verified functions |
 | --- | --- | --- |
 | dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy |
+| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 64-255 and AC recovery require --force --apply |
 | dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM/PWM/mode; CPU/all fan PWM and AC recovery with --apply |
 | dxp2800, dxp4800, dxp6800pro, dxp8800plus | profile only | none |
 
@@ -62,13 +65,25 @@ does not add --apply itself.
     ugreenctl fan status
     ugreenctl fan set cpu 120
     sudo ugreenctl --apply fan set cpu 120
+    sudo ugreenctl --apply fan mode cpu auto
     ugreenctl power startup get
     sudo ugreenctl --apply power startup set restore
 
-Writes are previews until --apply is supplied. Use --model ID when DMI is
-unavailable. --force bypasses DMI matching, the active vendor-driver guard,
-the IT8613 identity check, and the safe minimum PWM guard; it is for hardware
-investigation only.
+Writes are previews until --apply is supplied. `--force` acknowledges a
+firmware-reversed write path; it does not bypass exact DMI matching, the active
+vendor-driver guard, or the IT8613 identity check.
+
+DXP4800S has one recovered `sysfan1` channel. The plugin calls it `sys`, keeps
+current PWM/mode as unknown, and exposes only the stock curve's observed
+running range of 64-255:
+
+    sudo ugreenctl --force --apply fan set sys 120
+    sudo ugreenctl --force --apply power startup set restore
+
+The stock automatic mode is a user-space `hwmonitor` temperature daemon, not
+an IT8613 hardware-auto switch. This utility currently provides the guarded
+manual primitive; an alternate operating system needs its own temperature
+watchdog before automatic control is claimed.
 
 For DXP480T Plus, the firmware-recovered write paths have been validated on a
 physical device. Normal writes require --apply and retain exact DMI matching,
@@ -84,27 +99,33 @@ only CPU or the vendor all-fans operation is exposed.
 
 ## Safety
 
-- The DXP4800 Plus plugin refuses to touch /proc/it86 while the vendor driver
+- Every IT8613 plugin refuses to touch the controller while `/proc/it86`
   is active, avoiding concurrent register access.
 - Each controller access takes an advisory lock at
   /run/ugreenctl-it8613.lock.
 - Direct I/O requires root or CAP_SYS_RAWIO.
-- Manual PWM disables automatic control for that fan. Do not use a low PWM or
-  --force unless temperatures are independently monitored.
+- Manual PWM disables hardware automatic control for that channel. DXP4800S
+  stock automatic control is software-based, so stop or replace the stock
+  daemon before manual use and keep temperatures independently monitored.
 
 Before use outside UGREEN NAS firmware, unload the vendor module if it is
 active:
 
-    sudo modprobe -r ug_it86x_cpufan
+    sudo modprobe -r ug_it86x_sio       # DXP4800S / DXP4800 branch
+    sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T branch
 
 ## Plugin ABI
 
-Each models/*.so exports the ABI version 2 entrypoint:
+Models may export the ABI version 3 entrypoint for fan-mode control and keep
+the ABI version 2 entrypoint for compatibility:
+
+    const struct ugreenctl_plugin *ugreenctl_plugin_v3(void);
 
     const struct ugreenctl_plugin *ugreenctl_plugin_v2(void);
 
-The ABI is declared in include/ugreenctl.h. The core accepts ABI version 2
-only and discovers plugins by DMI product name or --model.
+The ABI is declared in include/ugreenctl.h. The core prefers ABI version 3,
+falls back to ABI version 2, and discovers plugins by DMI product name or
+--model.
 
 ## Maintaining compatibility
 
@@ -120,3 +141,7 @@ model.
 The DXP4800 Plus map is a clean-room reimplementation based on observable
 behavior of UGREEN firmware 1.17.0.95 and its ug_it86x-cpufan.ko interface.
 No vendor driver source or binary is linked or redistributed by this project.
+
+The DXP4800S map is documented in
+[docs/DXP4800S_REVERSE_ENGINEERING.md](docs/DXP4800S_REVERSE_ENGINEERING.md)
+and remains firmware-reversed until a physical validation record is added.

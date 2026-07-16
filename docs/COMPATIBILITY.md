@@ -51,6 +51,8 @@ Unknown facts must be recorded as unverified, not inferred.
 
 - DMI detection selects a plugin; it does not prove a control map is safe.
 - --force is an investigator override, not a compatibility guarantee.
+- --force never bypasses exact DMI matching, controller identity, or the
+  active vendor-driver conflict check.
 - A firmware upgrade can lower a model's support level if it changes the
   controller map or vendor driver behavior.
 - A reverse-engineered write path must retain the --force requirement until

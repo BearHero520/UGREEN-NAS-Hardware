@@ -30,6 +30,7 @@ set_target_properties(ugreenctl_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 add_library(ugreenctl_hardware STATIC
   superio/it86x.c
   fan/it8613_fan.c
+  fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
   power/it8613_power.c
   led/led.c
@@ -64,6 +65,7 @@ function(add_model_plugin target source)
 endfunction()
 
 add_model_plugin(dxp4800plus models/dxp4800plus.c)
+add_model_plugin(dxp4800s models/dxp4800s.c)
 add_model_plugin(dxp480tplus models/dxp480tplus.c)
 add_model_plugin(dxp2800 models/unsupported_model.c)
 target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
@@ -75,7 +77,7 @@ add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
 install(TARGETS ugreenctl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS dxp2800 dxp4800 dxp4800plus dxp480tplus dxp6800pro dxp8800plus
+install(TARGETS dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp8800plus
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
@@ -84,6 +86,9 @@ install(FILES
   docs/HARDWARE_SUPPORT.md
   docs/COMPATIBILITY.md
   docs/COMPATIBILITY.zh-CN.md
+  docs/DXP4800S_REVERSE_ENGINEERING.md
+  docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
+  docs/DXP4800S_INTAKE.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
   DESTINATION ${CMAKE_INSTALL_DOCDIR}

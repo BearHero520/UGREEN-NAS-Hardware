@@ -6,10 +6,12 @@ ugreenctl distinguishes a model profile from supported hardware.
 | --- | --- |
 | Supported | Controller identity, access sequence, and every exposed write register are verified on the named model. |
 | Read-only | The data source is verified, but no write operation is exposed. |
+| Reverse-engineered | The stock command path and registers are recovered, but physical validation is pending; writes require model-specific safeguards plus `--force --apply`. |
 | Profile only | The plugin participates in model discovery but exposes no hardware functions. |
 
-Only the supported level permits a write command. A placeholder must never map
-plausible-looking registers or reuse a controller map from another model.
+Supported and explicitly guarded reverse-engineered plugins may provide write
+commands. A placeholder must never map plausible-looking registers or reuse a
+controller map from another model.
 
 ## DXP4800 Plus / DXP4800 Pro
 
@@ -22,8 +24,28 @@ Pro.
 - Fan channels: CPU and system
 - AC recovery policy: on, off, restore previous state
 
-This map was observed from UGREEN firmware 1.17.0.95. The tool verifies the
-IT8613 identifier before access unless the caller supplies --force.
+This map was observed from UGREEN firmware 1.17.0.95. The tool always verifies
+the IT8613 identifier before access.
+
+## DXP4800S
+
+The `dxp4800s` plugin matches only the exact DMI product name `DXP4800S`.
+Its map was recovered from UGOS Pro 1.17.0.0095 `ug_it86x-sio.ko` and the
+stock `hwmonitor` model branch.
+
+- Controller: ITE IT8613 Super I/O
+- Single fan target: `sys` (stock name `sysfan1`)
+- RPM registers: `0x1a/0x0f`
+- Manual/PWM registers: `0x17/0x73`
+- Exposed PWM range: `64..255`
+- AC recovery registers: `0xf2/0xf4`
+- Current PWM and hardware/daemon mode: unknown
+
+Writes require exact DMI matching, `--force --apply`, a matching IT8613 ID,
+and an inactive vendor `/proc/it86` driver. Neither `--force` nor model
+selection bypasses the chip-identity or driver-conflict checks. This support
+is firmware-reversed, not physically validated. See
+[DXP4800S_REVERSE_ENGINEERING.md](DXP4800S_REVERSE_ENGINEERING.md).
 
 ## DXP480T Plus
 
