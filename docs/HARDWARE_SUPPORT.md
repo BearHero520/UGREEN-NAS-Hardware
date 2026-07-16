@@ -25,6 +25,26 @@ Pro.
 This map was observed from UGREEN firmware 1.17.0.95. The tool verifies the
 IT8613 identifier before access unless the caller supplies --force.
 
+## DXP480T Plus
+
+The dxp480tplus plugin matches the exact DMI product name DXP480T Plus. Its
+ITE IT8613 map was recovered from the stock 1.17.0.95
+ug_it86x-cpufan module.
+
+- Input image SHA-256:
+  7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0
+- Fan RPM registers: CPU 0x1a/0x0f, system fan 1 0x19/0x0e, system fan 2
+  0x81/0x80
+- CPU fan control: 0x16 and 0x6b
+- Vendor all-fans command: 0x16/0x6b, 0x1e/0x7b, then 0x17/0x73
+- AC recovery policy: Super I/O registers 0xf2 and 0xf4
+- LED hardware: N76E003 MCU via an I2C/SMBus driver; no ugreenctl LED write
+  operation is exposed
+
+This is reverse-engineered support, not physical validation. DXP480T writes
+require both --force and --apply. The implementation deliberately preserves
+the active vendor-driver and IT8613 identity checks even with --force.
+
 ## Adding a model
 
 1. Record the exact DMI product string and controller identity.

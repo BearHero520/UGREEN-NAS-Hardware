@@ -25,7 +25,7 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] models\n"
                   "  ugreenctl [options] info\n"
                   "  ugreenctl [options] fan status\n"
-                  "  ugreenctl [options] fan set <cpu|sys> <0-255>\n"
+                  "  ugreenctl [options] fan set <fan-id> <0-255>\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
                   "  ugreenctl [options] led list\n\n"
@@ -163,16 +163,30 @@ static int require_apply(const struct cli_options *options, const char *descript
     return 1;
 }
 
+static void print_fan_status(const struct ugreenctl_fan_status *fan)
+{
+    (void)printf("%s:", fan->id);
+    if (fan->pwm_known) {
+        (void)printf(" pwm=%u", fan->pwm);
+    } else {
+        (void)fputs(" pwm=unknown", stdout);
+    }
+    if (fan->mode_known) {
+        (void)printf(" mode=%s", fan->manual ? "manual" : "auto");
+    } else {
+        (void)fputs(" mode=unknown", stdout);
+    }
+    (void)printf(" tach=%u rpm=%lu\n", fan->tachometer, fan->rpm);
+}
+
 static void print_status(const struct ugreenctl_status *status)
 {
     size_t index;
     (void)printf("controller: %s\n", status->controller);
     (void)printf("startup: %s\n", startup_policy_name(status->startup_policy));
     for (index = 0; index < status->fan_count; ++index) {
-        const struct ugreenctl_fan_status *fan = &status->fans[index];
-        (void)printf("fan %s: pwm=%u mode=%s tach=%u rpm=%lu\n",
-                     fan->id, fan->pwm, fan->manual ? "manual" : "auto",
-                     fan->tachometer, fan->rpm);
+        (void)fputs("fan ", stdout);
+        print_fan_status(&status->fans[index]);
     }
 }
 
@@ -291,10 +305,7 @@ int main(int argc, char **argv)
             if (result == 0) {
                 size_t index;
                 for (index = 0; index < status.fan_count; ++index) {
-                    const struct ugreenctl_fan_status *fan = &status.fans[index];
-                    (void)printf("%s: pwm=%u mode=%s tach=%u rpm=%lu\n",
-                                 fan->id, fan->pwm, fan->manual ? "manual" : "auto",
-                                 fan->tachometer, fan->rpm);
+                    print_fan_status(&status.fans[index]);
                 }
                 result = EXIT_SUCCESS;
             } else {

@@ -9,6 +9,7 @@
 | --- | --- | --- |
 | profile-only | 已注册稳定机型 ID 和候选 DMI 名称，但尚未信任任何控制器映射。 | 无 |
 | read-only | 控制器身份和每一项读数均已在实机验证。 | 仅状态读取 |
+| reverse-engineered | 已从原厂固件恢复命令路径和寄存器，但尚未完成实机验证。 | 仅在 --force --apply 与机型专属保护同时具备时 |
 | supported | 每条开放的写路径、安全范围和退出行为均已验证。 | 仅已声明能力 |
 | blocked | 已知冲突、固件回归或安全问题导致无法使用。 | 无 |
 
@@ -24,7 +25,7 @@ CPU、外观、盘位数或主板相似都不能作为升级支持等级的依�
 | plugin | 安装后的预期共享对象文件名。 |
 | dmi_product_names | 从 /sys/class/dmi/id/product_name 获得的精确字符串，禁止模糊匹配。 |
 | support_level | 上述四种等级之一。 |
-| capabilities | 每项能力明确标注 verified、unverified 或 blocked。 |
+| capabilities | 每项能力明确标注 verified、reverse-engineered、unverified 或 blocked。 |
 | controller | 芯片/传输层身份；未知时写 unverified。 |
 | evidence | 固件版本、测试日期、方法与已验证范围。 |
 | known_conflicts | 不能并发运行的原厂模块、内核版本或服务。 |
@@ -45,5 +46,6 @@ CPU、外观、盘位数或主板相似都不能作为升级支持等级的依�
 - DMI 只用于选择插件，不能证明控制寄存器安全。
 - --force 是研究人员的强制开关，不是兼容性承诺。
 - 固件更新如改变控制器映射或原厂驱动行为，应降低该机型支持等级。
+- reverse-engineered 的写路径在目录中补齐实机验证记录前，必须一直要求 --force。
 - 直接 I/O 前必须检测冲突的原厂模块；目录中必须写明冲突及处理方式。
 - 固件差异应拆成独立插件或显式的版本化代码路径，禁止根据假定寄存器布局静默分支。

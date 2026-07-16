@@ -4,11 +4,13 @@
     "support_levels": [
       "profile-only",
       "read-only",
+      "reverse-engineered",
       "supported",
       "blocked"
     ],
     "capability_states": [
       "verified",
+      "reverse-engineered",
       "unverified",
       "blocked"
     ],
@@ -45,6 +47,51 @@
           "firmware": "1.17.0.95",
           "method": "Clean-room observation of the vendor module interface and validation of the IT8613 identity/access sequence.",
           "scope": "CPU and system fan PWM/status; AC recovery startup policy."
+        }
+      ]
+    },
+    {
+      "id": "dxp480tplus",
+      "plugin": "dxp480tplus.so",
+      "marketing_names": [
+        "UGREEN DXP480T Plus"
+      ],
+      "dmi_product_names": [
+        "DXP480T Plus"
+      ],
+      "support_level": "reverse-engineered",
+      "write_requirements": [
+        "--force",
+        "--apply",
+        "IT8613 identity check",
+        "vendor /proc/it86 driver must be inactive"
+      ],
+      "controller": {
+        "transport": "Super I/O",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613"
+      },
+      "capabilities": {
+        "fan_cpu": "reverse-engineered",
+        "fan_all": "reverse-engineered",
+        "fan_system_individual": "unverified",
+        "fan_rpm": "reverse-engineered",
+        "led": "unverified",
+        "power_recovery": "reverse-engineered"
+      },
+      "known_conflicts": [
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently."
+      ],
+      "evidence": [
+        {
+          "firmware": "1.17.0.95",
+          "method": "Static clean-room reverse engineering of the DXP480T Plus branch in ug_it86x-cpufan.ko.",
+          "scope": "CPU, sysfan1, and sysfan2 tachometer paths; CPU and all-fans PWM paths; AC recovery path."
+        },
+        {
+          "firmware": "1.17.0.95",
+          "method": "Module inventory from kernel.squashfs.",
+          "scope": "N76E003 I2C/SMBus LED MCU identified; no LED write protocol exposed."
         }
       ]
     },

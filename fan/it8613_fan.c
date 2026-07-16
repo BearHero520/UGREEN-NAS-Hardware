@@ -26,7 +26,9 @@ static void copy_fan(struct ugreenctl_fan_status *fan, const char *id,
     uint16_t tachometer = read_tachometer(tach_high_reg, tach_low_reg);
     (void)snprintf(fan->id, sizeof(fan->id), "%s", id);
     fan->pwm = it86x_hwm_read(pwm_reg);
+    fan->pwm_known = true;
     fan->manual = (it86x_hwm_read(control_reg) & 0x80) == 0;
+    fan->mode_known = true;
     fan->tachometer = tachometer;
     fan->rpm = tach_to_rpm(tachometer);
 }

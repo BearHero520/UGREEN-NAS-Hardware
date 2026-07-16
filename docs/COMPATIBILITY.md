@@ -11,6 +11,7 @@ expose a hardware operation.
 | --- | --- | --- |
 | profile-only | A stable model ID and candidate DMI names are registered. No controller map is trusted. | None |
 | read-only | The controller identity and every reported value are validated on physical hardware. | Status only |
+| reverse-engineered | Command flow and registers are recovered from vendor firmware, but physical validation is pending. | Only with --force --apply and model-specific safeguards |
 | supported | Each exposed write path, its safe range, and rollback/exit behavior are validated. | Only declared capabilities |
 | blocked | A known conflict, firmware regression, or safety issue prevents use. | None |
 
@@ -27,7 +28,7 @@ Every model record must contain:
 | plugin | Expected installed shared-object name. |
 | dmi_product_names | Exact strings reported by /sys/class/dmi/id/product_name; no fuzzy matching. |
 | support_level | One of the levels above. |
-| capabilities | State each feature as verified, unverified, or blocked. |
+| capabilities | State each feature as verified, reverse-engineered, unverified, or blocked. |
 | controller | Chip/transport identity, or unverified. |
 | evidence | Firmware version, test date, method, and the scope validated. |
 | known_conflicts | Vendor modules, kernel versions, or other software that must not run concurrently. |
@@ -52,6 +53,8 @@ Unknown facts must be recorded as unverified, not inferred.
 - --force is an investigator override, not a compatibility guarantee.
 - A firmware upgrade can lower a model's support level if it changes the
   controller map or vendor driver behavior.
+- A reverse-engineered write path must retain the --force requirement until
+  its physical validation record is added to the catalog.
 - An incompatible vendor module must be detected before direct I/O. The
   catalog must name the conflict and the remediation.
 - Keep firmware-specific differences in separate plugins or explicitly

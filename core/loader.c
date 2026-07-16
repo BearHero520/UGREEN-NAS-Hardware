@@ -79,14 +79,14 @@ int ugreenctl_plugins_open(const char *directory, struct ugreenctl_plugin_set *s
             continue;
         }
         dlerror();
-        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v1");
+        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v2");
         if (dlerror() != NULL || entrypoint == NULL) {
-            (void)fprintf(stderr, "warning: skipping %s: missing ugreenctl_plugin_v1\n", path);
+            (void)fprintf(stderr, "warning: skipping %s: missing ugreenctl_plugin_v2\n", path);
             (void)dlclose(handle);
             continue;
         }
         plugin = entrypoint();
-        if (plugin == NULL || plugin->abi_version != UGREENCTL_PLUGIN_ABI_V1 ||
+        if (plugin == NULL || plugin->abi_version != UGREENCTL_PLUGIN_ABI_V2 ||
             plugin->id == NULL || plugin->display_name == NULL) {
             (void)fprintf(stderr, "warning: skipping %s: incompatible plugin\n", path);
             (void)dlclose(handle);

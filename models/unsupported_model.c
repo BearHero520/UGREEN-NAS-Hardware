@@ -15,10 +15,10 @@ static const char * const product_names[] = {
     NULL
 };
 
-const struct ugreenctl_plugin *ugreenctl_plugin_v1(void)
+const struct ugreenctl_plugin *ugreenctl_plugin_v2(void)
 {
     static const struct ugreenctl_plugin plugin = {
-        .abi_version = UGREENCTL_PLUGIN_ABI_V1,
+        .abi_version = UGREENCTL_PLUGIN_ABI_V2,
         .id = MODEL_ID,
         .display_name = MODEL_NAME,
         .dmi_product_names = product_names,

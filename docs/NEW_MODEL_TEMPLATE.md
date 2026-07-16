@@ -17,6 +17,7 @@ personal data.
 
 - [ ] profile-only
 - [ ] read-only
+- [ ] reverse-engineered
 - [ ] supported
 - [ ] blocked
 
