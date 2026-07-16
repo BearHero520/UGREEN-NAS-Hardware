@@ -5,3 +5,8 @@ compile_commands.json
 *.a
 ugreenctl
 
+# Local firmware drop zone and disposable extraction workspace.
+firmware-inbox/input/*
+!firmware-inbox/input/.gitkeep
+firmware-inbox/work/*
+!firmware-inbox/work/.gitkeep
