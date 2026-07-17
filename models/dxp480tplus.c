@@ -11,22 +11,38 @@ static const char * const product_names[] = {
     NULL
 };
 
+static int read_fans(const struct ugreenctl_request *request,
+                     struct ugreenctl_fan_status *fans, size_t *fan_count,
+                     char *error, size_t error_size)
+{
+    (void)request;
+    return it8613_dxp480t_read_fans(fans, fan_count, error, error_size);
+}
+
+static int read_startup_policy(const struct ugreenctl_request *request,
+                               enum ugreenctl_startup_policy *policy,
+                               char *error, size_t error_size)
+{
+    return it8613_read_startup_policy(request->force, policy, error, error_size);
+}
+
 static int read_status(const struct ugreenctl_request *request,
                        struct ugreenctl_status *status,
                        char *error, size_t error_size)
 {
+    char startup_error[256] = {0};
     int result;
 
-    (void)request;
     memset(status, 0, sizeof(*status));
-    (void)snprintf(status->controller, sizeof(status->controller), "ITE IT8613 Super I/O");
-    result = it8613_dxp480t_read_fans(status->fans, &status->fan_count,
-                                      error, error_size);
+    (void)snprintf(status->controller, sizeof(status->controller), "ITE IT8613 hwmon");
+    result = read_fans(request, status->fans, &status->fan_count, error, error_size);
     if (result != 0) {
         return result;
     }
-    return it8613_read_startup_policy(false, &status->startup_policy,
-                                      error, error_size);
+    status->startup_policy = UGREENCTL_STARTUP_UNKNOWN;
+    (void)read_startup_policy(request, &status->startup_policy,
+                              startup_error, sizeof(startup_error));
+    return 0;
 }
 
 static int set_fan_pwm(const struct ugreenctl_request *request,
@@ -41,22 +57,13 @@ static int set_startup_policy(const struct ugreenctl_request *request,
                               enum ugreenctl_startup_policy policy,
                               char *error, size_t error_size)
 {
-    (void)request;
-    return it8613_set_startup_policy(false, policy, error, error_size);
+    return it8613_set_startup_policy(request->force, policy, error, error_size);
 }
 
-static int set_fan_mode(const struct ugreenctl_request *request,
-                        const char *fan_id, bool automatic,
-                        char *error, size_t error_size)
-{
-    (void)request;
-    return it8613_dxp480t_set_fan_mode(fan_id, automatic, error, error_size);
-}
-
-const struct ugreenctl_plugin *ugreenctl_plugin_v3(void)
+const struct ugreenctl_plugin *ugreenctl_plugin_v4(void)
 {
     static const struct ugreenctl_plugin plugin = {
-        .abi_version = UGREENCTL_PLUGIN_ABI_V3,
+        .abi_version = UGREENCTL_PLUGIN_ABI_V4,
         .id = "dxp480tplus",
         .display_name = "UGREEN DXP480T Plus (hardware-verified)",
         .dmi_product_names = product_names,
@@ -65,7 +72,10 @@ const struct ugreenctl_plugin *ugreenctl_plugin_v3(void)
         .set_fan_pwm = set_fan_pwm,
         .set_startup_policy = set_startup_policy,
         .set_led = NULL,
-        .set_fan_mode = set_fan_mode
+        .set_fan_mode = NULL,
+        .read_fans = read_fans,
+        .read_startup_policy = read_startup_policy,
+        .controller_name = "ITE IT8613 hwmon"
     };
     return &plugin;
 }

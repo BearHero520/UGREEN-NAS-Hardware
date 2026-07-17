@@ -30,7 +30,7 @@
       ],
       "support_level": "supported",
       "controller": {
-        "transport": "Super I/O",
+        "transport": "Linux hwmon",
         "chip": "ITE IT8613",
         "chip_id": "0x8613"
       },
@@ -66,19 +66,18 @@
         "--apply",
         "IT8613 identity check",
         "vendor /proc/it86 driver must be inactive",
-        "manual fan PWM 64-255"
+        "manual fan PWM 40-255"
       ],
       "controller": {
-        "transport": "Super I/O",
+        "transport": "Linux hwmon",
         "chip": "ITE IT8613",
         "chip_id": "0x8613",
-        "config_ports": "0x2e/0x2f",
-        "hardware_monitor_ports": "0xa35/0xa36"
+        "hwmon_name": "it8613"
       },
       "capabilities": {
         "fan_rpm": "reverse-engineered",
         "fan_pwm_write": "reverse-engineered",
-        "fan_pwm_read": "unverified",
+        "fan_pwm_read": "verified",
         "fan_automatic_service": "unverified",
         "fan_stop": "blocked",
         "led": "unverified",
@@ -86,7 +85,7 @@
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_sio module must not access the controller concurrently.",
-        "A generic IT87/IT86 hardware-monitor driver must not own the same Super I/O ports concurrently."
+        "The generic it87 driver may remain loaded; fan operations use its existing name=it8613 hwmon node."
       ],
       "evidence": [
         {
@@ -115,7 +114,7 @@
         "vendor /proc/it86 driver must be inactive"
       ],
       "controller": {
-        "transport": "Super I/O",
+        "transport": "Linux hwmon",
         "chip": "ITE IT8613",
         "chip_id": "0x8613"
       },

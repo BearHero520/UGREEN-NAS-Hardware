@@ -80,20 +80,26 @@ int ugreenctl_plugins_open(const char *directory, struct ugreenctl_plugin_set *s
             continue;
         }
         dlerror();
-        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v3");
+        entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v4");
         if (dlerror() == NULL && entrypoint != NULL) {
-            expected_abi = UGREENCTL_PLUGIN_ABI_V3;
+            expected_abi = UGREENCTL_PLUGIN_ABI_V4;
         } else {
             dlerror();
-            entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v2");
-            if (dlerror() != NULL || entrypoint == NULL) {
-                (void)fprintf(stderr,
-                              "warning: skipping %s: missing ugreenctl_plugin_v3/v2\n",
-                              path);
-                (void)dlclose(handle);
-                continue;
+            entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v3");
+            if (dlerror() == NULL && entrypoint != NULL) {
+                expected_abi = UGREENCTL_PLUGIN_ABI_V3;
+            } else {
+                dlerror();
+                entrypoint = (ugreenctl_plugin_entrypoint)dlsym(handle, "ugreenctl_plugin_v2");
+                if (dlerror() != NULL || entrypoint == NULL) {
+                    (void)fprintf(stderr,
+                                  "warning: skipping %s: missing ugreenctl_plugin_v4/v3/v2\n",
+                                  path);
+                    (void)dlclose(handle);
+                    continue;
+                }
+                expected_abi = UGREENCTL_PLUGIN_ABI_V2;
             }
-            expected_abi = UGREENCTL_PLUGIN_ABI_V2;
         }
         plugin = entrypoint();
         if (plugin == NULL || plugin->abi_version != expected_abi ||

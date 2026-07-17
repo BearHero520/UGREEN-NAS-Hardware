@@ -26,7 +26,6 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] info\n"
                   "  ugreenctl [options] fan status\n"
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
-                  "  ugreenctl [options] fan mode <fan-id> <auto|manual>\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
                   "  ugreenctl [options] led list\n\n"
@@ -37,8 +36,8 @@ static void usage(FILE *stream)
                   "  --force             acknowledge an experimental model write\n"
                   "  --version           print the version\n"
                   "  --help              print this help\n\n"
-                  "Direct Super I/O access requires root or CAP_SYS_RAWIO. The exact DMI name\n"
-                  "and IT8613 identity must match, and the vendor /proc/it86 driver must be unloaded.\n",
+                  "Fan control uses the existing Linux hwmon node whose name is exactly it8613.\n"
+                  "Writes require an exact DMI match and always select manual PWM mode.\n",
                   UGREENCTL_VERSION);
 }
 
@@ -197,6 +196,57 @@ static void print_status(const struct ugreenctl_status *status)
     }
 }
 
+static const char *plugin_controller_name(const struct ugreenctl_plugin *plugin)
+{
+    if (plugin->abi_version >= UGREENCTL_PLUGIN_ABI_V4 &&
+        plugin->controller_name != NULL && plugin->controller_name[0] != '\0') {
+        return plugin->controller_name;
+    }
+    return "model-defined controller";
+}
+
+static int plugin_read_fans(const struct ugreenctl_plugin *plugin,
+                            const struct ugreenctl_request *request,
+                            struct ugreenctl_fan_status *fans, size_t *fan_count,
+                            char *error, size_t error_size)
+{
+    if (plugin->abi_version >= UGREENCTL_PLUGIN_ABI_V4 && plugin->read_fans != NULL) {
+        return plugin->read_fans(request, fans, fan_count, error, error_size);
+    }
+    if (plugin->read_status != NULL) {
+        struct ugreenctl_status status;
+        int result = plugin->read_status(request, &status, error, error_size);
+        if (result == 0) {
+            memcpy(fans, status.fans, status.fan_count * sizeof(status.fans[0]));
+            *fan_count = status.fan_count;
+        }
+        return result;
+    }
+    (void)snprintf(error, error_size, "fan status is not available for %s", plugin->id);
+    return -ENOTSUP;
+}
+
+static int plugin_read_startup_policy(const struct ugreenctl_plugin *plugin,
+                                      const struct ugreenctl_request *request,
+                                      enum ugreenctl_startup_policy *policy,
+                                      char *error, size_t error_size)
+{
+    if (plugin->abi_version >= UGREENCTL_PLUGIN_ABI_V4 &&
+        plugin->read_startup_policy != NULL) {
+        return plugin->read_startup_policy(request, policy, error, error_size);
+    }
+    if (plugin->read_status != NULL) {
+        struct ugreenctl_status status;
+        int result = plugin->read_status(request, &status, error, error_size);
+        if (result == 0) {
+            *policy = status.startup_policy;
+        }
+        return result;
+    }
+    (void)snprintf(error, error_size, "startup policy is not available for %s", plugin->id);
+    return -ENOTSUP;
+}
+
 static int report_plugin_error(const char *action, int result, const char *error)
 {
     if (error != NULL && error[0] != '\0') {
@@ -287,37 +337,51 @@ int main(int argc, char **argv)
 
     if (strcmp(argv[arg], "info") == 0 && arg + 1 == argc) {
         struct ugreenctl_status status;
-        if (plugin->read_status == NULL) {
-            (void)fprintf(stderr, "error: %s is a profile-only plugin; hardware commands are not verified\n",
-                          plugin->id);
-            result = EXIT_FAILURE;
+        char fan_error[256] = {0};
+        char startup_error[256] = {0};
+        int fan_result;
+        int startup_result;
+
+        memset(&status, 0, sizeof(status));
+        (void)snprintf(status.controller, sizeof(status.controller), "%s",
+                       plugin_controller_name(plugin));
+        fan_result = plugin_read_fans(plugin, &request, status.fans,
+                                      &status.fan_count, fan_error, sizeof(fan_error));
+        startup_result = plugin_read_startup_policy(plugin, &request,
+                                                    &status.startup_policy,
+                                                    startup_error,
+                                                    sizeof(startup_error));
+        if (fan_result != 0 && startup_result != 0) {
+            result = report_plugin_error("read fan status", fan_result, fan_error);
+            (void)report_plugin_error("read startup policy", startup_result, startup_error);
         } else {
-            result = plugin->read_status(&request, &status, error, sizeof(error));
-            if (result == 0) {
-                (void)printf("model: %s (%s)\n", plugin->id, plugin->display_name);
-                print_status(&status);
-                result = EXIT_SUCCESS;
-            } else {
-                result = report_plugin_error("read hardware status", result, error);
+            (void)printf("model: %s (%s)\n", plugin->id, plugin->display_name);
+            print_status(&status);
+            if (fan_result != 0) {
+                (void)fprintf(stderr, "warning: fan status unavailable: %s\n",
+                              fan_error[0] != '\0' ? fan_error : strerror(-fan_result));
             }
+            if (startup_result != 0) {
+                (void)fprintf(stderr, "warning: startup policy unavailable: %s\n",
+                              startup_error[0] != '\0' ? startup_error
+                                                        : strerror(-startup_result));
+            }
+            result = EXIT_SUCCESS;
         }
     } else if (strcmp(argv[arg], "fan") == 0 && arg + 1 < argc &&
                strcmp(argv[arg + 1], "status") == 0 && arg + 2 == argc) {
-        struct ugreenctl_status status;
-        if (plugin->read_status == NULL) {
-            (void)fprintf(stderr, "error: fan status is not verified for %s\n", plugin->id);
-            result = EXIT_FAILURE;
-        } else {
-            result = plugin->read_status(&request, &status, error, sizeof(error));
-            if (result == 0) {
-                size_t index;
-                for (index = 0; index < status.fan_count; ++index) {
-                    print_fan_status(&status.fans[index]);
-                }
-                result = EXIT_SUCCESS;
-            } else {
-                result = report_plugin_error("read fan status", result, error);
+        struct ugreenctl_fan_status fans[UGREENCTL_MAX_FANS];
+        size_t fan_count = 0;
+        result = plugin_read_fans(plugin, &request, fans, &fan_count,
+                                  error, sizeof(error));
+        if (result == 0) {
+            size_t index;
+            for (index = 0; index < fan_count; ++index) {
+                print_fan_status(&fans[index]);
             }
+            result = EXIT_SUCCESS;
+        } else {
+            result = report_plugin_error("read fan status", result, error);
         }
     } else if (strcmp(argv[arg], "fan") == 0 && arg + 4 == argc &&
                strcmp(argv[arg + 1], "set") == 0) {
@@ -336,52 +400,17 @@ int main(int argc, char **argv)
                 result = report_plugin_error("set fan PWM", result, error);
             }
         }
-    } else if (strcmp(argv[arg], "fan") == 0 && arg + 4 == argc &&
-               strcmp(argv[arg + 1], "mode") == 0) {
-        bool automatic;
-        bool valid_mode = true;
-        if (strcmp(argv[arg + 3], "auto") == 0) {
-            automatic = true;
-        } else if (strcmp(argv[arg + 3], "manual") == 0) {
-            automatic = false;
-        } else {
-            automatic = false;
-            valid_mode = false;
-        }
-        if (!valid_mode || plugin->abi_version < UGREENCTL_PLUGIN_ABI_V3 ||
-            plugin->set_fan_mode == NULL) {
-            (void)fprintf(stderr,
-                          "error: fan mode control is not available for %s; use auto or manual\n",
-                          plugin->id);
-            result = EXIT_FAILURE;
-        } else if (require_apply(&options, "change the fan control mode") != 0) {
-            result = EXIT_SUCCESS;
-        } else {
-            result = plugin->set_fan_mode(&request, argv[arg + 2], automatic,
-                                          error, sizeof(error));
-            if (result == 0) {
-                (void)printf("%s fan mode set to %s\n", argv[arg + 2],
-                             automatic ? "auto" : "manual");
-                result = EXIT_SUCCESS;
-            } else {
-                result = report_plugin_error("set fan mode", result, error);
-            }
-        }
     } else if (strcmp(argv[arg], "power") == 0 && arg + 2 < argc &&
                strcmp(argv[arg + 1], "startup") == 0 &&
                strcmp(argv[arg + 2], "get") == 0 && arg + 3 == argc) {
-        struct ugreenctl_status status;
-        if (plugin->read_status == NULL) {
-            (void)fprintf(stderr, "error: startup policy is not verified for %s\n", plugin->id);
-            result = EXIT_FAILURE;
+        enum ugreenctl_startup_policy policy = UGREENCTL_STARTUP_UNKNOWN;
+        result = plugin_read_startup_policy(plugin, &request, &policy,
+                                            error, sizeof(error));
+        if (result == 0) {
+            (void)puts(startup_policy_name(policy));
+            result = EXIT_SUCCESS;
         } else {
-            result = plugin->read_status(&request, &status, error, sizeof(error));
-            if (result == 0) {
-                (void)puts(startup_policy_name(status.startup_policy));
-                result = EXIT_SUCCESS;
-            } else {
-                result = report_plugin_error("read startup policy", result, error);
-            }
+            result = report_plugin_error("read startup policy", result, error);
         }
     } else if (strcmp(argv[arg], "power") == 0 && arg + 3 < argc &&
                strcmp(argv[arg + 1], "startup") == 0 &&

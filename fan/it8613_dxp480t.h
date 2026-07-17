@@ -11,7 +11,5 @@ int it8613_dxp480t_read_fans(struct ugreenctl_fan_status *fans, size_t *fan_coun
                               char *error, size_t error_size);
 int it8613_dxp480t_set_fan_pwm(const char *fan_id, uint8_t pwm,
                                 char *error, size_t error_size);
-int it8613_dxp480t_set_fan_mode(const char *fan_id, bool automatic,
-                                char *error, size_t error_size);
 
 #endif

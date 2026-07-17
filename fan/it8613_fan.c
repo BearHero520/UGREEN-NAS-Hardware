@@ -4,128 +4,36 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "superio/it86x.h"
+#include "fan/it8613_hwmon.h"
 
-static unsigned long tach_to_rpm(uint16_t tachometer)
-{
-    if (tachometer == 0 || tachometer == 0x0fff || tachometer == 0xffff) {
-        return 0;
-    }
-    return 675000UL / tachometer;
-}
-
-static uint16_t read_tachometer(uint8_t high_reg, uint8_t low_reg)
-{
-    return ((uint16_t)it86x_hwm_read(high_reg) << 8) | it86x_hwm_read(low_reg);
-}
-
-static void copy_fan(struct ugreenctl_fan_status *fan, const char *id,
-                     uint8_t control_reg, uint8_t pwm_reg,
-                     uint8_t tach_high_reg, uint8_t tach_low_reg)
-{
-    uint16_t tachometer = read_tachometer(tach_high_reg, tach_low_reg);
-    (void)snprintf(fan->id, sizeof(fan->id), "%s", id);
-    fan->pwm = it86x_hwm_read(pwm_reg);
-    fan->pwm_known = true;
-    fan->manual = (it86x_hwm_read(control_reg) & 0x80) == 0;
-    fan->mode_known = true;
-    fan->tachometer = tachometer;
-    fan->rpm = tach_to_rpm(tachometer);
-}
+/* Linux it87 maps control/duty registers 0x16/0x6b to pwm2 and
+ * 0x17/0x73 to pwm3. The tachometer wiring is model-specific. */
+static const struct it8613_hwmon_channel channels[] = {
+    {"cpu", 2, 2},
+    {"sys", 3, 3}
+};
 
 int it8613_read_fans(bool force, struct ugreenctl_fan_status *fans, size_t *fan_count,
                      char *error, size_t error_size)
 {
-    struct it86x_device device;
-    int result;
-
     (void)force;
-    result = it86x_open(&device, error, error_size);
-
-    if (result != 0) {
-        return result;
-    }
-    copy_fan(&fans[0], "cpu", 0x16, 0x6b, 0x19, 0x0e);
-    copy_fan(&fans[1], "sys", 0x17, 0x73, 0x1a, 0x0f);
-    *fan_count = 2;
-    it86x_close(&device);
-    return 0;
+    return it8613_hwmon_read_fans(channels, 2, fans, fan_count,
+                                  error, error_size);
 }
 
 int it8613_set_fan_pwm(bool force, const char *fan_id, uint8_t pwm,
                        char *error, size_t error_size)
 {
-    struct it86x_device device;
-    uint8_t control_reg;
-    uint8_t pwm_reg;
-    uint8_t control;
-    int result;
+    const struct it8613_hwmon_channel *channel;
 
     if (strcmp(fan_id, "cpu") == 0) {
-        control_reg = 0x16;
-        pwm_reg = 0x6b;
+        channel = &channels[0];
     } else if (strcmp(fan_id, "sys") == 0) {
-        control_reg = 0x17;
-        pwm_reg = 0x73;
+        channel = &channels[1];
     } else {
         (void)snprintf(error, error_size, "unknown fan '%s' (expected cpu or sys)", fan_id);
         return -EINVAL;
     }
     (void)force;
-    if (pwm < 40) {
-        (void)snprintf(error, error_size,
-                       "refusing unsafe PWM %u; choose a value of 40-255", pwm);
-        return -EPERM;
-    }
-
-    result = it86x_open(&device, error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    control = it86x_hwm_read(control_reg);
-    it86x_hwm_write(control_reg, control & 0x7f);
-    it86x_hwm_write(pwm_reg, pwm);
-    it86x_close(&device);
-    return 0;
-}
-
-int it8613_set_fan_mode(bool force, const char *fan_id, bool automatic,
-                        char *error, size_t error_size)
-{
-    struct it86x_device device;
-    uint8_t control_reg;
-    uint8_t pwm_reg;
-    uint8_t control;
-    uint8_t pwm;
-    int result;
-
-    if (strcmp(fan_id, "cpu") == 0) {
-        control_reg = 0x16;
-        pwm_reg = 0x6b;
-    } else if (strcmp(fan_id, "sys") == 0) {
-        control_reg = 0x17;
-        pwm_reg = 0x73;
-    } else {
-        (void)snprintf(error, error_size, "unknown fan '%s' (expected cpu or sys)", fan_id);
-        return -EINVAL;
-    }
-
-    (void)force;
-    result = it86x_open(&device, error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    pwm = it86x_hwm_read(pwm_reg);
-    if (!automatic && pwm < 40) {
-        (void)snprintf(error, error_size,
-                       "refusing manual mode with unsafe current PWM %u; set PWM to 40-255 first",
-                       pwm);
-        it86x_close(&device);
-        return -EPERM;
-    }
-    control = it86x_hwm_read(control_reg);
-    it86x_hwm_write(control_reg, automatic ? (uint8_t)(control | 0x80)
-                                           : (uint8_t)(control & 0x7f));
-    it86x_close(&device);
-    return 0;
+    return it8613_hwmon_set_manual_pwm(channel, 1, pwm, error, error_size);
 }
