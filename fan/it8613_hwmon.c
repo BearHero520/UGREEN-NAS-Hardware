@@ -12,10 +12,12 @@
 #include <string.h>
 #include <sys/file.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 #define IT8613_HWMON_NAME "it8613"
 #define IT8613_MIN_MANUAL_PWM 40U
+#define IT8613_HWMON_READBACK_RETRY_MS 2000L
 
 struct it8613_hwmon_device {
     char path[PATH_MAX];
@@ -331,6 +333,17 @@ static int write_unsigned_file(const char *path, unsigned int value,
     return 0;
 }
 
+static void wait_for_hwmon_readback(void)
+{
+    struct timespec delay = {
+        .tv_sec = IT8613_HWMON_READBACK_RETRY_MS / 1000L,
+        .tv_nsec = (IT8613_HWMON_READBACK_RETRY_MS % 1000L) * 1000000L
+    };
+
+    while (nanosleep(&delay, &delay) != 0 && errno == EINTR) {
+    }
+}
+
 static int write_and_verify(const char *path, unsigned int expected,
                             char *error, size_t error_size)
 {
@@ -345,11 +358,23 @@ static int write_and_verify(const char *path, unsigned int expected,
         return result;
     }
     if (actual != expected) {
-        char detail[PATH_MAX + 64];
-        (void)snprintf(detail, sizeof(detail), "%s wrote %u but read back %lu",
-                       path, expected, actual);
-        set_error(error, error_size, "hwmon write verification failed: %s", detail);
-        return -EIO;
+        /* The it87 driver may return a cached register value for up to 1.5
+         * seconds. A mismatched immediate read must therefore be confirmed
+         * before treating an accepted sysfs write as a hardware failure. */
+        wait_for_hwmon_readback();
+        result = read_unsigned_file(path, &actual, error, error_size);
+        if (result != 0) {
+            return result;
+        }
+        if (actual != expected) {
+            char detail[PATH_MAX + 64];
+            (void)snprintf(detail, sizeof(detail),
+                           "%s wrote %u but read back %lu after %ld ms",
+                           path, expected, actual,
+                           IT8613_HWMON_READBACK_RETRY_MS);
+            set_error(error, error_size, "hwmon write verification failed: %s", detail);
+            return -EIO;
+        }
     }
     return 0;
 }
