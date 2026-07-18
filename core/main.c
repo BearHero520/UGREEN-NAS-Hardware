@@ -36,7 +36,8 @@ static void usage(FILE *stream)
                   "  --force             acknowledge an experimental model write\n"
                   "  --version           print the version\n"
                   "  --help              print this help\n\n"
-                  "Fan control uses the existing Linux hwmon node whose name is exactly it8613.\n"
+                  "Fan control prefers the Linux hwmon node named it8613. If it is absent,\n"
+                  "a guarded direct Super I/O fallback is available only with no active owner.\n"
                   "Writes require an exact DMI match and always select manual PWM mode.\n",
                   UGREENCTL_VERSION);
 }

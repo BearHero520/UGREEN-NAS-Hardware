@@ -29,6 +29,7 @@ set_target_properties(ugreenctl_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(ugreenctl_hardware STATIC
   superio/it86x.c
+  fan/it8613_direct.c
   fan/it8613_hwmon.c
   fan/it8613_fan.c
   fan/it8613_dxp4800s.c
@@ -105,4 +106,14 @@ if(BUILD_TESTING)
   target_link_libraries(test-it8613-hwmon PRIVATE ugreenctl_hardware)
   target_compile_options(test-it8613-hwmon PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-hwmon COMMAND test-it8613-hwmon)
+  add_executable(test-it8613-direct
+    tests/test_it8613_direct.c
+    fan/it8613_direct.c
+  )
+  target_include_directories(test-it8613-direct PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-direct PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-direct COMMAND test-it8613-direct)
 endif()

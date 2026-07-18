@@ -30,7 +30,7 @@
       ],
       "support_level": "supported",
       "controller": {
-        "transport": "Linux hwmon",
+        "transport": "Linux hwmon with guarded direct Super I/O fallback",
         "chip": "ITE IT8613",
         "chip_id": "0x8613"
       },
@@ -40,7 +40,8 @@
         "power_recovery": "verified"
       },
       "known_conflicts": [
-        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently."
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
+        "Direct fallback is available only after the it87 module is unloaded and requires --force --apply."
       ],
       "evidence": [
         {
@@ -69,7 +70,7 @@
         "manual fan PWM 40-255"
       ],
       "controller": {
-        "transport": "Linux hwmon",
+        "transport": "Linux hwmon with guarded direct Super I/O fallback",
         "chip": "ITE IT8613",
         "chip_id": "0x8613",
         "hwmon_name": "it8613"
@@ -85,7 +86,7 @@
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_sio module must not access the controller concurrently.",
-        "The generic it87 driver may remain loaded; fan operations use its existing name=it8613 hwmon node."
+        "The generic it87 driver may remain loaded while its name=it8613 hwmon node is used; it must be unloaded before direct fallback."
       ],
       "evidence": [
         {
@@ -108,13 +109,13 @@
       ],
       "support_level": "supported",
       "write_requirements": [
-        "--apply",
+        "--apply for hwmon writes; --force --apply for direct fallback writes",
         "exact DMI product name DXP480T Plus",
         "IT8613 identity check",
         "vendor /proc/it86 driver must be inactive"
       ],
       "controller": {
-        "transport": "Linux hwmon",
+        "transport": "Linux hwmon with guarded direct Super I/O fallback",
         "chip": "ITE IT8613",
         "chip_id": "0x8613"
       },
@@ -128,7 +129,8 @@
         "power_recovery": "verified"
       },
       "known_conflicts": [
-        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently."
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
+        "Direct fallback is available only after the it87 module is unloaded and requires --force --apply."
       ],
       "evidence": [
         {

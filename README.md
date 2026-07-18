@@ -15,9 +15,9 @@ its controls work.
 
 | Model plugin | State | Verified functions |
 | --- | --- | --- |
-| dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy |
-| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 64-255 and AC recovery require --force --apply |
-| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM/PWM/mode; CPU/all fan PWM and AC recovery with --apply |
+| dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback |
+| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 40-255 and AC recovery require --force --apply |
+| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM/PWM/mode; CPU/all fan PWM and AC recovery; guarded direct fan fallback |
 | dxp2800, dxp4800, dxp6800pro, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
@@ -73,9 +73,8 @@ Writes are previews until --apply is supplied. `--force` acknowledges a
 firmware-reversed write path; it does not bypass exact DMI matching, the active
 vendor-driver guard, or the IT8613 identity check.
 
-DXP4800S has one recovered `sysfan1` channel. The plugin calls it `sys`, keeps
-current PWM/mode as unknown, and exposes only the stock curve's observed
-running range of 64-255:
+DXP4800S has one recovered `sysfan1` channel. The plugin calls it `sys`, and
+exposes a guarded manual range of 40-255:
 
     sudo ugreenctl --force --apply fan set sys 120
     sudo ugreenctl --force --apply power startup set restore
@@ -85,8 +84,8 @@ an IT8613 hardware-auto switch. This utility currently provides the guarded
 manual primitive; an alternate operating system needs its own temperature
 watchdog before automatic control is claimed.
 
-For DXP480T Plus, the firmware-recovered write paths have been validated on a
-physical device. Normal writes require --apply and retain exact DMI matching,
+For DXP480T Plus, the firmware-recovered hwmon write paths have been validated
+on a physical device. Normal hwmon writes require --apply and retain exact DMI matching,
 the vendor-driver conflict guard, the IT8613 identity check, and the PWM floor:
 
     sudo ugreenctl --apply fan set cpu 120
@@ -95,7 +94,12 @@ the vendor-driver conflict guard, the IT8613 identity check, and the PWM floor:
 The all target follows the vendor's set command and writes its three observed
 PWM channels in vendor order. Status reads the PWM and automatic/manual mode
 from those same three channels. Independent system-fan writes remain hidden;
-only CPU or the vendor all-fans operation is exposed.
+only CPU or the vendor all-fans operation is exposed. For DXP4800 Plus / Pro,
+DXP4800S, and DXP480T Plus, if the `it8613` hwmon node is absent because `it87`
+was intentionally unloaded, a direct Super I/O fallback is available. It refuses
+to run while any vendor interface or `it87` owns the controller, checks the chip
+identity and process lock, and requires `--force --apply` for writes. The direct
+write fallback is experimental until separately physically verified on each model.
 
 ## Safety
 

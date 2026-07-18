@@ -47,7 +47,8 @@ static int read_status(const struct ugreenctl_request *request,
     int result;
 
     memset(status, 0, sizeof(*status));
-    (void)snprintf(status->controller, sizeof(status->controller), "ITE IT8613 hwmon");
+    (void)snprintf(status->controller, sizeof(status->controller),
+                   "ITE IT8613 hwmon/direct");
     result = read_fans(request, status->fans, &status->fan_count, error, error_size);
     if (result != 0) {
         return result;
@@ -95,7 +96,7 @@ const struct ugreenctl_plugin *ugreenctl_plugin_v4(void)
         .set_fan_mode = NULL,
         .read_fans = read_fans,
         .read_startup_policy = read_startup_policy,
-        .controller_name = "ITE IT8613 hwmon"
+        .controller_name = "ITE IT8613 hwmon/direct"
     };
     return &plugin;
 }
