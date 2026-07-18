@@ -90,6 +90,7 @@ install(FILES
   docs/COMPATIBILITY.zh-CN.md
   docs/DXP4800S_REVERSE_ENGINEERING.md
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
+  docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP4800S_INTAKE.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
@@ -116,4 +117,14 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-direct PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-direct COMMAND test-it8613-direct)
+  add_executable(test-it8613-dxp480t
+    tests/test_it8613_dxp480t.c
+    fan/it8613_dxp480t.c
+  )
+  target_include_directories(test-it8613-dxp480t PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp480t PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp480t COMMAND test-it8613-dxp480t)
 endif()

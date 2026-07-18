@@ -17,8 +17,8 @@ static const struct it8613_hwmon_channel channels[] = {
 /* Direct mappings are model-specific fan wiring on the common IT8613 HWM.
  * They are used only when the generic it87 hwmon driver is not present. */
 static const struct it8613_direct_channel direct_channels[] = {
-    {"cpu", 0x16, 0x6b, 0x0e, 0x19},
-    {"sys", 0x17, 0x73, 0x0f, 0x1a}
+    {"cpu", 0x16, 0x6b, 0x0e, 0x19, true},
+    {"sys", 0x17, 0x73, 0x0f, 0x1a, true}
 };
 
 int it8613_read_fans(bool force, struct ugreenctl_fan_status *fans, size_t *fan_count,

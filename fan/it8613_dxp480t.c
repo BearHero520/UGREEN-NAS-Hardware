@@ -21,16 +21,18 @@ static const struct it8613_hwmon_channel all_write_channels[] = {
 };
 
 static const struct it8613_direct_channel direct_status_channels[] = {
-    {"cpu", 0x16, 0x6b, 0x0f, 0x1a},
-    {"sys1", 0x17, 0x73, 0x0e, 0x19},
-    {"sys2", 0x7f, 0x7b, 0x80, 0x81}
+    /* Stock DXP480T Plus CPU and system commands both use this one PWM
+     * output; the tachometer inputs remain independently reported. */
+    {"cpu", 0x17, 0x73, 0x0f, 0x1a, true},
+    {"sys1", 0x17, 0x73, 0x0e, 0x19, true},
+    {"sys2", 0x00, 0x00, 0x80, 0x81, false}
 };
 
-/* Preserve the vendor all-fans transaction order exactly. */
-static const struct it8613_direct_channel direct_all_write_channels[] = {
-    {"cpu", 0x16, 0x6b, 0x0f, 0x1a},
-    {"sys2", 0x7f, 0x7b, 0x80, 0x81},
-    {"sys1", 0x17, 0x73, 0x0e, 0x19}
+/* hwmonitor-480t sends both "cpu <pwm>" and "set <pwm>" through the
+ * DXP480T Plus branch of ug_it86x-cpufan. That branch clears bit 7 of 0x17
+ * and writes the requested duty to 0x73. It does not write a sys2 PWM. */
+static const struct it8613_direct_channel direct_vendor_all_channel = {
+    "all", 0x17, 0x73, 0x0e, 0x19, true
 };
 
 int it8613_dxp480t_read_fans(struct ugreenctl_fan_status *fans, size_t *fan_count,
@@ -80,6 +82,6 @@ int it8613_dxp480t_set_fan_pwm(bool force, const char *fan_id, uint8_t pwm,
                        "direct Super I/O fan writes require --force together with --apply");
         return -EPERM;
     }
-    return it8613_direct_set_manual_pwm(direct_all_write_channels, 3, pwm,
+    return it8613_direct_set_manual_pwm(&direct_vendor_all_channel, 1, pwm,
                                         error, error_size);
 }

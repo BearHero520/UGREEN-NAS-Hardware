@@ -15,7 +15,7 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 | --- | --- | --- |
 | dxp4800plus | 已支持 | CPU/系统风扇状态与 PWM、交流电恢复后的启动策略 |
 | dxp4800s | 固件逆向完成 | sysfan1 转速；系统风扇 PWM 64-255 与来电启动策略需 --force --apply |
-| dxp480tplus | 已支持 | CPU、sysfan1、sysfan2 转速/PWM/模式；CPU/全部风扇 PWM 与来电启动策略需 --apply |
+| dxp480tplus | 已支持 | CPU、sysfan1、sysfan2 转速；hwmon CPU/全部风扇 PWM、来电启动策略；受保护的共享 PWM 直控兜底 |
 | dxp2800、dxp4800、dxp6800pro、dxp8800plus | 仅机型档案 | 暂无 |
 
 dxp4800plus 同时匹配 DMI 产品名 DXP4800 Plus 和 DXP4800 Pro。该插件针对在
@@ -76,9 +76,12 @@ DXP480T Plus 的固件逆向写入路径已经完成实机验证。正常写入�
     sudo ugreenctl --apply fan set cpu 120
     sudo ugreenctl --apply fan set all 120
 
-all 对应原厂 set 命令，按原厂顺序写入 3 个 PWM 通道。状态读取会从相同通道返回三路
-PWM 以及自动/手动模式。插件仍不会开放单独的系统风扇写操作，只提供 CPU 或原厂全部
-风扇操作。
+hwmon 存在时，all 对应原厂 set 命令，按原厂顺序写入 3 个 PWM 通道。若为释放通道而
+卸载 it87、`name=it8613` hwmon 节点不存在，DXP480T Plus 的 cpu 与 all 会复现原厂
+共享直控输出：控制寄存器 `0x17`、占空比寄存器 `0x73`。三路转速仍会报告，但 sysfan2
+没有固件证明的独立 PWM 路径，因此 PWM/模式显示为 unknown；插件不会开放单独的系统
+风扇写操作。该共享直控 all 路径仍等待实机验证，且始终需要 `--force --apply`、原厂接口
+与 it87 冲突检查、芯片身份检查和进程锁。
 
 ## 安全说明
 

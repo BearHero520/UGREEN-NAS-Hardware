@@ -49,7 +49,10 @@ void it86x_hwm_write(uint8_t reg, uint8_t value)
 int main(void)
 {
     static const struct it8613_direct_channel channel = {
-        "sys", 0x17, 0x73, 0x0f, 0x1a
+        "sys", 0x17, 0x73, 0x0f, 0x1a, true
+    };
+    static const struct it8613_direct_channel tachometer_only_channel = {
+        "tach", 0x00, 0x00, 0x0f, 0x1a, false
     };
     struct ugreenctl_fan_status fan;
     char error[256] = {0};
@@ -78,9 +81,17 @@ int main(void)
         fail("invalid tachometer handling");
     }
 
+    registers[0x0f] = 0xee;
+    registers[0x1a] = 0x02;
+    if (it8613_direct_read_fans(&tachometer_only_channel, 1, &fan, &fan_count,
+                                error, sizeof(error)) != 0 || fan.pwm_known ||
+        fan.mode_known || fan.manual || fan.rpm != 900) {
+        fail("tachometer-only direct status");
+    }
+
     if (it8613_direct_set_manual_pwm(&channel, 1, 39,
                                      error, sizeof(error)) != -EPERM ||
-        open_calls != 2) {
+        open_calls != 3) {
         fail("unsafe direct PWM guard");
     }
 
@@ -89,8 +100,14 @@ int main(void)
     if (it8613_direct_set_manual_pwm(&channel, 1, 120,
                                      error, sizeof(error)) != 0 ||
         (registers[0x17] & 0x80U) != 0 || registers[0x73] != 120 ||
-        open_calls != 3 || close_calls != 3) {
+        open_calls != 4 || close_calls != 4) {
         fail("manual direct PWM write and readback");
+    }
+
+    if (it8613_direct_set_manual_pwm(&tachometer_only_channel, 1, 120,
+                                     error, sizeof(error)) != -EOPNOTSUPP ||
+        strstr(error, "unavailable for: tach") == NULL || open_calls != 4) {
+        fail("tachometer-only direct write guard");
     }
 
     mock_open_result = -EBUSY;

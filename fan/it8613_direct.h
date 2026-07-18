@@ -1,6 +1,7 @@
 #ifndef UGREENCTL_IT8613_DIRECT_H
 #define UGREENCTL_IT8613_DIRECT_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -16,6 +17,9 @@ struct it8613_direct_channel {
     uint8_t duty_register;
     uint8_t tachometer_low_register;
     uint8_t tachometer_high_register;
+    /* False when firmware proves tachometer wiring but provides no exact PWM
+     * write map for this model/channel. Such channels are read-only. */
+    bool pwm_supported;
 };
 
 int it8613_direct_read_fans(const struct it8613_direct_channel *channels,

@@ -9,7 +9,7 @@
 
 static const struct it8613_hwmon_channel channel = {"sys", 3, 3};
 static const struct it8613_direct_channel direct_channel = {
-    "sys", 0x17, 0x73, 0x0f, 0x1a
+    "sys", 0x17, 0x73, 0x0f, 0x1a, true
 };
 
 int it8613_dxp4800s_read_fan(struct ugreenctl_fan_status *fans, size_t *fan_count,

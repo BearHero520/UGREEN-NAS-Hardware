@@ -17,7 +17,7 @@ its controls work.
 | --- | --- | --- |
 | dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback |
 | dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 40-255 and AC recovery require --force --apply |
-| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM/PWM/mode; CPU/all fan PWM and AC recovery; guarded direct fan fallback |
+| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback |
 | dxp2800, dxp4800, dxp6800pro, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
@@ -91,15 +91,16 @@ the vendor-driver conflict guard, the IT8613 identity check, and the PWM floor:
     sudo ugreenctl --apply fan set cpu 120
     sudo ugreenctl --apply fan set all 120
 
-The all target follows the vendor's set command and writes its three observed
-PWM channels in vendor order. Status reads the PWM and automatic/manual mode
-from those same three channels. Independent system-fan writes remain hidden;
-only CPU or the vendor all-fans operation is exposed. For DXP4800 Plus / Pro,
-DXP4800S, and DXP480T Plus, if the `it8613` hwmon node is absent because `it87`
-was intentionally unloaded, a direct Super I/O fallback is available. It refuses
-to run while any vendor interface or `it87` owns the controller, checks the chip
-identity and process lock, and requires `--force --apply` for writes. The direct
-write fallback is experimental until separately physically verified on each model.
+With hwmon present, the all target follows the vendor's three-channel transaction
+in vendor order. When `it87` was intentionally unloaded and the `it8613` hwmon
+node is absent, DXP480T Plus uses the stock shared direct PWM output for both
+`cpu` and `all`: control `0x17`, duty `0x73`. Its three tachometers remain
+visible, but sysfan2 has no firmware-proven independent PWM path and is reported
+with unknown PWM/mode. Independent system-fan writes remain hidden. As for the
+other supported direct fallbacks, it refuses to run while any vendor interface or
+`it87` owns the controller, checks chip identity and the process lock, and
+requires `--force --apply`; physical validation of this shared direct all-fans
+path is still pending.
 
 ## Safety
 

@@ -69,11 +69,16 @@ The firmware-recovered hwmon CPU/all-fans PWM and AC recovery paths have been
 validated on a physical DXP480T Plus. Fan writes through hwmon require
 `--apply`; each `pwm*_enable=1` and PWM write is read back while holding a
 process lock. If the `it8613` hwmon node is absent, the same model-specific
-CPU/sysfan1/sysfan2 direct map is available only with `--force --apply`, no
-active vendor or `it87` owner, an IT8613 identity match, and verified readback.
-That direct fallback awaits separate physical write validation. Only manual PWM
-is exposed: `pwm*_enable=2` is not reported as the vendor software temperature
-curve. Independent system-fan writes are not exposed.
+CPU direct map is available only with `--force --apply`, no active vendor or
+`it87` owner, an IT8613 identity match, and verified readback. The stock
+DXP480T Plus branch uses one shared PWM output (`0x17/0x73`) for both its
+`cpu` and `set` commands, so the direct `all` fallback reproduces that one
+vendor control path rather than guessing three independent registers. Sysfan2
+RPM is reported but its PWM and mode are unknown because the stock branch has
+no sysfan2-specific write sequence. Only manual PWM is exposed: `pwm*_enable=2`
+is not reported as the vendor software temperature curve. Independent system-fan
+writes are not exposed. See
+[DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md](DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md).
 
 ## Adding a model
 
