@@ -34,6 +34,7 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_fan.c
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
+  fan/it8613_dxp6800pro.c
   power/it8613_power.c
   led/led.c
   ec/ec.c
@@ -73,8 +74,7 @@ add_model_plugin(dxp2800 models/unsupported_model.c)
 target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
 add_model_plugin(dxp4800 models/unsupported_model.c)
 target_compile_definitions(dxp4800 PRIVATE MODEL_ID="dxp4800" MODEL_NAME="UGREEN DXP4800" MODEL_DMI_NAME="DXP4800")
-add_model_plugin(dxp6800pro models/unsupported_model.c)
-target_compile_definitions(dxp6800pro PRIVATE MODEL_ID="dxp6800pro" MODEL_NAME="UGREEN DXP6800 Pro" MODEL_DMI_NAME="DXP6800 Pro")
+add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
@@ -91,6 +91,7 @@ install(FILES
   docs/DXP4800S_REVERSE_ENGINEERING.md
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
+  docs/DXP6800_PRO_REVERSE_ENGINEERING.md
   docs/DXP4800S_INTAKE.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
@@ -127,4 +128,14 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp480t PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp480t COMMAND test-it8613-dxp480t)
+  add_executable(test-it8613-dxp6800pro
+    tests/test_it8613_dxp6800pro.c
+    fan/it8613_dxp6800pro.c
+  )
+  target_include_directories(test-it8613-dxp6800pro PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp6800pro PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp6800pro COMMAND test-it8613-dxp6800pro)
 endif()

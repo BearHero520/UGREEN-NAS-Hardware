@@ -18,7 +18,8 @@ its controls work.
 | dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback |
 | dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 40-255 and AC recovery require --force --apply |
 | dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback |
-| dxp2800, dxp4800, dxp6800pro, dxp8800plus | profile only | none |
+| dxp6800pro | firmware-reversed | CPU/sys1/sys2 status; guarded CPU and paired-system PWM, AC recovery require --force --apply |
+| dxp2800, dxp4800, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
 targets the ITE IT8613 Super I/O hardware monitor observed in firmware
@@ -79,6 +80,19 @@ exposes a guarded manual range of 40-255:
     sudo ugreenctl --force --apply fan set sys 120
     sudo ugreenctl --force --apply power startup set restore
 
+DXP6800 Pro is firmware-reversed and has not yet had a physical write
+validation. It exposes the stock CPU path and the stock paired-system-fan path;
+both still require `--force --apply`:
+
+    sudo ugreenctl --force --apply fan set cpu 120
+    sudo ugreenctl --force --apply fan set sys 120
+    sudo ugreenctl --force --apply power startup set restore
+
+`sys` sets both firmware-proven system PWM outputs with the same value. The
+stock `hwmonitor` thermal curve is a user-space service, so it is not exposed
+as a hardware automatic mode. The recovered register map and validation limits
+are in [docs/DXP6800_PRO_REVERSE_ENGINEERING.md](docs/DXP6800_PRO_REVERSE_ENGINEERING.md).
+
 The stock automatic mode is a user-space `hwmonitor` temperature daemon, not
 an IT8613 hardware-auto switch. This utility currently provides the guarded
 manual primitive; an alternate operating system needs its own temperature
@@ -117,7 +131,7 @@ Before use outside UGREEN NAS firmware, unload the vendor module if it is
 active:
 
     sudo modprobe -r ug_it86x_sio       # DXP4800S / DXP4800 branch
-    sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T branch
+    sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T / DXP6800 branch
 
 ## Plugin ABI
 

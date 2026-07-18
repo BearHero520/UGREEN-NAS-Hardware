@@ -80,6 +80,28 @@ is not reported as the vendor software temperature curve. Independent system-fan
 writes are not exposed. See
 [DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md](DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md).
 
+## DXP6800 Pro
+
+The `dxp6800pro` plugin matches only the exact DMI product name `DXP6800 Pro`.
+The stock DXP6800 prefix route in UGOS Pro 1.17.0.0095 loads
+`ug_it86x-cpufan`, which identifies ITE IT8613.
+
+- CPU status/control: `pwm2/fan2_input`, direct map `0x16/0x6b` and
+  tachometer `0x0e/0x19`
+- System status: `pwm3/fan3_input` and `pwm4/fan4_input`; the stock `set`
+  command writes the system pair in order `0x17/0x73`, then `0x1e/0x7b`
+- AC recovery policy: Super I/O registers `0xf2` and `0xf4`
+
+This mapping is firmware-reversed and has no physical validation record. Fan
+and AC-recovery writes require exact DMI matching plus `--force --apply`.
+The preferred path uses the dynamic `name=it8613` hwmon node; direct fallback
+requires no vendor or `it87` owner, the same process lock, IT8613 identity, and
+readback of every manual-mode/PWM write. The `sys` target preserves the stock
+paired-system-fan operation; individual system-fan writes are not exposed.
+The stock `hwmonitor` daemon supplies a software temperature curve, so no
+hardware automatic mode is claimed. See
+[DXP6800_PRO_REVERSE_ENGINEERING.md](DXP6800_PRO_REVERSE_ENGINEERING.md).
+
 ## Adding a model
 
 1. Record the exact DMI product string and controller identity.

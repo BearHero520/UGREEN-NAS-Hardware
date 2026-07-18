@@ -206,18 +206,45 @@
       "dmi_product_names": [
         "DXP6800 Pro"
       ],
-      "support_level": "profile-only",
+      "support_level": "reverse-engineered",
+      "write_requirements": [
+        "exact DMI product name DXP6800 Pro",
+        "--force experimental acknowledgement",
+        "--apply",
+        "IT8613 identity check",
+        "vendor /proc/it86 driver must be inactive",
+        "manual fan PWM 40-255"
+      ],
       "controller": {
-        "transport": "unverified",
-        "chip": "unverified"
+        "transport": "Linux hwmon with guarded direct Super I/O fallback",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613",
+        "hwmon_name": "it8613"
       },
       "capabilities": {
-        "fan": "unverified",
+        "fan_rpm": "reverse-engineered",
+        "fan_cpu_pwm_write": "reverse-engineered",
+        "fan_system_pair_pwm_write": "reverse-engineered",
+        "fan_system_individual_write": "blocked",
+        "fan_pwm_readback": "reverse-engineered",
+        "fan_automatic_service": "unverified",
+        "fan_stop": "blocked",
         "led": "unverified",
-        "power_recovery": "unverified"
+        "power_recovery": "reverse-engineered"
       },
-      "known_conflicts": [],
-      "evidence": []
+      "known_conflicts": [
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
+        "The generic it87 driver may remain loaded while its name=it8613 hwmon node is used; it must be unloaded before direct fallback."
+      ],
+      "evidence": [
+        {
+          "firmware": "UGOS Pro 1.17.0.0095, build 20260630.111337, kernel 6.12.30+",
+          "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
+          "module_sha256": "677b740208097187caab302a16c9bf575478b46e455096f24c5ac284f2e8ccd7",
+          "method": "Static clean-room reverse engineering of the DXP6800 branch in ug_it86x-cpufan.ko and its stock DMI routing.",
+          "scope": "Three tachometer paths; CPU PWM at 0x16/0x6b; the stock paired system PWM transaction at 0x17/0x73 then 0x1e/0x7b; AC recovery registers 0xf2/0xf4. No physical write validation."
+        }
+      ]
     },
     {
       "id": "dxp8800plus",

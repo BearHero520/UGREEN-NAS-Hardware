@@ -67,6 +67,17 @@ DXP4800S 只有一个已恢复的 `sysfan1` 通道，插件命名为 `sys`。当
     sudo ugreenctl --force --apply fan set sys 120
     sudo ugreenctl --force --apply power startup set restore
 
+DXP6800 Pro 已从固件恢复、但尚未完成实机写入验证。它提供原厂 CPU 路径以及原厂的
+成对系统风扇路径，两者均必须使用 `--force --apply`：
+
+    sudo ugreenctl --force --apply fan set cpu 120
+    sudo ugreenctl --force --apply fan set sys 120
+    sudo ugreenctl --force --apply power startup set restore
+
+`sys` 会以同一 PWM 写入两个已经由固件证实的系统风扇输出。原厂 `hwmonitor` 的温控
+曲线属于用户态服务，不等同于硬件自动模式。寄存器映射和验证限制见
+[DXP6800_PRO_REVERSE_ENGINEERING.md](docs/DXP6800_PRO_REVERSE_ENGINEERING.md)。
+
 原厂自动模式由用户态 `hwmonitor` 根据温度写 PWM，不是 IT8613 硬件自动模式。当前工具
 提供受保护的手动写入原语；其他系统若要自动调速，仍需独立的温度守护与故障保护。
 
@@ -95,7 +106,7 @@ hwmon 存在时，all 对应原厂 set 命令，按原厂顺序写入 3 个 PWM 
 如果你在原厂 NAS 固件之外运行该工具，且原厂模块已加载，先卸载它：
 
     sudo modprobe -r ug_it86x_sio       # DXP4800S / DXP4800 分支
-    sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T 分支
+    sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T / DXP6800 分支
 
 ## 后续增加机型
 
