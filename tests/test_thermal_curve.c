@@ -1,0 +1,104 @@
+#define _GNU_SOURCE
+
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include "fan/thermal_curve.h"
+
+static void fail(const char *message)
+{
+    (void)fprintf(stderr, "FAIL: %s\n", message);
+    exit(EXIT_FAILURE);
+}
+
+static void write_file(const char *path, const char *content)
+{
+    FILE *stream = fopen(path, "w");
+    if (stream == NULL || fputs(content, stream) < 0 || fclose(stream) != 0) {
+        fail("cannot write fixture");
+    }
+}
+
+int main(void)
+{
+    char temporary[] = "/tmp/ugreenctl-thermal-XXXXXX";
+    char path[512];
+    struct ugreenctl_fan_curve_config config;
+    struct ugreenctl_thermal_snapshot snapshot;
+    struct ugreenctl_fan_curve_plan plan;
+    char error[256] = {0};
+    unsigned int pwm;
+
+    if (mkdtemp(temporary) == NULL) {
+        fail("cannot create temporary directory");
+    }
+    (void)snprintf(path, sizeof(path), "%s/hwmon0", temporary);
+    if (mkdir(path, 0700) != 0) fail("cannot create CPU fixture");
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/name", temporary);
+    write_file(path, "coretemp\n");
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp1_input", temporary);
+    write_file(path, "70000\n");
+    (void)snprintf(path, sizeof(path), "%s/hwmon1", temporary);
+    if (mkdir(path, 0700) != 0) fail("cannot create HDD fixture");
+    (void)snprintf(path, sizeof(path), "%s/hwmon1/name", temporary);
+    write_file(path, "drivetemp\n");
+    (void)snprintf(path, sizeof(path), "%s/hwmon1/temp1_input", temporary);
+    write_file(path, "52000\n");
+    if (setenv("UGREENCTL_THERMAL_HWMON_ROOT", temporary, 1) != 0) fail("cannot set env");
+    if (ugreenctl_read_thermal_snapshot(&snapshot, error, sizeof(error)) != 0 ||
+        snapshot.cpu_celsius != 70 || snapshot.hdd_celsius != 52 || snapshot.ssd_celsius != -1) {
+        fail("thermal snapshot did not classify hwmon sensors");
+    }
+    ugreenctl_fan_curve_config_defaults(&config);
+    if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != 0 ||
+        pwm != 158) {
+        fail("fan curve did not use the hottest source");
+    }
+    (void)snprintf(path, sizeof(path), "%s/stock.conf", temporary);
+    write_file(path, "profile=stock-4800plus\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
+        fail("cannot load DXP4800 Plus stock profile");
+    }
+    snapshot = (struct ugreenctl_thermal_snapshot){65, 42, -1};
+    if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 108 || plan.system_pwm != 110) {
+        fail("DXP4800 Plus stock channels did not preserve recovered points");
+    }
+    write_file(path, "profile=stock-480tplus\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
+        fail("cannot load DXP480T Plus stock profile");
+    }
+    snapshot = (struct ugreenctl_thermal_snapshot){80, 70, 50};
+    if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 140 || plan.system_pwm != 100) {
+        fail("DXP480T Plus stock channels did not preserve recovered points");
+    }
+    write_file(path, "profile=stock-6800pro\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
+        fail("cannot load DXP6800 Pro stock profile");
+    }
+    snapshot = (struct ugreenctl_thermal_snapshot){65, 40, -1};
+    if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 170 || plan.system_pwm != 170) {
+        fail("DXP6800 Pro stock channels did not preserve recovered points");
+    }
+    snapshot.cpu_celsius = -1;
+    if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != -ENODATA ||
+        pwm != 255) {
+        fail("missing CPU temperature did not use failsafe PWM");
+    }
+    (void)unsetenv("UGREENCTL_THERMAL_HWMON_ROOT");
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/name", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp1_input", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon1/name", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon1/temp1_input", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon0", temporary); (void)rmdir(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon1", temporary); (void)rmdir(path);
+    (void)snprintf(path, sizeof(path), "%s/stock.conf", temporary); (void)unlink(path);
+    (void)rmdir(temporary);
+    return EXIT_SUCCESS;
+}

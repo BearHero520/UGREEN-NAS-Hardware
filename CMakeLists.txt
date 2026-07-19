@@ -35,6 +35,7 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
   fan/it8613_dxp6800pro.c
+  fan/thermal_curve.c
   power/it8613_power.c
   led/led.c
   ec/ec.c
@@ -49,7 +50,14 @@ add_executable(ugreenctl core/main.c)
 target_include_directories(ugreenctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(ugreenctl PRIVATE ugreenctl_core dl)
 
-foreach(target ugreenctl_core ugreenctl_hardware ugreenctl)
+add_executable(ugreenctl-fand core/fan_daemon.c)
+target_include_directories(ugreenctl-fand PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_link_libraries(ugreenctl-fand PRIVATE ugreenctl_hardware)
+
+foreach(target ugreenctl_core ugreenctl_hardware ugreenctl ugreenctl-fand)
   target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
 endforeach()
 
@@ -78,7 +86,7 @@ add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
-install(TARGETS ugreenctl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ugreenctl ugreenctl-fand RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp8800plus
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
@@ -93,6 +101,7 @@ install(FILES
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
   docs/DXP4800S_INTAKE.md
+  docs/FAN_CURVE.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
@@ -138,4 +147,12 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp6800pro PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp6800pro COMMAND test-it8613-dxp6800pro)
+  add_executable(test-thermal-curve tests/test_thermal_curve.c)
+  target_include_directories(test-thermal-curve PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_link_libraries(test-thermal-curve PRIVATE ugreenctl_hardware)
+  target_compile_options(test-thermal-curve PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME thermal-curve COMMAND test-thermal-curve)
 endif()
