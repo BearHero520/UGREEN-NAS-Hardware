@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
+#include <glob.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,9 +103,10 @@ static int read_temperature_celsius(const char *path, int *temperature)
 
 static bool is_cpu_hwmon(const char *name)
 {
-    return strcmp(name, "coretemp") == 0 || strcmp(name, "k10temp") == 0 ||
-           strcmp(name, "zenpower") == 0 || strcmp(name, "cpu_thermal") == 0 ||
-           strcmp(name, "acpitz") == 0;
+    /* fnOS Resource Monitor looks for these generic x86 CPU hwmon drivers.
+     * ACPI zones describe board sensors, not the CPU reading it presents. */
+    return strcmp(name, "coretemp") == 0 || strcmp(name, "k8temp") == 0 ||
+           strcmp(name, "k10temp") == 0 || strcmp(name, "zenpower") == 0;
 }
 
 static bool is_hdd_hwmon(const char *name)
@@ -117,7 +119,36 @@ static bool is_ssd_hwmon(const char *name)
     return strcmp(name, "nvme") == 0 || strcmp(name, "nvme-pci") == 0;
 }
 
-static void collect_hwmon_temperatures(const char *directory, int *maximum)
+static bool collect_first_hwmon_temperature(const char *directory, int *temperature)
+{
+    char pattern[PATH_MAX];
+    glob_t matches;
+    size_t index;
+    bool found = false;
+
+    if (snprintf(pattern, sizeof(pattern), "%s/temp*_input", directory) >=
+        (int)sizeof(pattern)) {
+        return false;
+    }
+    memset(&matches, 0, sizeof(matches));
+    /* Use the same glob primitive as fnOS Resource Monitor.  Its first
+     * result is the CPU value shown by fnOS, including platforms where the
+     * labels are not ordered by numeric sensor index. */
+    if (glob(pattern, 0, NULL, &matches) != 0) {
+        globfree(&matches);
+        return false;
+    }
+    for (index = 0; index < matches.gl_pathc; ++index) {
+        if (read_temperature_celsius(matches.gl_pathv[index], temperature) == 0) {
+            found = true;
+            break;
+        }
+    }
+    globfree(&matches);
+    return found;
+}
+
+static void collect_hottest_hwmon_temperature(const char *directory, int *maximum)
 {
     DIR *dir = opendir(directory);
     struct dirent *entry;
@@ -467,6 +498,7 @@ int ugreenctl_read_thermal_snapshot(struct ugreenctl_thermal_snapshot *snapshot,
     snapshot->cpu_celsius = -1;
     snapshot->hdd_celsius = -1;
     snapshot->ssd_celsius = -1;
+    snapshot->cpu_peak_celsius = -1;
     directory = opendir(root);
     if (directory == NULL) {
         set_error(error, error_size, "cannot open thermal hwmon root");
@@ -484,11 +516,14 @@ int ugreenctl_read_thermal_snapshot(struct ugreenctl_thermal_snapshot *snapshot,
             continue;
         }
         if (is_cpu_hwmon(name)) {
-            collect_hwmon_temperatures(device, &snapshot->cpu_celsius);
+            if (snapshot->cpu_celsius < 0) {
+                (void)collect_first_hwmon_temperature(device, &snapshot->cpu_celsius);
+            }
+            collect_hottest_hwmon_temperature(device, &snapshot->cpu_peak_celsius);
         } else if (is_hdd_hwmon(name)) {
-            collect_hwmon_temperatures(device, &snapshot->hdd_celsius);
+            collect_hottest_hwmon_temperature(device, &snapshot->hdd_celsius);
         } else if (is_ssd_hwmon(name)) {
-            collect_hwmon_temperatures(device, &snapshot->ssd_celsius);
+            collect_hottest_hwmon_temperature(device, &snapshot->ssd_celsius);
         }
     }
     (void)closedir(directory);
@@ -553,6 +588,12 @@ static unsigned int cpu_system_floor(const struct ugreenctl_fan_curve_config *co
                        config->system_cpu_floor_end_pwm, cpu);
 }
 
+static int fan_curve_cpu_celsius(const struct ugreenctl_thermal_snapshot *snapshot)
+{
+    return snapshot->cpu_peak_celsius >= 0 ? snapshot->cpu_peak_celsius :
+                                              snapshot->cpu_celsius;
+}
+
 int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *config,
                                       const struct ugreenctl_thermal_snapshot *snapshot,
                                       struct ugreenctl_fan_curve_plan *plan,
@@ -560,12 +601,14 @@ int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *c
 {
     unsigned int system_target;
     unsigned int cpu_target;
+    int cpu_celsius;
 
     if (config == NULL || snapshot == NULL || plan == NULL) {
         set_error(error, error_size, "fan curve evaluation requires configuration and temperatures");
         return -EINVAL;
     }
-    if (snapshot->cpu_celsius < 0) {
+    cpu_celsius = fan_curve_cpu_celsius(snapshot);
+    if (cpu_celsius < 0) {
         plan->cpu_pwm = config->failsafe_pwm;
         plan->system_pwm = config->failsafe_pwm;
         set_error(error, error_size, "CPU temperature is unavailable; using failsafe PWM");
@@ -577,7 +620,7 @@ int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *c
         set_error(error, error_size, "storage temperature is unavailable; using failsafe PWM");
         return -ENODATA;
     }
-    system_target = evaluate_source(&config->cpu, &config->system_pwm, snapshot->cpu_celsius);
+    system_target = evaluate_source(&config->cpu, &config->system_pwm, cpu_celsius);
     if (config->hdd_curve_enabled && snapshot->hdd_celsius >= 0) {
         system_target = maximum_of(system_target,
                                    evaluate_source(&config->hdd, &config->system_pwm,
@@ -588,11 +631,11 @@ int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *c
                                    evaluate_source(&config->ssd, &config->system_pwm,
                                                    snapshot->ssd_celsius));
     }
-    system_target = maximum_of(system_target, cpu_system_floor(config, snapshot->cpu_celsius));
+    system_target = maximum_of(system_target, cpu_system_floor(config, cpu_celsius));
     if (strcmp(config->profile, "custom") == 0) {
         cpu_target = system_target;
     } else {
-        cpu_target = evaluate_source(&config->cpu, &config->cpu_pwm, snapshot->cpu_celsius);
+        cpu_target = evaluate_source(&config->cpu, &config->cpu_pwm, cpu_celsius);
     }
     plan->system_pwm = maximum_of(system_target, config->minimum_pwm);
     plan->cpu_pwm = maximum_of(cpu_target, config->minimum_pwm);

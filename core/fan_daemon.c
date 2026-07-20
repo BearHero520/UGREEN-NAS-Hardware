@@ -184,12 +184,13 @@ static void write_state(const char *path, const char *model,
     }
     (void)fprintf(stream,
                   "timestamp=%ld\nmodel=%s\nprofile=%s\nstatus=%s\n"
-                  "cpu_celsius=%d\nhdd_celsius=%d\nssd_celsius=%d\n"
+                  "cpu_celsius=%d\ncpu_peak_celsius=%d\nhdd_celsius=%d\nssd_celsius=%d\n"
                   "desired_pwm=%u\napplied_pwm=%d\n"
                   "desired_cpu_pwm=%u\ndesired_system_pwm=%u\n"
                   "applied_cpu_pwm=%d\napplied_system_pwm=%d\ndetail=%s\n",
                   (long)now, model != NULL ? model : "unknown", config->profile,
                   status != NULL ? status : "unknown", snapshot->cpu_celsius,
+                  snapshot->cpu_peak_celsius,
                   snapshot->hdd_celsius, snapshot->ssd_celsius, desired_pwm, applied_pwm,
                   plan->cpu_pwm, plan->system_pwm, applied_cpu_pwm, applied_system_pwm,
                   detail != NULL ? detail : "");
@@ -329,7 +330,7 @@ int main(int argc, char **argv)
     const char *plugin_dir = NULL;
     bool once = false;
     struct ugreenctl_fan_curve_config config;
-    struct ugreenctl_thermal_snapshot snapshot = {-1, -1, -1};
+    struct ugreenctl_thermal_snapshot snapshot = {-1, -1, -1, -1};
     struct ugreenctl_fan_curve_plan last_plan;
     struct pwm_hold_state target_states[3] = {{0}};
     const struct model_route *route;

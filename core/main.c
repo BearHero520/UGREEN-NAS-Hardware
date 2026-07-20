@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "loader.h"
+#include "fan/thermal_curve.h"
 #include "ugreenctl.h"
 
 #define UGREENCTL_VERSION "0.1.0"
@@ -24,6 +25,7 @@ static void usage(FILE *stream)
                   "Usage:\n"
                   "  ugreenctl [options] models\n"
                   "  ugreenctl [options] info\n"
+                  "  ugreenctl [options] thermal status\n"
                   "  ugreenctl [options] fan status\n"
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
                   "  ugreenctl [options] power startup get\n"
@@ -197,6 +199,13 @@ static void print_status(const struct ugreenctl_status *status)
     }
 }
 
+static void print_thermal_snapshot(const struct ugreenctl_thermal_snapshot *snapshot)
+{
+    (void)printf("cpu_celsius=%d cpu_peak_celsius=%d hdd_celsius=%d ssd_celsius=%d\n",
+                 snapshot->cpu_celsius, snapshot->cpu_peak_celsius,
+                 snapshot->hdd_celsius, snapshot->ssd_celsius);
+}
+
 static const char *plugin_controller_name(const struct ugreenctl_plugin *plugin)
 {
     if (plugin->abi_version >= UGREENCTL_PLUGIN_ABI_V4 &&
@@ -336,7 +345,18 @@ int main(int argc, char **argv)
     }
     request.force = options.force;
 
-    if (strcmp(argv[arg], "info") == 0 && arg + 1 == argc) {
+    if (strcmp(argv[arg], "thermal") == 0 && arg + 1 < argc &&
+               strcmp(argv[arg + 1], "status") == 0 && arg + 2 == argc) {
+        struct ugreenctl_thermal_snapshot snapshot;
+
+        result = ugreenctl_read_thermal_snapshot(&snapshot, error, sizeof(error));
+        if (result == 0) {
+            print_thermal_snapshot(&snapshot);
+            result = EXIT_SUCCESS;
+        } else {
+            result = report_plugin_error("read thermal snapshot", result, error);
+        }
+    } else if (strcmp(argv[arg], "info") == 0 && arg + 1 == argc) {
         struct ugreenctl_status status;
         char fan_error[256] = {0};
         char startup_error[256] = {0};

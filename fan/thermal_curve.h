@@ -24,9 +24,14 @@ struct ugreenctl_curve_pwm_points {
 };
 
 struct ugreenctl_thermal_snapshot {
+    /* Matches fnOS Resource Monitor: the first temperature exposed by the
+     * CPU hwmon source.  This is the value intended for user-facing status. */
     int cpu_celsius;
     int hdd_celsius;
     int ssd_celsius;
+    /* Highest valid CPU temperature.  Fan policy must use this value so a
+     * low individual core reading can never reduce cooling protection. */
+    int cpu_peak_celsius;
 };
 
 /* The vendor monitors can drive the CPU and system channels differently.

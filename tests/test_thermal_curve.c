@@ -40,7 +40,9 @@ int main(void)
     if (mkdir(path, 0700) != 0) fail("cannot create CPU fixture");
     (void)snprintf(path, sizeof(path), "%s/hwmon0/name", temporary);
     write_file(path, "coretemp\n");
-    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp1_input", temporary);
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp10_input", temporary);
+    write_file(path, "43000\n");
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp11_input", temporary);
     write_file(path, "70000\n");
     (void)snprintf(path, sizeof(path), "%s/hwmon1", temporary);
     if (mkdir(path, 0700) != 0) fail("cannot create HDD fixture");
@@ -50,7 +52,8 @@ int main(void)
     write_file(path, "52000\n");
     if (setenv("UGREENCTL_THERMAL_HWMON_ROOT", temporary, 1) != 0) fail("cannot set env");
     if (ugreenctl_read_thermal_snapshot(&snapshot, error, sizeof(error)) != 0 ||
-        snapshot.cpu_celsius != 70 || snapshot.hdd_celsius != 52 || snapshot.ssd_celsius != -1) {
+        snapshot.cpu_celsius != 43 || snapshot.cpu_peak_celsius != 70 ||
+        snapshot.hdd_celsius != 52 || snapshot.ssd_celsius != -1) {
         fail("thermal snapshot did not classify hwmon sensors");
     }
     ugreenctl_fan_curve_config_defaults(&config);
@@ -63,7 +66,7 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP4800 Plus stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){65, 42, -1};
+    snapshot = (struct ugreenctl_thermal_snapshot){65, 42, -1, 65};
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 108 || plan.system_pwm != 110) {
         fail("DXP4800 Plus stock channels did not preserve recovered points");
@@ -72,7 +75,7 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP480T Plus stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){80, 70, 50};
+    snapshot = (struct ugreenctl_thermal_snapshot){80, 70, 50, 80};
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 140 || plan.system_pwm != 100) {
         fail("DXP480T Plus stock channels did not preserve recovered points");
@@ -81,19 +84,21 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP6800 Pro stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){65, 40, -1};
+    snapshot = (struct ugreenctl_thermal_snapshot){65, 40, -1, 65};
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 170 || plan.system_pwm != 170) {
         fail("DXP6800 Pro stock channels did not preserve recovered points");
     }
     snapshot.cpu_celsius = -1;
+    snapshot.cpu_peak_celsius = -1;
     if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != -ENODATA ||
         pwm != 255) {
         fail("missing CPU temperature did not use failsafe PWM");
     }
     (void)unsetenv("UGREENCTL_THERMAL_HWMON_ROOT");
     (void)snprintf(path, sizeof(path), "%s/hwmon0/name", temporary); (void)unlink(path);
-    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp1_input", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp10_input", temporary); (void)unlink(path);
+    (void)snprintf(path, sizeof(path), "%s/hwmon0/temp11_input", temporary); (void)unlink(path);
     (void)snprintf(path, sizeof(path), "%s/hwmon1/name", temporary); (void)unlink(path);
     (void)snprintf(path, sizeof(path), "%s/hwmon1/temp1_input", temporary); (void)unlink(path);
     (void)snprintf(path, sizeof(path), "%s/hwmon0", temporary); (void)rmdir(path);

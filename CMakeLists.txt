@@ -47,8 +47,11 @@ target_include_directories(ugreenctl_hardware PUBLIC
 set_target_properties(ugreenctl_hardware PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_executable(ugreenctl core/main.c)
-target_include_directories(ugreenctl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(ugreenctl PRIVATE ugreenctl_core dl)
+target_include_directories(ugreenctl PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_link_libraries(ugreenctl PRIVATE ugreenctl_core ugreenctl_hardware dl)
 
 add_executable(ugreenctl-fand core/fan_daemon.c)
 target_include_directories(ugreenctl-fand PRIVATE
