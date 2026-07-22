@@ -6,7 +6,10 @@ project; it is **not** an IT8613 hardware automatic mode.
 
 The daemon samples the highest temperature from Linux hwmon sources named
 `coretemp`, `k10temp`, `zenpower`, `cpu_thermal`, or `acpitz` (CPU),
-`drivetemp` (SATA HDD), and `nvme`/`nvme-pci` (NVMe). Every calculated PWM is
+`drivetemp` (SATA HDD), and `nvme`/`nvme-pci` (NVMe). When `drivetemp` is not
+available, SATA rotational disks use a guarded, read-only ATA SMART fallback:
+it first checks that a disk is not in standby, so sampling never wakes a parked
+disk. Every calculated PWM is
 written back through the exact-DMI `ugreenctl` plugin. The existing controller
 owner checks, process lock, minimum PWM floor, manual-mode selection and
 readback therefore still apply to every update.

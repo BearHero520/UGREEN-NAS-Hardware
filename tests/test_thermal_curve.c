@@ -32,6 +32,8 @@ int main(void)
     struct ugreenctl_fan_curve_plan plan;
     char error[256] = {0};
     unsigned int pwm;
+    int smart_temperature;
+    unsigned char smart_data[512] = {0};
 
     if (mkdtemp(temporary) == NULL) {
         fail("cannot create temporary directory");
@@ -55,6 +57,23 @@ int main(void)
         snapshot.cpu_celsius != 43 || snapshot.cpu_peak_celsius != 70 ||
         snapshot.hdd_celsius != 52 || snapshot.ssd_celsius != -1) {
         fail("thermal snapshot did not classify hwmon sensors");
+    }
+    smart_data[2] = 190;
+    smart_data[7] = 42;
+    smart_data[14] = 194;
+    smart_data[19] = 47;
+    if (ugreenctl_parse_ata_smart_temperature(smart_data, sizeof(smart_data),
+                                               &smart_temperature) != 0 ||
+        smart_temperature != 47) {
+        fail("ATA SMART parser did not prefer Temperature_Celsius");
+    }
+    memset(smart_data, 0, sizeof(smart_data));
+    smart_data[2] = 190;
+    smart_data[7] = 42;
+    if (ugreenctl_parse_ata_smart_temperature(smart_data, sizeof(smart_data),
+                                               &smart_temperature) != 0 ||
+        smart_temperature != 42) {
+        fail("ATA SMART parser did not use Airflow_Temperature fallback");
     }
     ugreenctl_fan_curve_config_defaults(&config);
     if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != 0 ||

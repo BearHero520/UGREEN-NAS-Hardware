@@ -5,13 +5,33 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <glob.h>
 #include <limits.h>
+#include <scsi/sg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #define THERMAL_MAX_CELSIUS 125U
+#define ATA_SMART_DATA_SIZE 512U
+#define ATA_SMART_ATTRIBUTE_OFFSET 2U
+#define ATA_SMART_ATTRIBUTE_SIZE 12U
+#define ATA_SMART_ATTRIBUTE_COUNT 30U
+#define ATA_SMART_AIRFLOW_TEMPERATURE_ATTRIBUTE 190U
+#define ATA_SMART_TEMPERATURE_ATTRIBUTE 194U
+#define ATA_PASS_THROUGH_16 0x85U
+#define ATA_PROTOCOL_NON_DATA 0x06U
+#define ATA_PROTOCOL_PIO_DATA_IN 0x08U
+#define ATA_CHECK_CONDITION 0x02U
+#define ATA_CHECK_POWER_MODE 0xe5U
+#define ATA_SMART_COMMAND 0xb0U
+#define ATA_SMART_READ_DATA 0xd0U
+#define ATA_SMART_LBA_MID 0x4fU
+#define ATA_SMART_LBA_HIGH 0xc2U
+#define ATA_RETURN_DESCRIPTOR 0x09U
 
 static void set_error(char *error, size_t error_size, const char *message)
 {
@@ -24,6 +44,18 @@ static const char *thermal_hwmon_root(void)
 {
     const char *override = getenv("UGREENCTL_THERMAL_HWMON_ROOT");
     return override != NULL && override[0] != '\0' ? override : "/sys/class/hwmon";
+}
+
+static const char *thermal_block_root(void)
+{
+    const char *override = getenv("UGREENCTL_THERMAL_BLOCK_ROOT");
+    return override != NULL && override[0] != '\0' ? override : "/sys/block";
+}
+
+static const char *thermal_device_root(void)
+{
+    const char *override = getenv("UGREENCTL_THERMAL_DEVICE_ROOT");
+    return override != NULL && override[0] != '\0' ? override : "/dev";
 }
 
 static bool is_hwmon_directory(const char *name)
@@ -173,6 +205,198 @@ static void collect_hottest_hwmon_temperature(const char *directory, int *maximu
         }
     }
     (void)closedir(dir);
+}
+
+int ugreenctl_parse_ata_smart_temperature(const unsigned char *data, size_t size,
+                                          int *temperature)
+{
+    size_t index;
+    int airflow_temperature = -1;
+
+    if (data == NULL || temperature == NULL || size < ATA_SMART_DATA_SIZE) {
+        return -EINVAL;
+    }
+    for (index = 0; index < ATA_SMART_ATTRIBUTE_COUNT; ++index) {
+        size_t offset = ATA_SMART_ATTRIBUTE_OFFSET + index * ATA_SMART_ATTRIBUTE_SIZE;
+        unsigned int attribute = data[offset];
+        unsigned int value = data[offset + 5];
+
+        if (value == 0 || value > THERMAL_MAX_CELSIUS) {
+            continue;
+        }
+        if (attribute == ATA_SMART_TEMPERATURE_ATTRIBUTE) {
+            *temperature = (int)value;
+            return 0;
+        }
+        if (attribute == ATA_SMART_AIRFLOW_TEMPERATURE_ATTRIBUTE) {
+            airflow_temperature = (int)value;
+        }
+    }
+    if (airflow_temperature >= 0) {
+        *temperature = airflow_temperature;
+        return 0;
+    }
+    return -ENODATA;
+}
+
+static bool ata_return_sector_count(const unsigned char *sense, size_t sense_size,
+                                    unsigned char *sector_count)
+{
+    size_t offset;
+
+    if (sense == NULL || sector_count == NULL || sense_size < 8 ||
+        (sense[0] & 0x7fU) != 0x72U) {
+        return false;
+    }
+    for (offset = 8; offset + 1 < sense_size; offset += (size_t)sense[offset + 1] + 2U) {
+        size_t descriptor_size = (size_t)sense[offset + 1] + 2U;
+
+        if (descriptor_size > sense_size - offset) {
+            return false;
+        }
+        if (sense[offset] == ATA_RETURN_DESCRIPTOR && descriptor_size >= 14U) {
+            *sector_count = sense[offset + 4];
+            return true;
+        }
+    }
+    return false;
+}
+
+static int ata_check_power_mode(int file_descriptor, bool *running)
+{
+    unsigned char cdb[16] = {0};
+    unsigned char sense[32] = {0};
+    unsigned char sector_count;
+    sg_io_hdr_t request;
+
+    if (running == NULL) {
+        return -EINVAL;
+    }
+    cdb[0] = ATA_PASS_THROUGH_16;
+    cdb[1] = ATA_PROTOCOL_NON_DATA;
+    cdb[2] = 0x20U; /* CK_COND: return the ATA taskfile in descriptor sense. */
+    cdb[14] = ATA_CHECK_POWER_MODE;
+    memset(&request, 0, sizeof(request));
+    request.interface_id = 'S';
+    request.dxfer_direction = SG_DXFER_NONE;
+    request.cmd_len = (unsigned char)sizeof(cdb);
+    request.mx_sb_len = (unsigned char)sizeof(sense);
+    request.cmdp = cdb;
+    request.sbp = sense;
+    request.timeout = 2000U;
+    if (ioctl(file_descriptor, SG_IO, &request) < 0) {
+        return -errno;
+    }
+    if (request.host_status != 0 || request.status != ATA_CHECK_CONDITION ||
+        !ata_return_sector_count(sense, request.sb_len_wr, &sector_count)) {
+        return -EIO;
+    }
+    *running = sector_count != 0;
+    return 0;
+}
+
+static int ata_read_smart_data(int file_descriptor, unsigned char data[ATA_SMART_DATA_SIZE])
+{
+    unsigned char cdb[16] = {0};
+    unsigned char sense[32] = {0};
+    sg_io_hdr_t request;
+
+    cdb[0] = ATA_PASS_THROUGH_16;
+    cdb[1] = ATA_PROTOCOL_PIO_DATA_IN;
+    cdb[2] = 0x0eU; /* T_DIR + BYT_BLOK + sector-count transfer. */
+    cdb[3] = ATA_SMART_READ_DATA;
+    cdb[5] = 1U;
+    cdb[9] = ATA_SMART_LBA_MID;
+    cdb[11] = ATA_SMART_LBA_HIGH;
+    cdb[14] = ATA_SMART_COMMAND;
+    memset(&request, 0, sizeof(request));
+    request.interface_id = 'S';
+    request.dxfer_direction = SG_DXFER_FROM_DEV;
+    request.cmd_len = (unsigned char)sizeof(cdb);
+    request.mx_sb_len = (unsigned char)sizeof(sense);
+    request.dxfer_len = ATA_SMART_DATA_SIZE;
+    request.dxferp = data;
+    request.cmdp = cdb;
+    request.sbp = sense;
+    request.timeout = 5000U;
+    if (ioctl(file_descriptor, SG_IO, &request) < 0) {
+        return -errno;
+    }
+    if (request.status != 0 || request.host_status != 0 || request.driver_status != 0 ||
+        request.resid != 0) {
+        return -EIO;
+    }
+    return 0;
+}
+
+static bool is_sata_rotational_block_device(const char *block_root, const char *name)
+{
+    char path[PATH_MAX];
+    char value[64];
+    const unsigned char *cursor;
+
+    if (strncmp(name, "sd", 2) != 0 || name[2] == '\0') {
+        return false;
+    }
+    for (cursor = (const unsigned char *)name + 2; *cursor != '\0'; ++cursor) {
+        if (!islower(*cursor)) {
+            return false;
+        }
+    }
+    if (snprintf(path, sizeof(path), "%s/%s/device/vendor", block_root, name) >=
+            (int)sizeof(path) ||
+        read_text(path, value, sizeof(value)) != 0 || strcmp(value, "ATA") != 0) {
+        return false;
+    }
+    if (snprintf(path, sizeof(path), "%s/%s/queue/rotational", block_root, name) >=
+            (int)sizeof(path) ||
+        read_text(path, value, sizeof(value)) != 0 || strcmp(value, "1") != 0) {
+        return false;
+    }
+    return true;
+}
+
+static void collect_smart_hdd_temperatures(int *maximum)
+{
+    const char *block_root = thermal_block_root();
+    const char *device_root = thermal_device_root();
+    DIR *directory;
+    struct dirent *entry;
+
+    if (maximum == NULL) {
+        return;
+    }
+    directory = opendir(block_root);
+    if (directory == NULL) {
+        return;
+    }
+    while ((entry = readdir(directory)) != NULL) {
+        char device_path[PATH_MAX];
+        unsigned char data[ATA_SMART_DATA_SIZE] = {0};
+        bool running = false;
+        int file_descriptor;
+        int temperature;
+
+        if (!is_sata_rotational_block_device(block_root, entry->d_name) ||
+            snprintf(device_path, sizeof(device_path), "%s/%s", device_root, entry->d_name) >=
+                (int)sizeof(device_path)) {
+            continue;
+        }
+        file_descriptor = open(device_path, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+        if (file_descriptor < 0) {
+            continue;
+        }
+        /* Never issue SMART READ DATA to a standby drive: fan telemetry must
+         * not wake a disk merely to obtain a temperature. */
+        if (ata_check_power_mode(file_descriptor, &running) == 0 && running &&
+            ata_read_smart_data(file_descriptor, data) == 0 &&
+            ugreenctl_parse_ata_smart_temperature(data, sizeof(data), &temperature) == 0 &&
+            temperature > *maximum) {
+            *maximum = temperature;
+        }
+        (void)close(file_descriptor);
+    }
+    (void)closedir(directory);
 }
 
 void ugreenctl_fan_curve_config_defaults(struct ugreenctl_fan_curve_config *config)
@@ -534,6 +758,11 @@ int ugreenctl_read_thermal_snapshot(struct ugreenctl_thermal_snapshot *snapshot,
         }
     }
     (void)closedir(directory);
+    /* Kernel drivetemp remains the preferred source.  Some fnOS kernels omit
+     * that module; on those systems, use guarded ATA SMART reads instead. */
+    if (snapshot->hdd_celsius < 0) {
+        collect_smart_hdd_temperatures(&snapshot->hdd_celsius);
+    }
     return 0;
 }
 

@@ -75,6 +75,11 @@ int ugreenctl_fan_curve_validate_config(const struct ugreenctl_fan_curve_config 
                                         char *error, size_t error_size);
 int ugreenctl_read_thermal_snapshot(struct ugreenctl_thermal_snapshot *snapshot,
                                     char *error, size_t error_size);
+/* Extract the current temperature from a 512-byte ATA SMART READ DATA page.
+ * This is kept public so its format handling can be fixture-tested without
+ * sending commands to an actual drive. */
+int ugreenctl_parse_ata_smart_temperature(const unsigned char *data, size_t size,
+                                          int *temperature);
 int ugreenctl_fan_curve_evaluate(const struct ugreenctl_fan_curve_config *config,
                                  const struct ugreenctl_thermal_snapshot *snapshot,
                                  unsigned int *pwm, char *error, size_t error_size);
