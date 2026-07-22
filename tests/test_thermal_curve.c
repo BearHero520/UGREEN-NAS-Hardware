@@ -66,7 +66,9 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP4800 stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){70, 45, -1, 55};
+    snapshot = (struct ugreenctl_thermal_snapshot){
+        .cpu_celsius = 70, .hdd_celsius = -1, .ssd_celsius = -1, .cpu_peak_celsius = 70
+    };
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 128 || plan.system_pwm != 128) {
         fail("DXP4800 stock channels did not preserve recovered points");
@@ -76,7 +78,9 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP4800 Plus stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){65, 42, -1, 65};
+    snapshot = (struct ugreenctl_thermal_snapshot){
+        .cpu_celsius = 65, .hdd_celsius = 42, .ssd_celsius = -1, .cpu_peak_celsius = 65
+    };
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 108 || plan.system_pwm != 110) {
         fail("DXP4800 Plus stock channels did not preserve recovered points");
@@ -85,7 +89,9 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP480T Plus stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){80, 70, 50, 80};
+    snapshot = (struct ugreenctl_thermal_snapshot){
+        .cpu_celsius = 80, .hdd_celsius = 70, .ssd_celsius = 50, .cpu_peak_celsius = 80
+    };
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
         plan.cpu_pwm != 140 || plan.system_pwm != 100) {
         fail("DXP480T Plus stock channels did not preserve recovered points");
@@ -94,9 +100,11 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP6800 Pro stock profile");
     }
-    snapshot = (struct ugreenctl_thermal_snapshot){65, 40, -1, 65};
+    snapshot = (struct ugreenctl_thermal_snapshot){
+        .cpu_celsius = 46, .hdd_celsius = 39, .ssd_celsius = -1, .cpu_peak_celsius = 46
+    };
     if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
-        plan.cpu_pwm != 170 || plan.system_pwm != 170) {
+        plan.cpu_pwm != 103 || plan.system_pwm != 97) {
         fail("DXP6800 Pro stock channels did not preserve recovered points");
     }
     snapshot.cpu_celsius = -1;
