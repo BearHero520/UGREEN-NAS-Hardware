@@ -30,6 +30,10 @@ and verifies every write. The fallback needs `--force --apply` because its direc
 fan transaction is not yet separately physically validated. AC recovery remains
 an independent Super I/O operation.
 
+Both exact DMI names also expose firmware-reversed Magic Packet WOL on the
+stock `eth0` and `eth1` NICs. WOL uses ethtool rather than Super I/O, requires
+`--force --apply`, and awaits physical shutdown/persistence validation.
+
 ## DXP4800
 
 The `dxp4800` plugin matches only the exact DMI product name `DXP4800`. Its
@@ -71,6 +75,9 @@ inactive. Neither `--force` nor model selection bypasses ownership, chip-ID, or
 lock checks. The direct path is firmware-reversed and awaits physical write
 validation. See [DXP4800S_REVERSE_ENGINEERING.md](DXP4800S_REVERSE_ENGINEERING.md).
 
+Firmware-reversed Magic Packet WOL is also available for the exact stock
+`eth0`/`eth1` NIC map and requires the same `--force --apply` acknowledgement.
+
 ## DXP480T Plus
 
 The dxp480tplus plugin matches the exact DMI product name DXP480T Plus. Its
@@ -101,6 +108,9 @@ is not reported as the vendor software temperature curve. Independent system-fan
 writes are not exposed. See
 [DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md](DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md).
 
+WOL follows the stock `eth0`/`eth1` map but remains firmware-reversed, so it
+requires `--force --apply` pending a separate physical WOL validation.
+
 ## DXP6800 Pro
 
 The `dxp6800pro` plugin matches only the exact DMI product name `DXP6800 Pro`.
@@ -122,6 +132,16 @@ paired-system-fan operation; individual system-fan writes are not exposed.
 The stock `hwmonitor` daemon supplies a software temperature curve, so no
 hardware automatic mode is claimed. See
 [DXP6800_PRO_REVERSE_ENGINEERING.md](DXP6800_PRO_REVERSE_ENGINEERING.md).
+
+Magic Packet WOL uses the separately recovered stock `eth0`/`eth1` map and
+also requires `--force --apply` until physically validated.
+
+## Firmware-derived Wake-on-LAN
+
+The exact WOL routes for DXP4800, DXP4800S, DXP4800 Plus/Pro, DXP480T Plus,
+and DXP6800 Pro are documented in
+[WOL_FIRMWARE_EVIDENCE.md](WOL_FIRMWARE_EVIDENCE.md). WOL is a NIC ethtool
+operation, not a BIOS or LED control operation.
 
 ## Adding a model
 

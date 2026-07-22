@@ -37,17 +37,19 @@
       "capabilities": {
         "fan": "verified",
         "led": "unverified",
-        "power_recovery": "verified"
+        "power_recovery": "verified",
+        "wake_on_lan": "reverse-engineered"
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
-        "Direct fallback is available only after the it87 module is unloaded and requires --force --apply."
+        "Direct fallback is available only after the it87 module is unloaded and requires --force --apply.",
+        "Wake-on-LAN follows the stock eth0/eth1 map and requires --force --apply until it is physically validated."
       ],
       "evidence": [
         {
           "firmware": "1.17.0.95",
           "method": "Clean-room observation of the vendor module interface and validation of the IT8613 identity/access sequence.",
-          "scope": "CPU and system fan PWM/status; AC recovery startup policy."
+          "scope": "CPU and system fan PWM/status; AC recovery startup policy; stock hwmonitor-480t magic-packet WOL on eth0 and eth1."
         }
       ]
     },
@@ -82,7 +84,8 @@
         "fan_automatic_service": "unverified",
         "fan_stop": "blocked",
         "led": "unverified",
-        "power_recovery": "reverse-engineered"
+        "power_recovery": "reverse-engineered",
+        "wake_on_lan": "reverse-engineered"
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_sio module must not access the controller concurrently.",
@@ -94,7 +97,7 @@
           "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
           "module_sha256": "4d3864794d9cdec926b666878aed4431f80b69108acceadfa21322245f1393f4",
           "method": "Static clean-room reverse engineering of ug_it86x-sio.ko plus the DXP4800S branch in ug-load-drive.sh and hwmonitor.",
-          "scope": "Exact DMI branch; IT8613 identity/access sequence; single sysfan1 tachometer and PWM path; AC recovery registers; stock user-space automatic fan policy. No physical write validation."
+          "scope": "Exact DMI branch; IT8613 identity/access sequence; single sysfan1 tachometer and PWM path; AC recovery registers; stock user-space automatic fan policy; generic hwmonitor magic-packet WOL on eth0 and eth1. No physical write validation."
         }
       ]
     },
@@ -127,7 +130,8 @@
         "fan_rpm": "verified",
         "fan_pwm_readback": "verified",
         "led": "unverified",
-        "power_recovery": "verified"
+        "power_recovery": "verified",
+        "wake_on_lan": "reverse-engineered"
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
@@ -139,7 +143,7 @@
           "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
           "module_sha256": "677b740208097187caab302a16c9bf575478b46e455096f24c5ac284f2e8ccd7",
           "method": "Static clean-room reverse engineering of the DXP480T Plus branch in ug_it86x-cpufan.ko.",
-          "scope": "Three tachometer paths; the stock DXP480T Plus shared CPU/all-fans PWM branch at 0x17/0x73; AC recovery path. The stock module does not provide a sysfan2-specific direct PWM write map."
+          "scope": "Three tachometer paths; the stock DXP480T Plus shared CPU/all-fans PWM branch at 0x17/0x73; AC recovery path; hwmonitor-480t magic-packet WOL on eth0 and eth1. The stock module does not provide a sysfan2-specific direct PWM write map."
         },
         {
           "firmware": "1.17.0.95",
@@ -258,7 +262,8 @@
         "fan_automatic_service": "unverified",
         "fan_stop": "blocked",
         "led": "unverified",
-        "power_recovery": "reverse-engineered"
+        "power_recovery": "reverse-engineered",
+        "wake_on_lan": "reverse-engineered"
       },
       "known_conflicts": [
         "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
@@ -270,7 +275,7 @@
           "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
           "module_sha256": "677b740208097187caab302a16c9bf575478b46e455096f24c5ac284f2e8ccd7",
           "method": "Static clean-room reverse engineering of the DXP6800 branch in ug_it86x-cpufan.ko and its stock DMI routing.",
-          "scope": "Three tachometer paths; CPU PWM at 0x16/0x6b; the stock paired system PWM transaction at 0x17/0x73 then 0x1e/0x7b; AC recovery registers 0xf2/0xf4. No physical write validation."
+          "scope": "Three tachometer paths; CPU PWM at 0x16/0x6b; the stock paired system PWM transaction at 0x17/0x73 then 0x1e/0x7b; AC recovery registers 0xf2/0xf4; hwmonitor-480t magic-packet WOL on eth0 and eth1. No physical write validation."
         }
       ]
     },

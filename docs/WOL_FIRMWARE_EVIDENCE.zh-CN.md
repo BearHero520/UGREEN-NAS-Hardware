@@ -1,0 +1,48 @@
+# 基于官方固件的网络唤醒映射
+
+本文是 `ugreenctl` 网络唤醒（WOL）机型映射的依据。结论来自官方 UGOS
+Pro 固件的静态、净室逆向，不等同于实机验证。
+
+## 输入与机型路由
+
+提供的 `4800.img`、`4800plus.img`、`4800s/release_*.img`、
+`480t/release_*.img` 都是同一通用 UGOS Pro 镜像，SHA-256 为
+`7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0`。
+镜像版本为 UGOS Pro `1.17.0.0095`（build `20260630.111337`）。原始镜像
+未被修改，分析文件仅位于忽略的临时目录。
+
+固件 `etc/startpre.d/hwmonitor.sh` 按 DMI 选择守护进程；下表各守护进程都
+明确包含 `ethtool -s eth0 wol g`、`ethtool -s eth1 wol g` 与对应的 `wol d`
+命令，并由 `power.wake_on` 控制：
+
+| 精确 DMI product name | 原厂守护进程 | 固件接口映射 |
+| --- | --- | --- |
+| `DXP4800` | `hwmonitor-amd` | `eth0`、`eth1` |
+| `DXP4800S` | `hwmonitor` | `eth0`、`eth1` |
+| `DXP4800 Plus` / `DXP4800 Pro` | `hwmonitor-480t` | `eth0`、`eth1` |
+| `DXP480T Plus` | `hwmonitor-480t` | `eth0`、`eth1` |
+| `DXP6800 Pro` | `hwmonitor-480t`（`DXP6800` 原厂路由） | `eth0`、`eth1` |
+
+`ug-load-drive.sh` 还独立确认了 `DXP4800S`、`DXP4800 Plus`、`DXP4800 Pro`、
+`DXP480T*`、`DXP6800*` 的原厂机型路由。运行时插件只接受上表中已有的精确
+DMI 名称，不会把固件里的前缀判断改为模糊匹配。
+
+## 实现与保护
+
+WOL 是网卡配置，不是 BIOS/Super I/O 寄存器。实现使用 Linux ethtool ioctl，
+等效于原厂命令但不启动 shell；也不会触碰 LED 控制平面。每个机型在
+`network/wol_<model>.c` 中保留独立的 `eth0`/`eth1` 映射。
+
+写入前会检查两个网卡都支持 Magic Packet；写完后会读取两个网卡状态，混合或
+不匹配状态会报错。不会猜测 `enp*` 等改名接口。
+
+所有 WOL 写操作仍需 `--force --apply`：固件路径已确认，但关机、重启和断电
+后的持续性尚未完成实机验证。读取状态无需写入确认。
+
+```sh
+ugreenctl --model dxp480tplus network wol get
+sudo ugreenctl --model dxp480tplus --force --apply network wol set on
+```
+
+在升级为已验证能力前，需逐机确认两块网卡均支持 WOL、关机后 Magic Packet
+可唤醒，以及重启和断电恢复后仍能保持设置。

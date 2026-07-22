@@ -7,6 +7,7 @@
 
 #include "loader.h"
 #include "fan/thermal_curve.h"
+#include "power/rtc_wake.h"
 #include "ugreenctl.h"
 
 #define UGREENCTL_VERSION "0.1.0"
@@ -30,6 +31,9 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
+                  "  ugreenctl [options] power rtc-wake get\n"
+                  "  ugreenctl [options] power rtc-wake set <unix-epoch>\n"
+                  "  ugreenctl [options] power rtc-wake clear\n"
                   "  ugreenctl [options] network wol get\n"
                   "  ugreenctl [options] network wol set <on|off>\n"
                   "  ugreenctl [options] led list\n\n"
@@ -133,6 +137,28 @@ static enum ugreenctl_wol_policy parse_wol_policy(const char *text)
         return UGREENCTL_WOL_OFF;
     }
     return UGREENCTL_WOL_UNKNOWN;
+}
+
+static int parse_epoch(const char *text, time_t *epoch)
+{
+    char *end;
+    long long value;
+
+    errno = 0;
+    value = strtoll(text, &end, 10);
+    if (errno != 0 || *text == '\0' || *end != '\0' || value <= 0) {
+        return -EINVAL;
+    }
+    *epoch = (time_t)value;
+    if ((long long)*epoch != value) {
+        return -ERANGE;
+    }
+    return 0;
+}
+
+static bool rtc_wake_supported_for_plugin(const struct ugreenctl_plugin *plugin)
+{
+    return (plugin->capabilities & UGREENCTL_CAP_WOL) != 0U;
 }
 
 static int choose_plugin(const struct ugreenctl_plugin_set *set,
@@ -500,6 +526,71 @@ int main(int argc, char **argv)
                 result = EXIT_SUCCESS;
             } else {
                 result = report_plugin_error("set startup policy", result, error);
+            }
+        }
+    } else if (strcmp(argv[arg], "power") == 0 && arg + 2 < argc &&
+               strcmp(argv[arg + 1], "rtc-wake") == 0 &&
+               strcmp(argv[arg + 2], "get") == 0 && arg + 3 == argc) {
+        time_t epoch = 0;
+
+        if (!rtc_wake_supported_for_plugin(plugin)) {
+            (void)fprintf(stderr, "error: RTC scheduled wake is not firmware-mapped for %s\n",
+                          plugin->id);
+            result = EXIT_FAILURE;
+        } else {
+            result = ugreenctl_rtc_wake_read(&epoch, error, sizeof(error));
+            if (result == 0) {
+                (void)printf("%lld\n", (long long)epoch);
+                result = EXIT_SUCCESS;
+            } else {
+                result = report_plugin_error("read RTC wake time", result, error);
+            }
+        }
+    } else if (strcmp(argv[arg], "power") == 0 && arg + 3 < argc &&
+               strcmp(argv[arg + 1], "rtc-wake") == 0 &&
+               strcmp(argv[arg + 2], "set") == 0 && arg + 4 == argc) {
+        time_t epoch = 0;
+
+        if (!rtc_wake_supported_for_plugin(plugin) ||
+            parse_epoch(argv[arg + 3], &epoch) != 0) {
+            (void)fprintf(stderr,
+                          "error: use a firmware-mapped model and a positive Unix epoch for RTC wake\n");
+            result = EXIT_FAILURE;
+        } else if (require_apply(&options, "set the RTC scheduled wake time") != 0) {
+            result = EXIT_SUCCESS;
+        } else if (!options.force) {
+            (void)fprintf(stderr,
+                          "error: RTC scheduled wake is firmware-reversed; use --force with --apply\n");
+            result = EXIT_FAILURE;
+        } else {
+            result = ugreenctl_rtc_wake_set(epoch, error, sizeof(error));
+            if (result == 0) {
+                (void)printf("RTC wake set to %lld\n", (long long)epoch);
+                result = EXIT_SUCCESS;
+            } else {
+                result = report_plugin_error("set RTC wake time", result, error);
+            }
+        }
+    } else if (strcmp(argv[arg], "power") == 0 && arg + 2 < argc &&
+               strcmp(argv[arg + 1], "rtc-wake") == 0 &&
+               strcmp(argv[arg + 2], "clear") == 0 && arg + 3 == argc) {
+        if (!rtc_wake_supported_for_plugin(plugin)) {
+            (void)fprintf(stderr, "error: RTC scheduled wake is not firmware-mapped for %s\n",
+                          plugin->id);
+            result = EXIT_FAILURE;
+        } else if (require_apply(&options, "clear the RTC scheduled wake time") != 0) {
+            result = EXIT_SUCCESS;
+        } else if (!options.force) {
+            (void)fprintf(stderr,
+                          "error: RTC scheduled wake is firmware-reversed; use --force with --apply\n");
+            result = EXIT_FAILURE;
+        } else {
+            result = ugreenctl_rtc_wake_clear(error, sizeof(error));
+            if (result == 0) {
+                (void)puts("RTC wake cleared");
+                result = EXIT_SUCCESS;
+            } else {
+                result = report_plugin_error("clear RTC wake time", result, error);
             }
         }
     } else if (strcmp(argv[arg], "network") == 0 && arg + 2 < argc &&

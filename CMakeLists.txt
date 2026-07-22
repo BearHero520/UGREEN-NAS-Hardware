@@ -38,8 +38,13 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_dxp6800pro.c
   fan/thermal_curve.c
   power/it8613_power.c
+  power/rtc_wake.c
   network/wol.c
   network/wol_dxp4800.c
+  network/wol_dxp4800plus.c
+  network/wol_dxp4800s.c
+  network/wol_dxp480tplus.c
+  network/wol_dxp6800pro.c
   led/led.c
   ec/ec.c
 )
@@ -103,6 +108,9 @@ install(FILES
   docs/COMPATIBILITY.zh-CN.md
   docs/DXP4800S_REVERSE_ENGINEERING.md
   docs/DXP4800_REVERSE_ENGINEERING.md
+  docs/WOL_FIRMWARE_EVIDENCE.md
+  docs/WOL_FIRMWARE_EVIDENCE.zh-CN.md
+  docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
@@ -156,6 +164,10 @@ if(BUILD_TESTING)
   add_executable(test-wol-dxp4800
     tests/test_wol_dxp4800.c
     network/wol_dxp4800.c
+    network/wol_dxp4800plus.c
+    network/wol_dxp4800s.c
+    network/wol_dxp480tplus.c
+    network/wol_dxp6800pro.c
   )
   target_include_directories(test-wol-dxp4800 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include

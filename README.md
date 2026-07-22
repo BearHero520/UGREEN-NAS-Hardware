@@ -15,11 +15,11 @@ its controls work.
 
 | Model plugin | State | Verified functions |
 | --- | --- | --- |
-| dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback |
+| dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback; firmware-reversed exact `eth0`/`eth1` WOL |
 | dxp4800 | firmware-reversed | sysfan1 RPM and PWM, AC recovery, and exact `eth0`/`eth1` Magic Packet Wake-on-LAN; writes require `--force --apply` |
-| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 40-255 and AC recovery require --force --apply |
-| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback |
-| dxp6800pro | firmware-reversed | CPU/sys1/sys2 status; guarded CPU and paired-system PWM, AC recovery require --force --apply |
+| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM, AC recovery, and exact `eth0`/`eth1` WOL require `--force --apply` |
+| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback; firmware-reversed exact `eth0`/`eth1` WOL |
+| dxp6800pro | firmware-reversed | CPU/sys1/sys2 status; guarded CPU and paired-system PWM, AC recovery, and exact `eth0`/`eth1` WOL require `--force --apply` |
 | dxp2800, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
@@ -70,6 +70,10 @@ does not add --apply itself.
     sudo ugreenctl --apply fan mode cpu auto
     ugreenctl power startup get
     sudo ugreenctl --apply power startup set restore
+    ugreenctl network wol get
+    sudo ugreenctl --force --apply network wol set on
+    ugreenctl power rtc-wake get
+    sudo ugreenctl --force --apply power rtc-wake set 1893452400
 
 Writes are previews until --apply is supplied. `--force` acknowledges a
 firmware-reversed write path; it does not bypass exact DMI matching, the active
@@ -98,6 +102,11 @@ The stock automatic mode is a user-space `hwmonitor` temperature daemon, not
 an IT8613 hardware-auto switch. This utility currently provides the guarded
 manual primitive; an alternate operating system needs its own temperature
 watchdog before automatic control is claimed.
+
+Scheduled wake uses the firmware-derived Linux RTC path, not a BIOS or LED
+register. It is available only for WOL-mapped exact models and needs
+`--force --apply`; see
+[docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md](docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md).
 
 For DXP480T Plus, the firmware-recovered hwmon write paths have been validated
 on a physical device. Normal hwmon writes require --apply and retain exact DMI matching,

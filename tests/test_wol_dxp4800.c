@@ -3,16 +3,14 @@
 #include <string.h>
 
 #include "network/wol_dxp4800.h"
+#include "network/wol_dxp4800plus.h"
+#include "network/wol_dxp4800s.h"
+#include "network/wol_dxp480tplus.h"
+#include "network/wol_dxp6800pro.h"
 
 static const char * const *captured_interfaces;
 static size_t captured_interface_count;
 static enum ugreenctl_wol_policy captured_policy;
-
-static void fail(const char *message)
-{
-    (void)fprintf(stderr, "FAIL: %s\n", message);
-    exit(EXIT_FAILURE);
-}
 
 int ugreenctl_wol_read_policy(const char * const *interfaces, size_t interface_count,
                               enum ugreenctl_wol_policy *policy,
@@ -38,30 +36,50 @@ int ugreenctl_wol_set_policy(const char * const *interfaces, size_t interface_co
     return 0;
 }
 
-static void expect_interfaces(void)
+static void expect_interfaces(const char *model)
 {
     if (captured_interface_count != 2 || strcmp(captured_interfaces[0], "eth0") != 0 ||
         strcmp(captured_interfaces[1], "eth1") != 0) {
-        fail("DXP4800 Wake-on-LAN interface map");
+        (void)fprintf(stderr, "FAIL: %s Wake-on-LAN interface map\n", model);
+        exit(EXIT_FAILURE);
     }
 }
 
-int main(void)
+typedef int (*wol_read_fn)(enum ugreenctl_wol_policy *policy,
+                           char *error, size_t error_size);
+typedef int (*wol_write_fn)(enum ugreenctl_wol_policy policy,
+                            char *error, size_t error_size);
+
+static void expect_route(const char *model, wol_read_fn read_policy,
+                         wol_write_fn write_policy)
 {
     enum ugreenctl_wol_policy policy = UGREENCTL_WOL_UNKNOWN;
     char error[256] = {0};
 
-    if (dxp4800_read_wol_policy(&policy, error, sizeof(error)) != 0 ||
-        policy != UGREENCTL_WOL_ON) {
-        fail("DXP4800 Wake-on-LAN read route");
+    if (read_policy(&policy, error, sizeof(error)) != 0 || policy != UGREENCTL_WOL_ON) {
+        (void)fprintf(stderr, "FAIL: %s Wake-on-LAN read route\n", model);
+        exit(EXIT_FAILURE);
     }
-    expect_interfaces();
-    if (dxp4800_set_wol_policy(UGREENCTL_WOL_OFF, error, sizeof(error)) != 0 ||
+    expect_interfaces(model);
+    if (write_policy(UGREENCTL_WOL_OFF, error, sizeof(error)) != 0 ||
         captured_policy != UGREENCTL_WOL_OFF) {
-        fail("DXP4800 Wake-on-LAN write route");
+        (void)fprintf(stderr, "FAIL: %s Wake-on-LAN write route\n", model);
+        exit(EXIT_FAILURE);
     }
-    expect_interfaces();
+    expect_interfaces(model);
+}
 
-    (void)puts("DXP4800 Wake-on-LAN map tests passed");
+int main(void)
+{
+    expect_route("DXP4800", dxp4800_read_wol_policy, dxp4800_set_wol_policy);
+    expect_route("DXP4800 Plus / Pro", dxp4800plus_read_wol_policy,
+                 dxp4800plus_set_wol_policy);
+    expect_route("DXP4800S", dxp4800s_read_wol_policy, dxp4800s_set_wol_policy);
+    expect_route("DXP480T Plus", dxp480tplus_read_wol_policy,
+                 dxp480tplus_set_wol_policy);
+    expect_route("DXP6800 Pro", dxp6800pro_read_wol_policy,
+                 dxp6800pro_set_wol_policy);
+
+    (void)puts("Firmware-mapped Wake-on-LAN map tests passed");
     return EXIT_SUCCESS;
 }
