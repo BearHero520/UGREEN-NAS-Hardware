@@ -175,6 +175,14 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-wol-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME wol-dxp4800 COMMAND test-wol-dxp4800)
+  add_executable(test-rtc-wake tests/test_rtc_wake.c)
+  target_include_directories(test-rtc-wake PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_link_libraries(test-rtc-wake PRIVATE ugreenctl_hardware)
+  target_compile_options(test-rtc-wake PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME rtc-wake COMMAND test-rtc-wake)
   add_executable(test-it8613-dxp480t
     tests/test_it8613_dxp480t.c
     fan/it8613_dxp480t.c

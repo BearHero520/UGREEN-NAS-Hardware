@@ -36,12 +36,17 @@ the firmware's prefix tests are not reproduced as fuzzy matching.
 
 WOL is NIC configuration, not a BIOS or Super-I/O setting. The implementation
 uses the Linux ethtool ioctl equivalent to the stock command, never launches a
-shell, and never touches the LED path. Each model keeps its own exact
-`eth0`/`eth1` map in `network/wol_<model>.c`.
+shell, and never touches the LED path. Each model retains its firmware-derived
+two-port map in `network/wol_<model>.c`.
 
-Before a write, `ugreenctl` checks magic-packet support on both mapped NICs.
-It writes both NICs, then reads both back and rejects a mixed or mismatched
-state. It deliberately does not guess renamed interfaces such as `enp*`.
+At runtime, the firmware names are used only when they resolve to physical PCI
+Ethernet adapters. If an alternative OS such as FNOS renames both adapters,
+`ugreenctl` discovers exactly the same number of physical PCI Ethernet
+adapters, sorts them by PCI slot, and then uses their driver-provided ethtool
+WOL interface. It refuses an ambiguous adapter count and excludes bridges,
+Docker/veth devices, and other virtual interfaces; it never guesses an `enp*`
+name. Before a write, it checks magic-packet support on both resolved NICs,
+writes both, then reads both back and rejects a mixed or mismatched state.
 
 All WOL writes require the normal `--apply` action gate and `--force`, because
 WOL persistence through shutdown, reboot, and AC loss has not been physically

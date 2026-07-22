@@ -19,6 +19,10 @@ the separately firmware-mapped WOL capability, requires `--force --apply` for
 writes, discovers a Linux `wakealarm` interface, clears before setting, and
 verifies readback. It does not write Super-I/O or LED registers.
 
+Linux exposes an empty `wakealarm` file when no alarm is armed. `ugreenctl`
+reports that state as epoch `0` (disabled), rather than treating it as a broken
+RTC interface.
+
 The application owns the weekly calendar and safe-shutdown adapter. Before its
 cron-based scheduled shutdown calls `systemctl poweroff`, it asks `ugreenctl`
 to re-arm the next RTC wake. If RTC re-arming fails, shutdown is cancelled.

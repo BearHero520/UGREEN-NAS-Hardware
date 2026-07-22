@@ -2,6 +2,7 @@
 
 #include "power/rtc_wake.h"
 
+#include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -69,15 +70,49 @@ static int write_wakealarm(const char *path, const char *value,
     return 0;
 }
 
+int ugreenctl_rtc_wake_parse(const char *value, time_t *epoch,
+                             char *error, size_t error_size)
+{
+    const char *cursor;
+    char *end;
+    long long parsed;
+
+    if (value == NULL || epoch == NULL) {
+        (void)snprintf(error, error_size, "RTC wakealarm output is required");
+        return -EINVAL;
+    }
+    cursor = value;
+    while (isspace((unsigned char)*cursor)) {
+        ++cursor;
+    }
+    if (*cursor == '\0') {
+        *epoch = 0;
+        return 0;
+    }
+    errno = 0;
+    parsed = strtoll(cursor, &end, 10);
+    while (isspace((unsigned char)*end)) {
+        ++end;
+    }
+    if (errno != 0 || end == cursor || *end != '\0') {
+        (void)snprintf(error, error_size, "RTC wakealarm returned an invalid value");
+        return -EIO;
+    }
+    if (parsed < 0 || (unsigned long long)parsed > (unsigned long long)LLONG_MAX) {
+        (void)snprintf(error, error_size, "RTC wakealarm returned an out-of-range value");
+        return -ERANGE;
+    }
+    *epoch = (time_t)parsed;
+    return 0;
+}
+
 int ugreenctl_rtc_wake_read(time_t *epoch, char *error, size_t error_size)
 {
     char path[PATH_MAX];
     char value[64];
-    char *end;
     int fd;
     int result;
     ssize_t count;
-    long long parsed;
 
     if (epoch == NULL) {
         (void)snprintf(error, error_size, "RTC wakealarm output is required");
@@ -99,18 +134,7 @@ int ugreenctl_rtc_wake_read(time_t *epoch, char *error, size_t error_size)
         return -errno;
     }
     value[count] = '\0';
-    errno = 0;
-    parsed = strtoll(value, &end, 10);
-    if (errno != 0 || end == value || (*end != '\0' && *end != '\n')) {
-        (void)snprintf(error, error_size, "RTC wakealarm returned an invalid value");
-        return -EIO;
-    }
-    if (parsed < 0 || (unsigned long long)parsed > (unsigned long long)LLONG_MAX) {
-        (void)snprintf(error, error_size, "RTC wakealarm returned an out-of-range value");
-        return -ERANGE;
-    }
-    *epoch = (time_t)parsed;
-    return 0;
+    return ugreenctl_rtc_wake_parse(value, epoch, error, error_size);
 }
 
 int ugreenctl_rtc_wake_clear(char *error, size_t error_size)
