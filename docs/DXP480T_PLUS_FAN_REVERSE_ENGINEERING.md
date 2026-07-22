@@ -25,27 +25,28 @@ selects the IT8613 hardware-monitor logical device at `0xa35/0xa36`.
 
 - The module reads three tachometer pairs: `0x0f/0x1a`, `0x0e/0x19`, and
   `0x80/0x81`.
-- In `set_fan.isra.0`, the exact `DXP480T Plus` DMI branch writes control
-  register `0x17`, clears manual/automatic bit `0x80`, and writes duty
-  register `0x73`.
-- `hwmonitor-480t` calls `/proc/it86/fan` with `cpu <PWM>` and `set <PWM>`.
-  In the same DXP480T Plus branch, `set_cpu_fan.isra.0` and
-  `set_fan.isra.0` both select `0x17/0x73`.
-- The code sequence using control `0x1e` and duty `0x7b` is in the separate
-  DXP6800/FORT 6/DXP8800 branch. It is not evidence for DXP480T Plus.
-- The stock DXP480T Plus branch contains no sysfan2 PWM write sequence.
+- `fan_read` emits `cpufan`, `sysfan1`, and `sysfan2` from tachometer pairs
+  `0x1a/0x0f`, `0x19/0x0e`, and `0x81/0x80`, respectively. It reports zero
+  RPM for a raw tachometer value of `0x0000`, `0x0fff`, or `0xffff`; otherwise
+  its conversion is `675000 / tachometer`.
+- `hwmonitor-480t` writes `/proc/it86/fan` with `cpu <PWM>` and `set <PWM>`.
+  `fan_write` dispatches `cpu` to `set_cpu_fan.isra.0` and `set` to
+  `set_fan.isra.0`.
+- In the exact `DXP480T Plus` branch, `set_cpu_fan.isra.0` clears bit `0x80`
+  in control register `0x17` and writes the CPU duty to `0x73`.
+- In the exact `DXP480T Plus` branch, `set_fan.isra.0` clears bit `0x80` and
+  writes the two system-fan duties in this order: `0x16/0x6b`, then
+  `0x1e/0x7b`. It does not write `0x17/0x73`.
+- The `DXP6800`, `FORT 6`, and `DXP8800` branches use a different system-pair
+  sequence (`0x17/0x73`, then `0x1e/0x7b`); that sequence is not used for
+  DXP480T Plus.
 
 ## Runtime consequence
 
-An earlier direct fallback guessed a sysfan2 control register and attempted an
-`all` transaction in CPU, sysfan2, sysfan1 order. On a physical DXP480T Plus
-with `it87` unloaded, CPU write/readback succeeded but the guessed sysfan2
-manual-mode readback failed. This is insufficient evidence for another direct
-write map.
-
-The implementation therefore reproduces the stock shared `0x17/0x73` path for
-both direct `cpu` and direct `all` writes, without requiring `it87`. It returns
-sysfan2 RPM with unknown PWM/mode and does not attempt an independent sysfan2
-write. A future sysfan2-specific path needs a DXP480T Plus-specific vendor write
-sequence or controlled physical validation that distinguishes the channel and
-mode bit.
+The prior fallback conflated the `cpu` and `set` DMI branches, so it wrote the
+CPU register (`0x17/0x73`) for both targets. That explains a CPU fan responding
+while both system fans remain unchanged. The corrected implementation preserves
+the stock separation: `cpu` controls the CPU output and the legacy `all` target
+replays the stock `set` transaction for the system-fan pair. Its register map is
+firmware-reversed and must retain the existing guarded ownership, lock, exact-DMI,
+minimum-PWM, and readback checks until physical validation is recorded.

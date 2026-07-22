@@ -9,6 +9,7 @@
 #define IT8613_DIRECT_MIN_MANUAL_PWM 40U
 #define IT8613_DIRECT_MANUAL_BIT 0x80U
 #define IT8613_TACHOMETER_DIVIDEND 675000UL
+#define IT8613_TACHOMETER_INVALID_12BIT 0x0fffU
 
 static void set_error(char *error, size_t error_size, const char *format,
                       const char *detail)
@@ -57,7 +58,12 @@ static void read_channel(const struct it8613_direct_channel *channel,
         fan->mode_known = fan->manual;
     }
     fan->tachometer = tachometer;
-    fan->rpm = tachometer == 0 || tachometer == UINT16_MAX
+    /* The stock ug_it86x-cpufan driver treats both all-ones encodings as
+     * invalid tachometer data. 0x0fff otherwise looks like a plausible
+     * low RPM, which made a stopped/unwired DXP480T Plus channel display
+     * roughly 164 RPM through the direct fallback. */
+    fan->rpm = tachometer == 0 || tachometer == IT8613_TACHOMETER_INVALID_12BIT ||
+                   tachometer == UINT16_MAX
                    ? 0
                    : IT8613_TACHOMETER_DIVIDEND / tachometer;
 }

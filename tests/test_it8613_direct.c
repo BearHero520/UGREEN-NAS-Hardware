@@ -81,6 +81,13 @@ int main(void)
         fail("invalid tachometer handling");
     }
 
+    registers[0x0f] = 0xff;
+    registers[0x1a] = 0x0f;
+    if (it8613_direct_read_fans(&channel, 1, &fan, &fan_count,
+                                error, sizeof(error)) != 0 || fan.rpm != 0) {
+        fail("12-bit invalid tachometer handling");
+    }
+
     registers[0x0f] = 0xee;
     registers[0x1a] = 0x02;
     if (it8613_direct_read_fans(&tachometer_only_channel, 1, &fan, &fan_count,
@@ -91,7 +98,7 @@ int main(void)
 
     if (it8613_direct_set_manual_pwm(&channel, 1, 39,
                                      error, sizeof(error)) != -EPERM ||
-        open_calls != 3) {
+        open_calls != 4) {
         fail("unsafe direct PWM guard");
     }
 
@@ -100,13 +107,13 @@ int main(void)
     if (it8613_direct_set_manual_pwm(&channel, 1, 120,
                                      error, sizeof(error)) != 0 ||
         (registers[0x17] & 0x80U) != 0 || registers[0x73] != 120 ||
-        open_calls != 4 || close_calls != 4) {
+        open_calls != 5 || close_calls != 5) {
         fail("manual direct PWM write and readback");
     }
 
     if (it8613_direct_set_manual_pwm(&tachometer_only_channel, 1, 120,
                                      error, sizeof(error)) != -EOPNOTSUPP ||
-        strstr(error, "unavailable for: tach") == NULL || open_calls != 4) {
+        strstr(error, "unavailable for: tach") == NULL || open_calls != 5) {
         fail("tachometer-only direct write guard");
     }
 

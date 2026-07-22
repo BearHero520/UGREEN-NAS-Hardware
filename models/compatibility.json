@@ -28,7 +28,7 @@
         "DXP4800 Plus",
         "DXP4800 Pro"
       ],
-      "support_level": "supported",
+      "support_level": "reverse-engineered",
       "controller": {
         "transport": "Linux hwmon with guarded direct Super I/O fallback",
         "chip": "ITE IT8613",
@@ -123,12 +123,13 @@
         "chip_id": "0x8613"
       },
       "capabilities": {
-        "fan_cpu": "verified",
-        "fan_all": "verified",
+        "fan_cpu": "reverse-engineered",
+        "fan_all": "reverse-engineered",
         "fan_all_direct_fallback": "reverse-engineered",
-        "fan_system_individual": "unverified",
-        "fan_rpm": "verified",
-        "fan_pwm_readback": "verified",
+        "fan_system_pair": "reverse-engineered",
+        "fan_system_individual": "blocked",
+        "fan_rpm": "reverse-engineered",
+        "fan_pwm_readback": "reverse-engineered",
         "led": "unverified",
         "power_recovery": "verified",
         "wake_on_lan": "reverse-engineered"
@@ -143,12 +144,12 @@
           "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
           "module_sha256": "677b740208097187caab302a16c9bf575478b46e455096f24c5ac284f2e8ccd7",
           "method": "Static clean-room reverse engineering of the DXP480T Plus branch in ug_it86x-cpufan.ko.",
-          "scope": "Three tachometer paths; the stock DXP480T Plus shared CPU/all-fans PWM branch at 0x17/0x73; AC recovery path; hwmonitor-480t magic-packet WOL on eth0 and eth1. The stock module does not provide a sysfan2-specific direct PWM write map."
+          "scope": "Three tachometer paths; CPU command at 0x17/0x73; stock system-pair set command at 0x16/0x6b then 0x1e/0x7b; AC recovery path; hwmonitor-480t magic-packet WOL on eth0 and eth1."
         },
         {
           "firmware": "1.17.0.95",
-          "method": "Physical DXP480T Plus validation reported by the LLLED_FPK project user on 2026-07-18.",
-          "scope": "The previous direct all-fans implementation failed at its unverified sysfan2 control register after updating CPU. The fallback now follows the firmware-proven shared 0x17/0x73 CPU/all command path and awaits physical all-fans validation."
+          "method": "Physical DXP480T Plus report supplied to the LLLED_FPK project on 2026-07-22.",
+          "scope": "CPU control responded but both system fans did not. This matches the prior fallback incorrectly writing the CPU 0x17/0x73 path for both targets. The corrected firmware-reversed system-pair map awaits controlled physical validation."
         },
         {
           "firmware": "1.17.0.95",

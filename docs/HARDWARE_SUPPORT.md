@@ -86,26 +86,24 @@ ug_it86x-cpufan module.
 
 - Input image SHA-256:
   7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0
-- Fan status uses hwmon channels `pwm2/fan3_input` (CPU),
-  `pwm3/fan2_input` (system fan 1), and `pwm4/fan4_input` (system fan 2).
-- All-fans manual PWM writes are ordered CPU, system fan 2, then system fan 1.
+- Fan status uses hwmon channels `pwm3/fan3_input` (CPU),
+  `pwm2/fan2_input` (system fan 1), and `pwm4/fan4_input` (system fan 2).
+- The vendor `cpu <PWM>` command controls CPU through `0x17/0x73`.
+  The legacy `all` target replays its `set <PWM>` transaction for the system
+  fan pair, ordered `0x16/0x6b` (system fan 1) then `0x1e/0x7b` (system fan 2).
 - AC recovery policy: Super I/O registers 0xf2 and 0xf4
 - LED hardware: N76E003 MCU via an I2C/SMBus driver; no ugreenctl LED write
   operation is exposed
 
-The firmware-recovered hwmon CPU/all-fans PWM and AC recovery paths have been
-validated on a physical DXP480T Plus. Fan writes through hwmon require
-`--apply`; each `pwm*_enable=1` and PWM write is read back while holding a
-process lock. If the `it8613` hwmon node is absent, the same model-specific
-CPU direct map is available only with `--force --apply`, no active vendor or
-`it87` owner, an IT8613 identity match, and verified readback. The stock
-DXP480T Plus branch uses one shared PWM output (`0x17/0x73`) for both its
-`cpu` and `set` commands, so the direct `all` fallback reproduces that one
-vendor control path rather than guessing three independent registers. Sysfan2
-RPM is reported but its PWM and mode are unknown because the stock branch has
-no sysfan2-specific write sequence. Only manual PWM is exposed: `pwm*_enable=2`
-is not reported as the vendor software temperature curve. Independent system-fan
-writes are not exposed. See
+Fan writes through hwmon require `--apply`; each `pwm*_enable=1` and PWM write
+is read back while holding a process lock. If the `it8613` hwmon node is absent,
+the same model-specific map is available only with `--force --apply`, no active
+vendor or `it87` owner, an IT8613 identity match, and verified readback. The
+corrected map was recovered from the exact stock `cpu` and `set` branches after
+the earlier fallback drove `0x17/0x73` for both targets. Only manual PWM is
+exposed: `pwm*_enable=2` is not reported as the vendor software temperature
+curve. The system-pair write map is firmware-reversed pending a new physical
+validation record. See
 [DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md](DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md).
 
 WOL follows the stock `eth0`/`eth1` map but remains firmware-reversed, so it

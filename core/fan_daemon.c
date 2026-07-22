@@ -18,9 +18,7 @@
 
 enum fan_channel {
     FAN_CHANNEL_CPU,
-    FAN_CHANNEL_SYSTEM,
-    /* DXP480T's vendor all transaction is one physical PWM output. */
-    FAN_CHANNEL_HIGHEST
+    FAN_CHANNEL_SYSTEM
 };
 
 struct fan_target {
@@ -40,7 +38,9 @@ static const struct model_route model_routes[] = {
     {"DXP4800 Plus", "dxp4800plus", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, false},
     {"DXP4800 Pro", "dxp4800plus", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, false},
     {"DXP4800S", "dxp4800s", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
-    {"DXP480T Plus", "dxp480tplus", {{"all", FAN_CHANNEL_HIGHEST}, {NULL, 0}}, false},
+    /* The stock controller uses `cpu` for the CPU output and `set` (the
+     * legacy ugreenctl target is `all`) for the two system fans. */
+    {"DXP480T Plus", "dxp480tplus", {{"cpu", FAN_CHANNEL_CPU}, {"all", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, false},
     {"DXP6800 Pro", "dxp6800pro", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true}
 };
 
@@ -278,8 +278,7 @@ static unsigned int desired_for_target(const struct fan_target *target,
                                        const struct ugreenctl_fan_curve_plan *plan)
 {
     if (target->channel == FAN_CHANNEL_CPU) return plan->cpu_pwm;
-    if (target->channel == FAN_CHANNEL_SYSTEM) return plan->system_pwm;
-    return maximum_of(plan->cpu_pwm, plan->system_pwm);
+    return plan->system_pwm;
 }
 
 static unsigned int hold_lower_pwm(struct pwm_hold_state *state, unsigned int desired_pwm,
@@ -315,10 +314,7 @@ static void applied_channels(const struct model_route *route,
         if (!states[index].applied_known) continue;
         if (route->targets[index].channel == FAN_CHANNEL_CPU) {
             *cpu_pwm = (int)states[index].applied_pwm;
-        } else if (route->targets[index].channel == FAN_CHANNEL_SYSTEM) {
-            *system_pwm = (int)states[index].applied_pwm;
         } else {
-            *cpu_pwm = (int)states[index].applied_pwm;
             *system_pwm = (int)states[index].applied_pwm;
         }
     }

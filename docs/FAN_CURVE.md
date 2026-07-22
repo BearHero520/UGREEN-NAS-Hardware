@@ -39,10 +39,10 @@ DXP4800 Plus/Pro also has a vendor system-fan CPU floor of 65°C → PWM 100 and
 system target is the highest active CPU/HDD/NVMe result and this CPU floor;
 the CPU target follows its separate CPU-channel points.
 
-DXP480T Plus exposes one vendor `all` transaction. Its implementation has one
-physical duty output, so the daemon writes the higher of the recovered CPU and
-system targets. This avoids two sequential channel writes racing on the shared
-output while retaining the conservative result.
+DXP480T Plus uses separate vendor transactions: `cpu` controls the CPU output,
+while the legacy `all` target replays the vendor `set` transaction for the two
+system fans. The daemon therefore applies the recovered CPU and system PWM
+curves independently; it does not collapse them into a single highest value.
 
 A stock profile is rejected unless it exactly matches the detected DMI model.
 `custom` remains available for every supported model and retains the prior
