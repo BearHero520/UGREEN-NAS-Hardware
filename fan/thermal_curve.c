@@ -255,7 +255,11 @@ static bool ata_return_sector_count(const unsigned char *sense, size_t sense_siz
             return false;
         }
         if (sense[offset] == ATA_RETURN_DESCRIPTOR && descriptor_size >= 14U) {
-            *sector_count = sense[offset + 4];
+            /* SAT ATA Return Descriptor: byte 4 is the expanded high byte;
+             * byte 5 is the current ATA Sector Count register.  Check Power
+             * Mode returns 0x00 for standby and a non-zero low byte for a
+             * running disk (normally 0xff). */
+            *sector_count = sense[offset + 5];
             return true;
         }
     }
@@ -304,10 +308,12 @@ static int ata_read_smart_data(int file_descriptor, unsigned char data[ATA_SMART
     cdb[0] = ATA_PASS_THROUGH_16;
     cdb[1] = ATA_PROTOCOL_PIO_DATA_IN;
     cdb[2] = 0x0eU; /* T_DIR + BYT_BLOK + sector-count transfer. */
-    cdb[3] = ATA_SMART_READ_DATA;
-    cdb[5] = 1U;
-    cdb[9] = ATA_SMART_LBA_MID;
-    cdb[11] = ATA_SMART_LBA_HIGH;
+    /* ATA PASS THROUGH (16) carries the normal taskfile registers in the
+     * low-byte slots.  The adjacent odd offsets are the EXTEND high bytes. */
+    cdb[4] = ATA_SMART_READ_DATA;
+    cdb[6] = 1U;
+    cdb[10] = ATA_SMART_LBA_MID;
+    cdb[12] = ATA_SMART_LBA_HIGH;
     cdb[14] = ATA_SMART_COMMAND;
     memset(&request, 0, sizeof(request));
     request.interface_id = 'S';
