@@ -62,6 +62,16 @@ int main(void)
         fail("fan curve did not use the hottest source");
     }
     (void)snprintf(path, sizeof(path), "%s/stock.conf", temporary);
+    write_file(path, "profile=stock-4800\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
+        fail("cannot load DXP4800 stock profile");
+    }
+    snapshot = (struct ugreenctl_thermal_snapshot){70, 45, -1, 55};
+    if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 128 || plan.system_pwm != 128) {
+        fail("DXP4800 stock channels did not preserve recovered points");
+    }
+    (void)snprintf(path, sizeof(path), "%s/stock.conf", temporary);
     write_file(path, "profile=stock-4800plus\ninterval_seconds=2\n");
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP4800 Plus stock profile");

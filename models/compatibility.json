@@ -184,18 +184,46 @@
       "dmi_product_names": [
         "DXP4800"
       ],
-      "support_level": "profile-only",
+      "support_level": "reverse-engineered",
+      "write_requirements": [
+        "exact DMI product name DXP4800",
+        "--force experimental acknowledgement",
+        "--apply",
+        "IT8613 identity check for fan and AC-recovery operations",
+        "vendor /proc/it86 driver must be inactive for direct fan fallback",
+        "magic-packet Wake-on-LAN support on firmware-mapped eth0 and eth1"
+      ],
       "controller": {
-        "transport": "unverified",
-        "chip": "unverified"
+        "transport": "Linux hwmon with guarded direct Super I/O fallback; Linux ethtool for WOL",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613",
+        "hwmon_name": "it8613"
       },
       "capabilities": {
-        "fan": "unverified",
+        "fan_rpm": "reverse-engineered",
+        "fan_pwm_write": "reverse-engineered",
+        "fan_pwm_readback": "reverse-engineered",
+        "fan_automatic_service": "unverified",
+        "fan_stop": "blocked",
         "led": "unverified",
-        "power_recovery": "unverified"
+        "power_recovery": "reverse-engineered",
+        "wake_on_lan": "reverse-engineered"
       },
-      "known_conflicts": [],
-      "evidence": []
+      "known_conflicts": [
+        "The vendor /proc/it86 interface or ug_it86x_sio module must not access the Super I/O controller concurrently.",
+        "The generic it87 driver may remain loaded while its name=it8613 hwmon node is used; it must be unloaded before direct fan fallback.",
+        "The firmware only establishes eth0 and eth1 for WOL; renamed interface mappings are not guessed."
+      ],
+      "evidence": [
+        {
+          "firmware": "UGOS Pro 1.17.0.0095, build 20260630.111337, kernel 6.12.30+",
+          "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
+          "module_sha256": "4d3864794d9cdec926b666878aed4431f80b69108acceadfa21322245f1393f4",
+          "hwmonitor_amd_sha256": "4718169d5f2e462991e3480cc8100fba8c5bd38f6a6cbfdb6de65c7c7a3079c0",
+          "method": "Static clean-room reverse engineering of the exact DXP4800 route in ug-load-drive.sh, ug_it86x-sio.ko, and hwmonitor-amd.",
+          "scope": "One system-fan IT8613 path; AC-recovery registers; magic-packet WOL on eth0 and eth1. No physical write validation."
+        }
+      ]
     },
     {
       "id": "dxp6800pro",

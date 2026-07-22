@@ -72,6 +72,15 @@ int it8613_set_startup_policy(bool force, enum ugreenctl_startup_policy policy,
     }
     it86x_sio_write(0xf2, f2);
     it86x_sio_write(0xf4, f4);
+    if (it86x_sio_read(0xf2) != f2 || it86x_sio_read(0xf4) != f4 ||
+        decode_policy(f2, f4) != policy) {
+        it86x_close(&device);
+        (void)snprintf(error, error_size,
+                       "IT8613 AC-recovery register readback did not match %s policy",
+                       policy == UGREENCTL_STARTUP_ON ? "on" :
+                       policy == UGREENCTL_STARTUP_OFF ? "off" : "restore");
+        return -EIO;
+    }
     it86x_close(&device);
     return 0;
 }

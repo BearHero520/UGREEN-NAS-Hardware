@@ -25,6 +25,7 @@ and linearly interpolates between them; it never writes a stop/zero PWM.
 
 | DMI product | Profile | CPU thresholds | HDD thresholds | NVMe thresholds | System PWM | CPU PWM |
 | --- | --- | --- | --- | --- | --- | --- |
+| DXP4800 | `stock-4800` | 45 / 50 / 70 / 75 / 85 | 35 / 40 / 45 / 50 / 65 | 40 / 45 / 55 / 60 / 65 | 64 / 128 / 204 / 255 | same channel |
 | DXP4800S | `stock-4800s` | 50 / 55 / 75 / 80 / 90 | 40 / 45 / 50 / 55 / 70 | 45 / 50 / 60 / 65 / 70 | 64 / 128 / 204 / 255 | same channel |
 | DXP4800 Plus / Pro | `stock-4800plus` | 42 / 50 / 70 / 78 / 90 | 30 / 40 / 46 / 52 / 55 | 50 / 55 / 60 / 65 / 70 | 65 / 125 / 200 / 235 | 60 / 125 / 205 / 230 |
 | DXP480T Plus | `stock-480tplus` | 25 / 55 / 75 / 85 / 95 | disabled (0 / 0 / 0 / 0 / 0) | 40 / 50 / 60 / 70 / 80 | 55 / 90 / 110 / 128 | 70 / 130 / 150 / 200 |

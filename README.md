@@ -16,10 +16,11 @@ its controls work.
 | Model plugin | State | Verified functions |
 | --- | --- | --- |
 | dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback |
+| dxp4800 | firmware-reversed | sysfan1 RPM and PWM, AC recovery, and exact `eth0`/`eth1` Magic Packet Wake-on-LAN; writes require `--force --apply` |
 | dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM 40-255 and AC recovery require --force --apply |
 | dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback |
 | dxp6800pro | firmware-reversed | CPU/sys1/sys2 status; guarded CPU and paired-system PWM, AC recovery require --force --apply |
-| dxp2800, dxp4800, dxp8800plus | profile only | none |
+| dxp2800, dxp8800plus | profile only | none |
 
 The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
 targets the ITE IT8613 Super I/O hardware monitor observed in firmware

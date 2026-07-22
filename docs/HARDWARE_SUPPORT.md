@@ -30,6 +30,27 @@ and verifies every write. The fallback needs `--force --apply` because its direc
 fan transaction is not yet separately physically validated. AC recovery remains
 an independent Super I/O operation.
 
+## DXP4800
+
+The `dxp4800` plugin matches only the exact DMI product name `DXP4800`. Its
+route, IT8613 controller map, AC-recovery path, and WOL behavior were recovered
+from the supplied UGOS Pro 1.17.0.95 image.
+
+- Preferred fan controller: Linux `it87` hwmon node with `name=it8613`
+- Single stock fan target: `sys` (`sysfan1`), direct map `0x17/0x73` and
+  tachometer `0x1a/0x0f`
+- AC recovery: Super I/O registers `0xf2/0xf4`, on/off/restore
+- Wake-on-LAN: magic-packet WOL across the firmware-mapped `eth0` and `eth1`
+  NICs; this uses ethtool, not a Super-I/O or BIOS register
+
+Fan, AC-recovery, and WOL writes require exact DMI matching plus
+`--force --apply`. Fan control uses the existing `it8613` hwmon path when
+present; otherwise its model-specific fallback enforces controller ownership,
+IT8613 identity, locking, a safe PWM range, and readback. WOL preflights NIC
+magic-packet support and verifies both NIC states after writing. The paths are
+firmware-reversed and await physical validation; LED control is not exposed.
+See [DXP4800_REVERSE_ENGINEERING.md](DXP4800_REVERSE_ENGINEERING.md).
+
 ## DXP4800S
 
 The `dxp4800s` plugin matches only the exact DMI product name `DXP4800S`.

@@ -32,11 +32,14 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_direct.c
   fan/it8613_hwmon.c
   fan/it8613_fan.c
+  fan/it8613_dxp4800.c
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
   fan/it8613_dxp6800pro.c
   fan/thermal_curve.c
   power/it8613_power.c
+  network/wol.c
+  network/wol_dxp4800.c
   led/led.c
   ec/ec.c
 )
@@ -83,8 +86,7 @@ add_model_plugin(dxp4800s models/dxp4800s.c)
 add_model_plugin(dxp480tplus models/dxp480tplus.c)
 add_model_plugin(dxp2800 models/unsupported_model.c)
 target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
-add_model_plugin(dxp4800 models/unsupported_model.c)
-target_compile_definitions(dxp4800 PRIVATE MODEL_ID="dxp4800" MODEL_NAME="UGREEN DXP4800" MODEL_DMI_NAME="DXP4800")
+add_model_plugin(dxp4800 models/dxp4800.c)
 add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
@@ -100,6 +102,7 @@ install(FILES
   docs/COMPATIBILITY.md
   docs/COMPATIBILITY.zh-CN.md
   docs/DXP4800S_REVERSE_ENGINEERING.md
+  docs/DXP4800_REVERSE_ENGINEERING.md
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
@@ -130,6 +133,36 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-direct PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-direct COMMAND test-it8613-direct)
+  add_executable(test-it8613-power
+    tests/test_it8613_power.c
+    power/it8613_power.c
+  )
+  target_include_directories(test-it8613-power PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-power PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-power COMMAND test-it8613-power)
+  add_executable(test-it8613-dxp4800
+    tests/test_it8613_dxp4800.c
+    fan/it8613_dxp4800.c
+  )
+  target_include_directories(test-it8613-dxp4800 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp4800 COMMAND test-it8613-dxp4800)
+  add_executable(test-wol-dxp4800
+    tests/test_wol_dxp4800.c
+    network/wol_dxp4800.c
+  )
+  target_include_directories(test-wol-dxp4800 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-wol-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME wol-dxp4800 COMMAND test-wol-dxp4800)
   add_executable(test-it8613-dxp480t
     tests/test_it8613_dxp480t.c
     fan/it8613_dxp480t.c

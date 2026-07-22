@@ -30,6 +30,8 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
+                  "  ugreenctl [options] network wol get\n"
+                  "  ugreenctl [options] network wol set <on|off>\n"
                   "  ugreenctl [options] led list\n\n"
                   "Options (must appear before the command):\n"
                   "  --model <id>        use a specific model plugin\n"
@@ -58,6 +60,18 @@ static const char *startup_policy_name(enum ugreenctl_startup_policy policy)
     }
 }
 
+static const char *wol_policy_name(enum ugreenctl_wol_policy policy)
+{
+    switch (policy) {
+    case UGREENCTL_WOL_ON:
+        return "on";
+    case UGREENCTL_WOL_OFF:
+        return "off";
+    default:
+        return "unknown";
+    }
+}
+
 static void print_capabilities(unsigned int capabilities)
 {
     bool first = true;
@@ -71,6 +85,10 @@ static void print_capabilities(unsigned int capabilities)
     }
     if (capabilities & UGREENCTL_CAP_POWER) {
         (void)fprintf(stdout, "%spower", first ? "" : ", ");
+        first = false;
+    }
+    if (capabilities & UGREENCTL_CAP_WOL) {
+        (void)fprintf(stdout, "%swol", first ? "" : ", ");
         first = false;
     }
     if (first) {
@@ -104,6 +122,17 @@ static enum ugreenctl_startup_policy parse_startup_policy(const char *text)
         return UGREENCTL_STARTUP_RESTORE;
     }
     return UGREENCTL_STARTUP_UNKNOWN;
+}
+
+static enum ugreenctl_wol_policy parse_wol_policy(const char *text)
+{
+    if (strcmp(text, "on") == 0) {
+        return UGREENCTL_WOL_ON;
+    }
+    if (strcmp(text, "off") == 0) {
+        return UGREENCTL_WOL_OFF;
+    }
+    return UGREENCTL_WOL_UNKNOWN;
 }
 
 static int choose_plugin(const struct ugreenctl_plugin_set *set,
@@ -193,6 +222,7 @@ static void print_status(const struct ugreenctl_status *status)
     size_t index;
     (void)printf("controller: %s\n", status->controller);
     (void)printf("startup: %s\n", startup_policy_name(status->startup_policy));
+    (void)printf("wol: %s\n", wol_policy_name(status->wol_policy));
     for (index = 0; index < status->fan_count; ++index) {
         (void)fputs("fan ", stdout);
         print_fan_status(&status->fans[index]);
@@ -254,6 +284,19 @@ static int plugin_read_startup_policy(const struct ugreenctl_plugin *plugin,
         return result;
     }
     (void)snprintf(error, error_size, "startup policy is not available for %s", plugin->id);
+    return -ENOTSUP;
+}
+
+static int plugin_read_wol_policy(const struct ugreenctl_plugin *plugin,
+                                  const struct ugreenctl_request *request,
+                                  enum ugreenctl_wol_policy *policy,
+                                  char *error, size_t error_size)
+{
+    if (plugin->abi_version >= UGREENCTL_PLUGIN_ABI_V5 &&
+        plugin->read_wol_policy != NULL) {
+        return plugin->read_wol_policy(request, policy, error, error_size);
+    }
+    (void)snprintf(error, error_size, "Wake-on-LAN is not available for %s", plugin->id);
     return -ENOTSUP;
 }
 
@@ -360,8 +403,10 @@ int main(int argc, char **argv)
         struct ugreenctl_status status;
         char fan_error[256] = {0};
         char startup_error[256] = {0};
+        char wol_error[256] = {0};
         int fan_result;
         int startup_result;
+        int wol_result;
 
         memset(&status, 0, sizeof(status));
         (void)snprintf(status.controller, sizeof(status.controller), "%s",
@@ -372,6 +417,8 @@ int main(int argc, char **argv)
                                                     &status.startup_policy,
                                                     startup_error,
                                                     sizeof(startup_error));
+        wol_result = plugin_read_wol_policy(plugin, &request, &status.wol_policy,
+                                            wol_error, sizeof(wol_error));
         if (fan_result != 0 && startup_result != 0) {
             result = report_plugin_error("read fan status", fan_result, fan_error);
             (void)report_plugin_error("read startup policy", startup_result, startup_error);
@@ -386,6 +433,10 @@ int main(int argc, char **argv)
                 (void)fprintf(stderr, "warning: startup policy unavailable: %s\n",
                               startup_error[0] != '\0' ? startup_error
                                                         : strerror(-startup_result));
+            }
+            if (wol_result != 0) {
+                (void)fprintf(stderr, "warning: Wake-on-LAN unavailable: %s\n",
+                              wol_error[0] != '\0' ? wol_error : strerror(-wol_result));
             }
             result = EXIT_SUCCESS;
         }
@@ -449,6 +500,37 @@ int main(int argc, char **argv)
                 result = EXIT_SUCCESS;
             } else {
                 result = report_plugin_error("set startup policy", result, error);
+            }
+        }
+    } else if (strcmp(argv[arg], "network") == 0 && arg + 2 < argc &&
+               strcmp(argv[arg + 1], "wol") == 0 &&
+               strcmp(argv[arg + 2], "get") == 0 && arg + 3 == argc) {
+        enum ugreenctl_wol_policy policy = UGREENCTL_WOL_UNKNOWN;
+        result = plugin_read_wol_policy(plugin, &request, &policy, error, sizeof(error));
+        if (result == 0) {
+            (void)puts(wol_policy_name(policy));
+            result = EXIT_SUCCESS;
+        } else {
+            result = report_plugin_error("read Wake-on-LAN policy", result, error);
+        }
+    } else if (strcmp(argv[arg], "network") == 0 && arg + 3 < argc &&
+               strcmp(argv[arg + 1], "wol") == 0 &&
+               strcmp(argv[arg + 2], "set") == 0 && arg + 4 == argc) {
+        enum ugreenctl_wol_policy policy = parse_wol_policy(argv[arg + 3]);
+        if (policy == UGREENCTL_WOL_UNKNOWN ||
+            plugin->abi_version < UGREENCTL_PLUGIN_ABI_V5 ||
+            plugin->set_wol_policy == NULL) {
+            (void)fprintf(stderr, "error: use Wake-on-LAN policy on or off\n");
+            result = EXIT_FAILURE;
+        } else if (require_apply(&options, "change Wake-on-LAN policy") != 0) {
+            result = EXIT_SUCCESS;
+        } else {
+            result = plugin->set_wol_policy(&request, policy, error, sizeof(error));
+            if (result == 0) {
+                (void)printf("Wake-on-LAN policy set to %s\n", wol_policy_name(policy));
+                result = EXIT_SUCCESS;
+            } else {
+                result = report_plugin_error("set Wake-on-LAN policy", result, error);
             }
         }
     } else if (strcmp(argv[arg], "led") == 0 && arg + 1 < argc &&
