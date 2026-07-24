@@ -11,20 +11,24 @@ expose only guarded writes with explicit acknowledgement while physical
 validation is pending. A profile in the models/ directory is not a claim that
 its controls work.
 
-## Support matrix
+## Support matrix and implemented firmware paths
 
-| Model plugin | State | Verified functions |
-| --- | --- | --- |
-| dxp4800plus | supported | CPU/system fan status and PWM, AC recovery policy; guarded direct fan fallback; firmware-reversed exact `eth0`/`eth1` WOL |
-| dxp4800 | firmware-reversed | sysfan1 RPM and PWM, AC recovery, and exact `eth0`/`eth1` Magic Packet Wake-on-LAN; writes require `--force --apply` |
-| dxp4800s | firmware-reversed | sysfan1 RPM; guarded sys fan PWM, AC recovery, and exact `eth0`/`eth1` WOL require `--force --apply` |
-| dxp480tplus | supported | CPU, sysfan1, sysfan2 RPM; hwmon CPU/all PWM and AC recovery; guarded shared-PWM direct fallback; firmware-reversed exact `eth0`/`eth1` WOL |
-| dxp6800pro | firmware-reversed | CPU/sys1/sys2 status; guarded CPU and paired-system PWM, AC recovery, and exact `eth0`/`eth1` WOL require `--force --apply` |
-| dxp2800, dxp8800plus | profile only | none |
+The firmware version below is the evidence used to implement the path. It is
+not a promise that an untested firmware upgrade has the same behavior.
 
-The dxp4800plus plugin also matches the DMI product name DXP4800 Pro. It
-targets the ITE IT8613 Super I/O hardware monitor observed in firmware
-1.17.0.95.
+| Exact model (plugin) | Firmware evidence implemented | Available functions | Validation status |
+| --- | --- | --- | --- |
+| DXP4800 Plus / DXP4800 Pro (`dxp4800plus`) | `1.17.0.95` | CPU/system fan readings and PWM, AC recovery, WOL, scheduled wake | Normal hwmon fan control and AC recovery are verified. Direct fallback, WOL, and scheduled wake still need `--force --apply`. |
+| DXP4800 (`dxp4800`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | System fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. Every write needs `--force --apply`. |
+| DXP4800S (`dxp4800s`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | `sys` fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. PWM is limited to `40..255`; writes need `--force --apply`. |
+| DXP480T Plus (`dxp480tplus`) | UGOS Pro `1.17.0.95`, build `20260630.111337`, kernel `6.12.30+` | Fan readings, `cpu`/`all` PWM, AC recovery, WOL, scheduled wake | CPU writes have physical feedback. The corrected system-pair map, direct fallback, WOL, and scheduled wake await controlled physical validation. |
+| DXP6800 Pro (`dxp6800pro`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | CPU/paired-system fans, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. Every write needs `--force --apply`. |
+| DXP2800 / DXP8800 Plus | none | Model detection only | No hardware-control command is implemented. |
+
+Every operation requires an exact DMI match. No LED write protocol has been
+implemented. The machine-readable [compatibility catalog](models/compatibility.json)
+and [hardware support document](docs/HARDWARE_SUPPORT.md) are the authoritative
+records of evidence and safeguards.
 
 ## Build
 
@@ -60,24 +64,79 @@ For a build-tree run without installing files:
 The last command is the only one that writes the fan register. The script
 does not add --apply itself.
 
-## Commands
+## CLI usage, inputs, and outputs
 
-    ugreenctl models
-    ugreenctl info
-    ugreenctl fan status
-    ugreenctl fan set cpu 120
-    sudo ugreenctl --apply fan set cpu 120
-    sudo ugreenctl --apply fan mode cpu auto
-    ugreenctl power startup get
-    sudo ugreenctl --apply power startup set restore
-    ugreenctl network wol get
-    sudo ugreenctl --force --apply network wol set on
-    ugreenctl power rtc-wake get
-    sudo ugreenctl --force --apply power rtc-wake set 1893452400
+The general command form is:
 
-Writes are previews until --apply is supplied. `--force` acknowledges a
-firmware-reversed write path; it does not bypass exact DMI matching, the active
-vendor-driver guard, or the IT8613 identity check.
+```sh
+ugreenctl [options] <command> [arguments]
+```
+
+Put every option before the command. The CLI identifies the NAS from its exact
+DMI product name; `--model` selects a plugin but never spoofs the identity or
+bypasses the match.
+
+| Input | Meaning |
+| --- | --- |
+| `--plugin-dir <dir>` | Directory containing the model plugins. Use `./build/models` with a build-tree binary; an installed binary uses its install-time default. |
+| `--model <plugin-id>` | Select a discovered plugin explicitly, for example `dxp4800plus`. The exact local DMI name must still match. |
+| `--apply` | Perform a write. Without it, every write command is only a preview. |
+| `--force` | Acknowledge a firmware-reversed or experimental write path when that model requires it. It does not bypass the DMI, controller-owner, chip-ID, lock, or PWM-floor checks. |
+
+| Command and input | Output on success |
+| --- | --- |
+| `models` | One line per plugin: `<plugin-id>  <display name>  <capabilities>`. No NAS hardware is accessed. |
+| `info` | Selected model and controller, then startup/WOL policy and each available fan-status line. A partially unavailable read is reported as a warning on standard error. |
+| `thermal status` | One machine-readable line: `cpu_celsius=<n> cpu_peak_celsius=<n> hdd_celsius=<n> ssd_celsius=<n>`. A value of `-1` means that source was unavailable. |
+| `fan status` | One line per fan: `<fan-id>: pwm=<0-255|unknown> mode=<manual|auto|unknown> tach=<n> rpm=<n>`. |
+| `fan set <fan-id> <pwm>` | `<pwm>` is an integer from `0` to `255`; accepted fan IDs depend on the exact model. The real write output is `<fan-id> fan PWM set to <pwm>`. |
+| `power startup get` | `on`, `off`, `restore`, or `unknown`. |
+| `power startup set <on|off|restore>` | `startup policy set to <policy>` after an applied write. `last` is accepted as an alias for `restore`. |
+| `network wol get` | `on`, `off`, or `unknown`. |
+| `network wol set <on|off>` | `Wake-on-LAN policy set to <policy>` after an applied write. |
+| `power rtc-wake get` | Scheduled wake as a Unix epoch (UTC). |
+| `power rtc-wake set <positive-unix-epoch>` | `RTC wake set to <epoch>` after an applied, forced write. |
+| `power rtc-wake clear` | `RTC wake cleared` after an applied, forced write. |
+
+`led list` is reserved in the command-line interface, but LED control has not
+been verified for any model and currently returns an error.
+
+Fan IDs are deliberately model-specific: DXP4800 Plus/Pro accepts `cpu` and
+`sys`; DXP4800, DXP4800S, and DXP6800 Pro accept `sys` (DXP6800 Pro also
+accepts `cpu`); and DXP480T Plus accepts `cpu` and `all`. Always start with
+`fan status` on the exact NAS before choosing a target.
+
+### Read, preview, then apply
+
+```sh
+# Read-only commands: their values are printed to standard output.
+sudo ugreenctl info
+sudo ugreenctl fan status
+sudo ugreenctl power startup get
+sudo ugreenctl network wol get
+
+# Preview: succeeds without changing hardware.
+ugreenctl fan set cpu 120
+# dry-run: would set the fan PWM
+# rerun with --apply to write hardware state
+
+# Apply a normal verified write (root/CAP_SYS_RAWIO is normally required).
+sudo ugreenctl --apply fan set cpu 120
+# cpu fan PWM set to 120
+
+# Firmware-reversed writes need the additional acknowledgement.
+sudo ugreenctl --force --apply network wol set on
+# Wake-on-LAN policy set to on
+sudo ugreenctl --force --apply power rtc-wake set 1893452400
+# RTC wake set to 1893452400
+```
+
+Successful commands exit with status `0`. Invalid input, an unsupported
+feature, an unmatched model, a missing privilege, or a safety check failure
+returns a non-zero status and writes a descriptive `error: ...` line to
+standard error. Do not parse human-readable status text as a stable API; the
+documented one-line `thermal status` output is the suitable compact status
+format.
 
 DXP4800S has one recovered `sysfan1` channel. The plugin calls it `sys`, and
 exposes a guarded manual range of 40-255:
@@ -99,32 +158,35 @@ as a hardware automatic mode. The recovered register map and validation limits
 are in [docs/DXP6800_PRO_REVERSE_ENGINEERING.md](docs/DXP6800_PRO_REVERSE_ENGINEERING.md).
 
 The stock automatic mode is a user-space `hwmonitor` temperature daemon, not
-an IT8613 hardware-auto switch. This utility currently provides the guarded
-manual primitive; an alternate operating system needs its own temperature
-watchdog before automatic control is claimed.
+an IT8613 hardware-auto switch. `ugreenctl-fand` is this project's guarded
+software-curve replacement: it samples Linux temperatures and submits PWM
+updates through `ugreenctl`. Its configuration inputs, invocation, and
+machine-readable state-file output are documented in
+[docs/FAN_CURVE.md](docs/FAN_CURVE.md).
 
 Scheduled wake uses the firmware-derived Linux RTC path, not a BIOS or LED
 register. It is available only for WOL-mapped exact models and needs
 `--force --apply`; see
 [docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md](docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md).
 
-For DXP480T Plus, the firmware-recovered hwmon write paths have been validated
-on a physical device. Normal hwmon writes require --apply and retain exact DMI matching,
-the vendor-driver conflict guard, the IT8613 identity check, and the PWM floor:
+For DXP480T Plus, the `cpu` write path has physical feedback. The corrected
+firmware-recovered `all` system-pair transaction still awaits controlled
+physical validation. Normal hwmon writes require --apply and retain exact DMI
+matching, the vendor-driver conflict guard, the IT8613 identity check, and the
+PWM floor:
 
     sudo ugreenctl --apply fan set cpu 120
     sudo ugreenctl --apply fan set all 120
 
-With hwmon present, the all target follows the vendor's three-channel transaction
-in vendor order. When `it87` was intentionally unloaded and the `it8613` hwmon
-node is absent, DXP480T Plus uses the stock shared direct PWM output for both
-`cpu` and `all`: control `0x17`, duty `0x73`. Its three tachometers remain
-visible, but sysfan2 has no firmware-proven independent PWM path and is reported
-with unknown PWM/mode. Independent system-fan writes remain hidden. As for the
-other supported direct fallbacks, it refuses to run while any vendor interface or
-`it87` owns the controller, checks chip identity and the process lock, and
-requires `--force --apply`; physical validation of this shared direct all-fans
-path is still pending.
+With hwmon present, the `all` target follows the vendor's two-system-fan
+transaction in vendor order. When `it87` was intentionally unloaded and the
+`it8613` hwmon node is absent, direct `cpu` uses control `0x17`, duty `0x73`;
+direct `all` writes the system pair in order `0x16`/`0x6b`, then `0x1e`/`0x7b`.
+Its three tachometers remain visible, but independent system-fan writes remain
+hidden. The direct path refuses to run while any vendor interface or `it87` owns
+the controller, checks chip identity and the process lock, and requires
+`--force --apply`; physical validation of the corrected system-pair fallback is
+still pending.
 
 ## Safety
 
@@ -165,12 +227,21 @@ exact DMI names, declare a support level, and record firmware evidence. Do not
 promote a profile-only plugin to read-only or supported based on a similar
 model.
 
-## Provenance
+## License, vendor firmware, and evidence
 
-The DXP4800 Plus map is a clean-room reimplementation based on observable
-behavior of UGREEN firmware 1.17.0.95 and its ug_it86x-cpufan.ko interface.
-No vendor driver source or binary is linked or redistributed by this project.
+This repository's own source code and documentation are available under the
+[MIT License](LICENSE). That license applies only to this repository; it does
+not grant rights to UGREEN firmware, drivers, trademarks, or other vendor
+materials.
 
-The DXP4800S map is documented in
-[docs/DXP4800S_REVERSE_ENGINEERING.md](docs/DXP4800S_REVERSE_ENGINEERING.md)
-and remains firmware-reversed until a physical validation record is added.
+Vendor firmware is used only as clean-room analysis evidence. This project
+independently implements observed behavior, interfaces, and register maps; it
+does not link, include, or redistribute vendor driver source, binaries, or
+firmware images. Using this project does not grant permission to copy,
+distribute, or modify vendor firmware.
+
+The firmware version and validation status for every implemented model appear
+in the support matrix above. Detailed evidence is in the
+[hardware support document](docs/HARDWARE_SUPPORT.md), the
+[compatibility catalog](models/compatibility.json), and the model reverse-
+engineering records. This project is not affiliated with or endorsed by UGREEN.

@@ -76,6 +76,41 @@ but both storage sources are unavailable, the daemon writes the configured
 failsafe PWM (255 by default). A lower PWM must remain the desired value for
 `downshift_delay_seconds` before it is written, preventing rapid fan hunting.
 
+## Runtime inputs and state output
+
+`ugreenctl-fand` requires four file-system inputs: `--config` (the root-owned
+configuration above), `--state` (the writable state-file destination),
+`--ugreenctl` (an executable `ugreenctl` binary), and `--plugin-dir` (the
+readable model-plugin directory). Add `--once` to perform one sample-and-apply
+cycle and exit; without it, the process repeats at `interval_seconds`.
+
+The daemon normally has no status output on standard output. Read the state
+file instead; it is atomically replaced after each cycle and has `key=value`
+lines including:
+
+```ini
+timestamp=<unix-epoch>
+model=<plugin-id>
+profile=<custom|stock-*>
+status=<running|failsafe|error|stopped>
+cpu_celsius=<integer>
+cpu_peak_celsius=<integer>
+hdd_celsius=<integer>
+ssd_celsius=<integer>
+desired_pwm=<0-255>
+applied_pwm=<0-255|-1>
+desired_cpu_pwm=<0-255>
+desired_system_pwm=<0-255>
+applied_cpu_pwm=<0-255|-1>
+applied_system_pwm=<0-255|-1>
+detail=<diagnostic text>
+```
+
+`-1` for an applied value means the daemon has not successfully applied that
+channel in its current run. Startup, configuration, DMI/profile, locking, and
+write errors are printed as `error: ...` to standard error and produce a
+non-zero exit status; a successful `--once` run exits with status `0`.
+
 Typical direct use is:
 
 ```sh
