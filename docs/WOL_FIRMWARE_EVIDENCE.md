@@ -40,13 +40,21 @@ shell, and never touches the LED path. Each model retains its firmware-derived
 two-port map in `network/wol_<model>.c`.
 
 At runtime, the firmware names are used only when they resolve to physical PCI
-Ethernet adapters. If an alternative OS such as FNOS renames both adapters,
-`ugreenctl` discovers exactly the same number of physical PCI Ethernet
-adapters, sorts them by PCI slot, and then uses their driver-provided ethtool
-WOL interface. It refuses an ambiguous adapter count and excludes bridges,
-Docker/veth devices, and other virtual interfaces; it never guesses an `enp*`
-name. Before a write, it checks magic-packet support on both resolved NICs,
-writes both, then reads both back and rejects a mixed or mismatched state.
+Ethernet adapters. An alternative OS such as FNOS can rename them; `ugreenctl`
+then discovers the documented number of physical PCI Ethernet adapters, sorts
+them by PCI slot, and uses their driver-provided ethtool WOL interface. It
+rejects an ambiguous adapter count and excludes bridges, Docker/veth devices,
+Wi-Fi, and other virtual interfaces; it never guesses an `enp*` name.
+
+The exact DXP480T Plus DMI name has a documented physical FNOS observation:
+one wired PCI Ethernet controller, Aquantia AQC113 at `0000:73:00.0`, renamed
+to `enp115s0`. Its driver reported `Supports Wake-on: pg` and `Wake-on: g`.
+The stock `eth0`/`eth1` map is still preferred if both names resolve; only when
+they are absent, this model accepts exactly one physical PCI Ethernet adapter.
+It rejects zero or more than one in that fallback, so the observation cannot
+silently remap another topology. Before a write, every resolved adapter must
+support magic packets; the result is then read back and a mixed or mismatched
+state is rejected.
 
 All WOL writes require the normal `--apply` action gate and `--force`, because
 WOL persistence through shutdown, reboot, and AC loss has not been physically
@@ -57,6 +65,6 @@ ugreenctl --model dxp480tplus network wol get
 sudo ugreenctl --model dxp480tplus --force --apply network wol set on
 ```
 
-Physical validation must confirm each NIC's WOL capability, a magic-packet
-wake after shutdown, and persistence across reboot and AC removal before the
-capability is promoted from `reverse-engineered`.
+Physical validation must confirm each resolved NIC's magic-packet wake after
+shutdown and persistence across reboot and AC removal before the capability is
+promoted from `reverse-engineered`.

@@ -155,6 +155,11 @@
           "firmware": "1.17.0.95",
           "method": "Module inventory from kernel.squashfs.",
           "scope": "N76E003 I2C/SMBus LED MCU identified; no LED write protocol exposed."
+        },
+        {
+          "firmware": "FNOS kernel 6.18.18.c938-trim",
+          "method": "Read-only physical DXP480T Plus report supplied to the LLLED_FPK project on 2026-07-23.",
+          "scope": "One wired PCI Ethernet controller was present: Aquantia AQC113 at 0000:73:00.0, renamed enp115s0. The atlantic driver reported Supports Wake-on: pg and Wake-on: g. With the stock eth0/eth1 names absent, only this exact model accepts one renamed physical PCI Ethernet interface; magic-packet wake after shutdown is still unvalidated."
         }
       ]
     },

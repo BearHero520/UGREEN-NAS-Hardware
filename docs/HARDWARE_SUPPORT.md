@@ -106,8 +106,14 @@ curve. The system-pair write map is firmware-reversed pending a new physical
 validation record. See
 [DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md](DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md).
 
-WOL follows the stock `eth0`/`eth1` map but remains firmware-reversed, so it
-requires `--force --apply` pending a separate physical WOL validation.
+The stock daemon calls `eth0` and `eth1`. A read-only FNOS report for the exact
+DXP480T Plus DMI name found one wired PCI adapter, an Aquantia AQC113 renamed
+to `enp115s0`, with `Supports Wake-on: pg` and `Wake-on: g`. The plugin still
+prefers the stock names when both are physical. When they are absent, this model
+alone accepts exactly one renamed physical PCI Ethernet adapter; two or any
+other count remains rejected. The policy read is physically observed, but a
+magic-packet wake after shutdown and persistence remain unvalidated, so writes
+still require `--force --apply`.
 
 ## DXP6800 Pro
 

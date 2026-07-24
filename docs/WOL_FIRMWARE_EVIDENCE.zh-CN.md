@@ -44,5 +44,15 @@ ugreenctl --model dxp480tplus network wol get
 sudo ugreenctl --model dxp480tplus --force --apply network wol set on
 ```
 
+## DXP480T Plus 的 FNOS 实机记录
+
+2026-07-23 收到的只读实机记录确认：精确 DMI `DXP480T Plus` 在 FNOS
+`6.18.18.c938-trim` 下仅暴露一张有线 PCI 网卡，Aquantia AQC113
+`0000:73:00.0`，接口名为 `enp115s0`；`atlantic` 驱动报告
+`Supports Wake-on: pg`、`Wake-on: g`。原厂 `eth0`/`eth1` 名称仍优先；仅当
+两者都不存在时，该精确机型允许安全识别**恰好一张**物理 PCI 有线网卡，零张或多于
+一张仍拒绝，绝不根据接口名猜测。该记录只确认策略读取与网卡能力，关机后的实际
+Magic Packet 唤醒及重启、断电后的持久性仍待验证。
+
 在升级为已验证能力前，需逐机确认两块网卡均支持 WOL、关机后 Magic Packet
 可唤醒，以及重启和断电恢复后仍能保持设置。

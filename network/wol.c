@@ -147,6 +147,7 @@ static int discover_renamed_interfaces(size_t expected_count,
 
 static int select_interfaces(const char * const *firmware_interfaces,
                              size_t firmware_interface_count,
+                             size_t renamed_interface_count,
                              char names[][IFNAMSIZ], const char **interfaces,
                              size_t *interface_count,
                              char *error, size_t error_size)
@@ -157,6 +158,12 @@ static int select_interfaces(const char * const *firmware_interfaces,
     if (result != 0) {
         return result;
     }
+    if (renamed_interface_count == 0 ||
+        renamed_interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES) {
+        (void)snprintf(error, error_size,
+                       "invalid renamed Wake-on-LAN interface count for this model");
+        return -EINVAL;
+    }
     if (mapped_interfaces_are_present_and_physical(firmware_interfaces,
                                                     firmware_interface_count)) {
         memcpy(interfaces, firmware_interfaces,
@@ -164,7 +171,7 @@ static int select_interfaces(const char * const *firmware_interfaces,
         *interface_count = firmware_interface_count;
         return 0;
     }
-    return discover_renamed_interfaces(firmware_interface_count, names, interfaces,
+    return discover_renamed_interfaces(renamed_interface_count, names, interfaces,
                                        interface_count, error, error_size);
 }
 
@@ -210,9 +217,11 @@ static int query_interface(int fd, const char *interface, struct ethtool_wolinfo
     return 0;
 }
 
-int ugreenctl_wol_read_policy(const char * const *interfaces, size_t interface_count,
-                              enum ugreenctl_wol_policy *policy,
-                              char *error, size_t error_size)
+int ugreenctl_wol_read_policy_with_renamed_count(const char * const *interfaces,
+                                                 size_t interface_count,
+                                                 size_t renamed_interface_count,
+                                                 enum ugreenctl_wol_policy *policy,
+                                                 char *error, size_t error_size)
 {
     char runtime_names[UGREENCTL_WOL_MAX_RUNTIME_INTERFACES][IFNAMSIZ] = {{0}};
     const char *mapped_interfaces[UGREENCTL_WOL_MAX_RUNTIME_INTERFACES] = {NULL};
@@ -225,11 +234,13 @@ int ugreenctl_wol_read_policy(const char * const *interfaces, size_t interface_c
         (void)snprintf(error, error_size, "Wake-on-LAN policy output is required");
         return -EINVAL;
     }
-    if (interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES) {
+    if (interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES ||
+        renamed_interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES) {
         (void)snprintf(error, error_size, "too many Wake-on-LAN interfaces are mapped for this model");
         return -E2BIG;
     }
-    result = select_interfaces(interfaces, interface_count, runtime_names, mapped_interfaces,
+    result = select_interfaces(interfaces, interface_count, renamed_interface_count,
+                               runtime_names, mapped_interfaces,
                                &interface_count, error, error_size);
     if (result != 0) {
         return result;
@@ -264,9 +275,20 @@ int ugreenctl_wol_read_policy(const char * const *interfaces, size_t interface_c
     return 0;
 }
 
-int ugreenctl_wol_set_policy(const char * const *interfaces, size_t interface_count,
-                             enum ugreenctl_wol_policy policy,
-                             char *error, size_t error_size)
+int ugreenctl_wol_read_policy(const char * const *interfaces, size_t interface_count,
+                              enum ugreenctl_wol_policy *policy,
+                              char *error, size_t error_size)
+{
+    return ugreenctl_wol_read_policy_with_renamed_count(interfaces, interface_count,
+                                                         interface_count, policy,
+                                                         error, error_size);
+}
+
+int ugreenctl_wol_set_policy_with_renamed_count(const char * const *interfaces,
+                                                size_t interface_count,
+                                                size_t renamed_interface_count,
+                                                enum ugreenctl_wol_policy policy,
+                                                char *error, size_t error_size)
 {
     char runtime_names[UGREENCTL_WOL_MAX_RUNTIME_INTERFACES][IFNAMSIZ] = {{0}};
     const char *mapped_interfaces[UGREENCTL_WOL_MAX_RUNTIME_INTERFACES] = {NULL};
@@ -283,11 +305,13 @@ int ugreenctl_wol_set_policy(const char * const *interfaces, size_t interface_co
         (void)snprintf(error, error_size, "Wake-on-LAN policy must be on or off");
         return -EINVAL;
     }
-    if (interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES) {
+    if (interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES ||
+        renamed_interface_count > UGREENCTL_WOL_MAX_RUNTIME_INTERFACES) {
         (void)snprintf(error, error_size, "too many Wake-on-LAN interfaces are mapped for this model");
         return -E2BIG;
     }
-    result = select_interfaces(interfaces, interface_count, runtime_names, mapped_interfaces,
+    result = select_interfaces(interfaces, interface_count, renamed_interface_count,
+                               runtime_names, mapped_interfaces,
                                &interface_count, error, error_size);
     if (result != 0) {
         return result;
@@ -336,4 +360,13 @@ int ugreenctl_wol_set_policy(const char * const *interfaces, size_t interface_co
         return -EIO;
     }
     return 0;
+}
+
+int ugreenctl_wol_set_policy(const char * const *interfaces, size_t interface_count,
+                             enum ugreenctl_wol_policy policy,
+                             char *error, size_t error_size)
+{
+    return ugreenctl_wol_set_policy_with_renamed_count(interfaces, interface_count,
+                                                        interface_count, policy,
+                                                        error, error_size);
 }
