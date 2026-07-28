@@ -10,7 +10,7 @@
 #include "power/rtc_wake.h"
 #include "ugreenctl.h"
 
-#define UGREENCTL_VERSION "0.1.0"
+#define UGREENCTL_VERSION "0.2.0"
 
 struct cli_options {
     const char *model_directory;
