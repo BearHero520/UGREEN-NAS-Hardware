@@ -32,6 +32,7 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_direct.c
   fan/it8613_hwmon.c
   fan/it8613_fan.c
+  fan/it8613_dx4600.c
   fan/it8613_dxp4800.c
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
@@ -40,6 +41,7 @@ add_library(ugreenctl_hardware STATIC
   power/it8613_power.c
   power/rtc_wake.c
   network/wol.c
+  network/wol_dx4600.c
   network/wol_dxp4800.c
   network/wol_dxp4800plus.c
   network/wol_dxp4800s.c
@@ -86,6 +88,7 @@ function(add_model_plugin target source)
   )
 endfunction()
 
+add_model_plugin(dx4600 models/dx4600.c)
 add_model_plugin(dxp4800plus models/dxp4800plus.c)
 add_model_plugin(dxp4800s models/dxp4800s.c)
 add_model_plugin(dxp480tplus models/dxp480tplus.c)
@@ -97,7 +100,7 @@ add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
 install(TARGETS ugreenctl ugreenctl-fand RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp8800plus
+install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp8800plus
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
@@ -108,6 +111,7 @@ install(FILES
   docs/COMPATIBILITY.zh-CN.md
   docs/DXP4800S_REVERSE_ENGINEERING.md
   docs/DXP4800_REVERSE_ENGINEERING.md
+  docs/DX4600_REVERSE_ENGINEERING.zh-CN.md
   docs/WOL_FIRMWARE_EVIDENCE.md
   docs/WOL_FIRMWARE_EVIDENCE.zh-CN.md
   docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md
@@ -115,6 +119,7 @@ install(FILES
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
   docs/DXP4800S_INTAKE.md
+  docs/DX4600_INTAKE.md
   docs/FAN_CURVE.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
@@ -161,8 +166,29 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp4800 COMMAND test-it8613-dxp4800)
+  add_executable(test-it8613-dx4600
+    tests/test_it8613_dx4600.c
+    fan/it8613_dx4600.c
+  )
+  target_include_directories(test-it8613-dx4600 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dx4600 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dx4600 COMMAND test-it8613-dx4600)
+  add_executable(test-dx4600-plugin
+    tests/test_dx4600_plugin.c
+    models/dx4600.c
+  )
+  target_include_directories(test-dx4600-plugin PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-dx4600-plugin PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME dx4600-plugin COMMAND test-dx4600-plugin)
   add_executable(test-wol-dxp4800
     tests/test_wol_dxp4800.c
+    network/wol_dx4600.c
     network/wol_dxp4800.c
     network/wol_dxp4800plus.c
     network/wol_dxp4800s.c

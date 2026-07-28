@@ -186,6 +186,64 @@
       "evidence": []
     },
     {
+      "id": "dx4600",
+      "plugin": "dx4600.so",
+      "marketing_names": [
+        "UGREEN DX4600",
+        "UGREEN DX4600+",
+        "UGREEN DX4600 Pro"
+      ],
+      "dmi_product_names": [
+        "DX4600",
+        "DX4600+",
+        "DX4600 Pro"
+      ],
+      "support_level": "reverse-engineered",
+      "write_requirements": [
+        "exact DMI product name DX4600, DX4600+, or DX4600 Pro",
+        "--force experimental acknowledgement",
+        "--apply",
+        "IT8613 identity check for fan and AC-recovery operations",
+        "vendor /proc/it86 and ug_it86x_sio controller owner must be inactive for direct fan fallback",
+        "manual fan PWM 40-255",
+        "magic-packet Wake-on-LAN support on firmware-mapped eth0 and eth1"
+      ],
+      "controller": {
+        "transport": "Linux hwmon with guarded direct Super I/O fallback; Linux ethtool for WOL",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613",
+        "hwmon_name": "it8613"
+      },
+      "capabilities": {
+        "fan_rpm": "reverse-engineered",
+        "fan_pwm_write": "reverse-engineered",
+        "fan_pwm_readback": "reverse-engineered",
+        "fan_automatic_service": "reverse-engineered",
+        "fan_stop": "blocked",
+        "led": "unverified",
+        "beeper": "unverified",
+        "sata_presence": "unverified",
+        "power_recovery": "reverse-engineered",
+        "wake_on_lan": "reverse-engineered"
+      },
+      "known_conflicts": [
+        "The vendor /proc/it86 interface, ug_it86x_sio module, or stock hwmonitor service must not access the Super I/O controller concurrently.",
+        "The generic it87 driver may remain loaded while its name=it8613 hwmon node is used; it must be unloaded before direct fan fallback.",
+        "The firmware establishes eth0 and eth1 for WOL; if both names are absent, the shared resolver requires exactly two physical PCI Ethernet adapters and rejects any other count.",
+        "The bound leds_mcu_28a48 driver owns the LED MCU; direct I2C writes are not exposed."
+      ],
+      "evidence": [
+        {
+          "firmware": "Official UGOS Pro 1.17.0.0095, build 20260630.111337, kernel 6.12.30+",
+          "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
+          "it8613_module_sha256": "4d3864794d9cdec926b666878aed4431f80b69108acceadfa21322245f1393f4",
+          "hwmonitor_sha256": "866c37a88a58917aaf7eb02a1f037847e63214d1c83d196253b92ad566147d6f",
+          "method": "Static clean-room reverse engineering of the official DX4600 routes in hwmonitor.sh, ug-load-drive.sh, dx4600.conf, hwmonitor, ug_it86x-sio.ko, and the firmware product tables.",
+          "scope": "Exact DX4600, DX4600+, and DX4600 Pro product strings; one system-fan IT8613 path; AC-recovery registers; stock mode-2 user-space fan curve; magic-packet WOL on eth0 and eth1. No physical write validation."
+        }
+      ]
+    },
+    {
       "id": "dxp4800",
       "plugin": "dxp4800.so",
       "marketing_names": [

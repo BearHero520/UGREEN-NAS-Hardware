@@ -523,7 +523,8 @@ static char *trim(char *text)
 
 static bool profile_is_valid(const char *profile)
 {
-    return strcmp(profile, "custom") == 0 || strcmp(profile, "stock-4800") == 0 ||
+    return strcmp(profile, "custom") == 0 || strcmp(profile, "stock-4600") == 0 ||
+           strcmp(profile, "stock-4800") == 0 ||
            strcmp(profile, "stock-4800s") == 0 ||
            strcmp(profile, "stock-4800plus") == 0 ||
            strcmp(profile, "stock-480tplus") == 0 ||
@@ -540,7 +541,16 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
     config->ssd_curve_enabled = true;
     config->system_cpu_floor_enabled = false;
 
-    if (strcmp(config->profile, "stock-4800") == 0) {
+    if (strcmp(config->profile, "stock-4600") == 0) {
+        /* DX4600 ships with fan.conf mode 2.  The vendor daemon applies that
+         * mode by lowering every stop/start point 5 C and raising the mid/full
+         * PWM points by 24 before evaluating the curve. */
+        config->cpu = (struct ugreenctl_curve_thresholds){40, 45, 70, 80, 90};
+        config->hdd = (struct ugreenctl_curve_thresholds){30, 35, 50, 55, 70};
+        config->ssd = (struct ugreenctl_curve_thresholds){35, 40, 55, 65, 70};
+        config->system_pwm = (struct ugreenctl_curve_pwm_points){64, 152, 228, 255};
+        config->cpu_pwm = config->system_pwm;
+    } else if (strcmp(config->profile, "stock-4800") == 0) {
         config->cpu = (struct ugreenctl_curve_thresholds){45, 50, 70, 75, 85};
         config->hdd = (struct ugreenctl_curve_thresholds){35, 40, 45, 50, 65};
         config->ssd = (struct ugreenctl_curve_thresholds){40, 45, 55, 60, 65};

@@ -6,7 +6,7 @@ firmware, not a physical validation record.
 
 ## Inputs
 
-The supplied official image files `4800.img`, `4800plus.img`,
+The supplied official image files `4600.img`, `4800.img`, `4800plus.img`,
 `4800s/release_*.img`, and `480t/release_*.img` all contain the same universal
 UGOS Pro image:
 
@@ -21,13 +21,16 @@ counterparts, gated by `power.wake_on`.
 
 | Exact runtime DMI product name | Stock daemon chosen by firmware | Daemon SHA-256 | Firmware WOL interface map |
 | --- | --- | --- | --- |
+| `DX4600` / `DX4600+` / `DX4600 Pro` | `hwmonitor` through the `DX4600` stock route | `866c37a88a58917aaf7eb02a1f037847e63214d1c83d196253b92ad566147d6f` | `eth0`, `eth1` |
 | `DXP4800` | `hwmonitor-amd` | `4718169d5f2e462991e3480cc8100fba8c5bd38f6a6cbfdb6de65c7c7a3079c0` | `eth0`, `eth1` |
 | `DXP4800S` | `hwmonitor` | `866c37a88a58917aaf7eb02a1f037847e63214d1c83d196253b92ad566147d6f` | `eth0`, `eth1` |
 | `DXP4800 Plus` / `DXP4800 Pro` | `hwmonitor-480t` | `ab14a9602e208bb9e13f43b18a7ec6b8fb18cc6242f1ca3ab1a1b5fc9db1242a` | `eth0`, `eth1` |
 | `DXP480T Plus` | `hwmonitor-480t` | `ab14a9602e208bb9e13f43b18a7ec6b8fb18cc6242f1ca3ab1a1b5fc9db1242a` | `eth0`, `eth1` |
 | `DXP6800 Pro` | `hwmonitor-480t` through the `DXP6800` stock route | `ab14a9602e208bb9e13f43b18a7ec6b8fb18cc6242f1ca3ab1a1b5fc9db1242a` | `eth0`, `eth1` |
 
-`ug-load-drive.sh` independently confirms the exact `DXP4800S`,
+The firmware product tables confirm the exact `DX4600`, `DX4600+`, and
+`DX4600 Pro` strings. `ug-load-drive.sh` independently confirms the `DX4600`
+prefix route and the exact `DXP4800S`,
 `DXP4800 Plus`, `DXP4800 Pro`, `DXP480T*`, and `DXP6800*` product routes.
 The runtime plugins intentionally accept only their documented exact DMI names;
 the firmware's prefix tests are not reproduced as fuzzy matching.
@@ -55,6 +58,13 @@ It rejects zero or more than one in that fallback, so the observation cannot
 silently remap another topology. Before a write, every resolved adapter must
 support magic packets; the result is then read back and a mixed or mismatched
 state is rejected.
+
+The [official DX4600-family specification](https://www.ugnas.com/products-detail/id-22.html)
+identifies two wired 2.5GbE ports. Accordingly, the `dx4600` route explicitly
+sets its renamed-interface count to two. On fnOS, if `eth0` and `eth1` are
+both absent, the resolver selects exactly two physical PCI Ethernet adapters
+in stable PCI order. It rejects one, more than two, or any topology containing
+only virtual/bond/bridge interfaces; no `enp*` name is hard-coded.
 
 All WOL writes require the normal `--apply` action gate and `--force`, because
 WOL persistence through shutdown, reboot, and AC loss has not been physically

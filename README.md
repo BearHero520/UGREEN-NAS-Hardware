@@ -18,6 +18,7 @@ not a promise that an untested firmware upgrade has the same behavior.
 
 | Exact model (plugin) | Firmware evidence implemented | Available functions | Validation status |
 | --- | --- | --- | --- |
+| DX4600 / DX4600+ / DX4600 Pro (`dx4600`) | Official UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | `sys` fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. PWM is limited to `40..255`; writes need `--force --apply`. |
 | DXP4800 Plus / DXP4800 Pro (`dxp4800plus`) | `1.17.0.95` | CPU/system fan readings and PWM, AC recovery, WOL, scheduled wake | Normal hwmon fan control and AC recovery are verified. Direct fallback, WOL, and scheduled wake still need `--force --apply`. |
 | DXP4800 (`dxp4800`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | System fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. Every write needs `--force --apply`. |
 | DXP4800S (`dxp4800s`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | `sys` fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. PWM is limited to `40..255`; writes need `--force --apply`. |
@@ -144,6 +145,25 @@ exposes a guarded manual range of 40-255:
     sudo ugreenctl --force --apply fan set sys 120
     sudo ugreenctl --force --apply power startup set restore
 
+DX4600, DX4600+, and DX4600 Pro use their own firmware-derived single-fan map
+and the same guarded `sys` target. The three exact DMI names select the
+`dx4600` plugin; prefix matching is not used:
+
+    sudo ugreenctl --force --apply fan set sys 120
+    sudo ugreenctl --force --apply power startup set restore
+    sudo ugreenctl --force --apply network wol set on
+
+The recovered `stock-4600` profile preserves the official daemon's effective
+mode-2 thresholds and PWM points through `ugreenctl-fand`, while retaining the
+project's non-stop safety floor. LED, beeper, and SATA MMIO operations are not
+exposed.
+
+On fnOS, WOL does not depend on a literal `eth0`/`eth1`. If both stock names
+are absent, the DX4600 route enumerates physical PCI Ethernet adapters, rejects
+virtual/bond/bridge devices, requires the official two-port topology, sorts by
+PCI address, and verifies Magic Packet support and post-write state. Any other
+physical-adapter count is rejected.
+
 DXP6800 Pro is firmware-reversed and has not yet had a physical write
 validation. It exposes the stock CPU path and the stock paired-system-fan path;
 both still require `--force --apply`:
@@ -195,14 +215,14 @@ still pending.
 - Each controller access takes an advisory lock at
   /run/ugreenctl-it8613.lock.
 - Direct I/O requires root or CAP_SYS_RAWIO.
-- Manual PWM disables hardware automatic control for that channel. DXP4800S
-  stock automatic control is software-based, so stop or replace the stock
-  daemon before manual use and keep temperatures independently monitored.
+- Manual PWM disables hardware automatic control for that channel. DX4600 and
+  DXP4800S stock automatic control is software-based, so stop or replace the
+  stock daemon before manual use and keep temperatures independently monitored.
 
 Before use outside UGREEN NAS firmware, unload the vendor module if it is
 active:
 
-    sudo modprobe -r ug_it86x_sio       # DXP4800S / DXP4800 branch
+    sudo modprobe -r ug_it86x_sio       # DX4600 / DXP4800S / DXP4800 branch
     sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T / DXP6800 branch
 
 ## Plugin ABI

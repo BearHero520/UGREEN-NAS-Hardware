@@ -115,6 +115,35 @@ other count remains rejected. The policy read is physically observed, but a
 magic-packet wake after shutdown and persistence remain unvalidated, so writes
 still require `--force --apply`.
 
+## DX4600 / DX4600+ / DX4600 Pro
+
+The `dx4600` plugin matches only the official-firmware product strings
+`DX4600`, `DX4600+`, and `DX4600 Pro`. UGOS Pro 1.17.0.0095 routes this family
+to a single-fan ITE IT8613 controller, an HT32F52231-family LED MCU driver, a
+PC-speaker/SATA-status module, and the generic userspace `hwmonitor` daemon.
+
+Recovered static hardware routes include:
+
+- IT8613 config ports `0x2e/0x2f`, HWM ports `0xa35/0xa36`, LDN `0x04`
+- Single fan control/PWM `0x17/0x73`, tachometer `0x1a/0x0f`
+- AC recovery policy registers `0xf2/0xf4`
+- LED MCU on I2C/SMBus address `0x3a`
+- Four SATA-present MMIO status addresses and a legacy PC-speaker beeper path
+
+The plugin exposes the `sys` fan, AC-recovery policy, and the firmware-mapped
+`eth0`/`eth1` WOL route. It prefers a dynamic `name=it8613` hwmon node and
+falls back to the model-specific direct map only when that node is absent.
+Direct access requires no vendor or `it87` owner, IT8613 identity, the process
+lock, a `40..255` PWM, and verified manual-mode/PWM readback. All fan,
+AC-recovery, WOL, and software-curve writes require exact DMI matching and
+`--force --apply` until physical validation is available.
+
+The stock automatic fan policy is the userspace `stock-4600` software curve,
+not an IT8613 hardware automatic mode. LED, beeper, and SATA MMIO operations
+remain unexposed. See
+[DX4600_REVERSE_ENGINEERING.zh-CN.md](DX4600_REVERSE_ENGINEERING.zh-CN.md)
+and [DX4600_INTAKE.md](DX4600_INTAKE.md).
+
 ## DXP6800 Pro
 
 The `dxp6800pro` plugin matches only the exact DMI product name `DXP6800 Pro`.
@@ -142,8 +171,8 @@ also requires `--force --apply` until physically validated.
 
 ## Firmware-derived Wake-on-LAN
 
-The exact WOL routes for DXP4800, DXP4800S, DXP4800 Plus/Pro, DXP480T Plus,
-and DXP6800 Pro are documented in
+The exact WOL routes for DX4600/DX4600+/DX4600 Pro, DXP4800, DXP4800S,
+DXP4800 Plus/Pro, DXP480T Plus, and DXP6800 Pro are documented in
 [WOL_FIRMWARE_EVIDENCE.md](WOL_FIRMWARE_EVIDENCE.md). WOL is a NIC ethtool
 operation, not a BIOS or LED control operation.
 

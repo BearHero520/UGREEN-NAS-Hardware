@@ -17,10 +17,11 @@ readback therefore still apply to every update.
 ## Recovered vendor profiles
 
 The following points were read from the vendor universal image supplied for
-DXP480T Plus, DXP6800 Pro, DXP4800S and DXP4800 Plus. All four files have the
+DX4600, DXP480T Plus, DXP6800 Pro, DXP4800S and DXP4800 Plus. All files have the
 same SHA-256 (`7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0`).
 Its `hwmonitor-480t` binary selects the corresponding `/etc/default/*.conf`
-file by exact DMI product name; the generic `hwmonitor` selects DXP4800S.
+file by exact DMI product name; the generic `hwmonitor` selects DXP4800S and
+the DX4600 family.
 
 `stop / start / mid / full / max` below are degrees Celsius. `sys` and `CPU`
 are the vendor PWM points for those channels. The daemon preserves the points
@@ -28,11 +29,19 @@ and linearly interpolates between them; it never writes a stop/zero PWM.
 
 | DMI product | Profile | CPU thresholds | HDD thresholds | NVMe thresholds | System PWM | CPU PWM |
 | --- | --- | --- | --- | --- | --- | --- |
+| DX4600 / DX4600+ / DX4600 Pro | `stock-4600` | 40 / 45 / 70 / 80 / 90 | 30 / 35 / 50 / 55 / 70 | 35 / 40 / 55 / 65 / 70 | 64 / 152 / 228 / 255 | same channel |
 | DXP4800 | `stock-4800` | 45 / 50 / 70 / 75 / 85 | 35 / 40 / 45 / 50 / 65 | 40 / 45 / 55 / 60 / 65 | 64 / 128 / 204 / 255 | same channel |
 | DXP4800S | `stock-4800s` | 50 / 55 / 75 / 80 / 90 | 40 / 45 / 50 / 55 / 70 | 45 / 50 / 60 / 65 / 70 | 64 / 128 / 204 / 255 | same channel |
 | DXP4800 Plus / Pro | `stock-4800plus` | 42 / 50 / 70 / 78 / 90 | 30 / 40 / 46 / 52 / 55 | 50 / 55 / 60 / 65 / 70 | 65 / 125 / 200 / 235 | 60 / 125 / 205 / 230 |
 | DXP480T Plus | `stock-480tplus` | 25 / 55 / 75 / 85 / 95 | disabled (0 / 0 / 0 / 0 / 0) | 40 / 50 / 60 / 70 / 80 | 55 / 90 / 110 / 128 | 70 / 130 / 150 / 200 |
 | DXP6800 Pro | `stock-6800pro` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
+
+DX4600 ships with `/etc/fan.conf` mode 2. The vendor daemon lowers every
+configured stop/start threshold by 5°C and raises the mid/full PWM points by
+24 in that mode. The `stock-4600` row records those effective runtime values,
+not merely the unadjusted `dx4600.conf` text. As with every stock profile,
+`ugreenctl-fand` does not reproduce the vendor PWM 0 stop or PWM 25
+pre-start point; it clamps the calculated target to the safe non-stop floor.
 
 DXP4800 Plus/Pro also has a vendor system-fan CPU floor of 65°C → PWM 100 and
 90°C → PWM 205. DXP6800 Pro uses 65°C → PWM 125 and 90°C → PWM 220. The

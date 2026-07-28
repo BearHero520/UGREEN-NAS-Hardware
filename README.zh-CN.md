@@ -16,6 +16,7 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 
 | 精确机型（插件） | 已实现的原厂固件依据 | 已接入的功能 | 当前状态 |
 | --- | --- | --- | --- |
+| DX4600 / DX4600+ / DX4600 Pro (`dx4600`) | 官方 UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | `sys` 风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；PWM 安全范围为 `40..255`，写入需 `--force --apply`。 |
 | DXP4800 Plus / DXP4800 Pro (`dxp4800plus`) | `1.17.0.95` | CPU/系统风扇读取与 PWM、来电启动策略、WOL、计划唤醒 | 常规 hwmon 风扇与来电启动已验证；直控兜底、WOL 和计划唤醒仍需 `--force --apply`。 |
 | DXP4800 (`dxp4800`) | UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | 系统风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；所有写入均需 `--force --apply`。 |
 | DXP4800S (`dxp4800s`) | UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | `sys` 风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；PWM 安全范围为 `40..255`，写入需 `--force --apply`。 |
@@ -145,6 +146,21 @@ DXP4800S 只有一个已恢复的 `sysfan1` 通道，插件命名为 `sys`。当
     sudo ugreenctl --force --apply fan set sys 120
     sudo ugreenctl --force --apply power startup set restore
 
+DX4600、DX4600+、DX4600 Pro 使用各自固件证据对应的单风扇映射，并统一提供
+受保护的 `sys` 目标。只有这三个精确 DMI 名称会选择 `dx4600` 插件，不使用前缀匹配：
+
+    sudo ugreenctl --force --apply fan set sys 120
+    sudo ugreenctl --force --apply power startup set restore
+    sudo ugreenctl --force --apply network wol set on
+
+`stock-4600` 配置通过 `ugreenctl-fand` 保留官方守护进程默认 `mode=2` 的实际阈值和
+PWM 点，同时继续执行本项目禁止停转的安全下限。LED、蜂鸣器与 SATA MMIO 操作均未开放。
+
+在飞牛 OS 下，WOL 不依赖字面上的 `eth0`/`eth1`。两个原厂名称都不存在时，
+DX4600 路由会枚举物理 PCI 有线网卡，排除虚拟、bond 和 bridge 设备，要求符合
+官方双网口拓扑，按 PCI 地址排序，并检查 Magic Packet 能力及写后状态；物理网卡
+数量不是两张时直接拒绝。
+
 DXP6800 Pro 已从固件恢复、但尚未完成实机写入验证。它提供原厂 CPU 路径以及原厂的
 成对系统风扇路径，两者均必须使用 `--force --apply`：
 
@@ -181,12 +197,12 @@ hwmon 存在时，`all` 对应原厂 `set` 命令，按原厂顺序写入两个�
   寄存器。
 - 每次控制器访问都会使用 /run/ugreenctl-it8613.lock 进行进程锁定。
 - 直接端口 I/O 需要 root 或 CAP_SYS_RAWIO。
-- 手动 PWM 会关闭对应通道的硬件自动位。DXP4800S 的原厂自动控制是软件守护进程，
-  手动接管前必须停止或替代原厂守护，并保持独立温度监控。
+- 手动 PWM 会关闭对应通道的硬件自动位。DX4600 与 DXP4800S 的原厂自动控制是
+  软件守护进程，手动接管前必须停止或替代原厂守护，并保持独立温度监控。
 
 如果你在原厂 NAS 固件之外运行该工具，且原厂模块已加载，先卸载它：
 
-    sudo modprobe -r ug_it86x_sio       # DXP4800S / DXP4800 分支
+    sudo modprobe -r ug_it86x_sio       # DX4600 / DXP4800S / DXP4800 分支
     sudo modprobe -r ug_it86x_cpufan    # DXP4800 Plus / DXP480T / DXP6800 分支
 
 ## 后续增加机型

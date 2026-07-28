@@ -19,6 +19,11 @@ the separately firmware-mapped WOL capability, requires `--force --apply` for
 writes, discovers a Linux `wakealarm` interface, clears before setting, and
 verifies readback. It does not write Super-I/O or LED registers.
 
+RTC scheduled wake does not read or configure a network interface and is
+therefore unaffected by fnOS interface renaming. The WOL capability is used
+only as a conservative model-eligibility gate; the wake transaction itself is
+performed exclusively through the discovered Linux RTC `wakealarm` node.
+
 Linux exposes an empty `wakealarm` file when no alarm is armed. `ugreenctl`
 reports that state as epoch `0` (disabled), rather than treating it as a broken
 RTC interface.

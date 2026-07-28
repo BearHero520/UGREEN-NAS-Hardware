@@ -5,7 +5,7 @@ Pro 固件的静态、净室逆向，不等同于实机验证。
 
 ## 输入与机型路由
 
-提供的 `4800.img`、`4800plus.img`、`4800s/release_*.img`、
+提供的 `4600.img`、`4800.img`、`4800plus.img`、`4800s/release_*.img`、
 `480t/release_*.img` 都是同一通用 UGOS Pro 镜像，SHA-256 为
 `7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0`。
 镜像版本为 UGOS Pro `1.17.0.0095`（build `20260630.111337`）。原始镜像
@@ -17,13 +17,16 @@ Pro 固件的静态、净室逆向，不等同于实机验证。
 
 | 精确 DMI product name | 原厂守护进程 | 固件接口映射 |
 | --- | --- | --- |
+| `DX4600` / `DX4600+` / `DX4600 Pro` | `hwmonitor`（`DX4600` 原厂路由） | `eth0`、`eth1` |
 | `DXP4800` | `hwmonitor-amd` | `eth0`、`eth1` |
 | `DXP4800S` | `hwmonitor` | `eth0`、`eth1` |
 | `DXP4800 Plus` / `DXP4800 Pro` | `hwmonitor-480t` | `eth0`、`eth1` |
 | `DXP480T Plus` | `hwmonitor-480t` | `eth0`、`eth1` |
 | `DXP6800 Pro` | `hwmonitor-480t`（`DXP6800` 原厂路由） | `eth0`、`eth1` |
 
-`ug-load-drive.sh` 还独立确认了 `DXP4800S`、`DXP4800 Plus`、`DXP4800 Pro`、
+固件产品表确认了 `DX4600`、`DX4600+`、`DX4600 Pro` 三个精确字符串；
+`ug-load-drive.sh` 还独立确认了 `DX4600` 前缀以及 `DXP4800S`、
+`DXP4800 Plus`、`DXP4800 Pro`、
 `DXP480T*`、`DXP6800*` 的原厂机型路由。运行时插件只接受上表中已有的精确
 DMI 名称，不会把固件里的前缀判断改为模糊匹配。
 
@@ -35,6 +38,12 @@ WOL 是网卡配置，不是 BIOS/Super I/O 寄存器。实现使用 Linux ethto
 
 写入前会检查两个网卡都支持 Magic Packet；写完后会读取两个网卡状态，混合或
 不匹配状态会报错。不会猜测 `enp*` 等改名接口。
+
+[DX4600 系列官方规格](https://www.ugnas.com/products-detail/id-22.html)确认有两个
+2.5GbE 有线网口，因此 `dx4600` 路由把改名后的物理网卡数量显式设为两张。
+飞牛 OS 中若 `eth0`、`eth1` 都不存在，解析器只接受恰好两张物理 PCI 有线网卡
+并按 PCI 地址稳定排序；一张、多于两张，或只有虚拟、bond、bridge 接口时都会
+拒绝，不硬编码任何 `enp*` 名称。
 
 所有 WOL 写操作仍需 `--force --apply`：固件路径已确认，但关机、重启和断电
 后的持续性尚未完成实机验证。读取状态无需写入确认。

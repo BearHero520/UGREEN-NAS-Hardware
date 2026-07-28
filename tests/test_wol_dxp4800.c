@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "network/wol_dx4600.h"
 #include "network/wol_dxp4800.h"
 #include "network/wol_dxp4800plus.h"
 #include "network/wol_dxp4800s.h"
@@ -105,6 +106,7 @@ static void expect_route(const char *model, wol_read_fn read_policy,
 
 int main(void)
 {
+    expect_route("DX4600 family", dx4600_read_wol_policy, dx4600_set_wol_policy, 2);
     expect_route("DXP4800", dxp4800_read_wol_policy, dxp4800_set_wol_policy, 0);
     expect_route("DXP4800 Plus / Pro", dxp4800plus_read_wol_policy,
                  dxp4800plus_set_wol_policy, 0);

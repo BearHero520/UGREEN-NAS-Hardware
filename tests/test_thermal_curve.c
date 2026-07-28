@@ -92,6 +92,24 @@ int main(void)
         plan.cpu_pwm != 128 || plan.system_pwm != 128) {
         fail("DXP4800 stock channels did not preserve recovered points");
     }
+    write_file(path, "profile=stock-4600\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
+        fail("cannot load DX4600 stock profile");
+    }
+    if (config.cpu.stop != 40 || config.cpu.start != 45 ||
+        config.hdd.stop != 30 || config.hdd.start != 35 ||
+        config.ssd.stop != 35 || config.ssd.start != 40 ||
+        config.system_pwm.idle != 64 || config.system_pwm.mid != 152 ||
+        config.system_pwm.full != 228 || config.system_pwm.maximum != 255) {
+        fail("DX4600 stock profile did not apply vendor mode 2 adjustments");
+    }
+    snapshot = (struct ugreenctl_thermal_snapshot){
+        .cpu_celsius = 70, .hdd_celsius = -1, .ssd_celsius = -1, .cpu_peak_celsius = 70
+    };
+    if (ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 152 || plan.system_pwm != 152) {
+        fail("DX4600 stock channel did not preserve recovered effective points");
+    }
     (void)snprintf(path, sizeof(path), "%s/stock.conf", temporary);
     write_file(path, "profile=stock-4800plus\ninterval_seconds=2\n");
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
