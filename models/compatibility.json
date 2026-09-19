@@ -234,6 +234,11 @@
       ],
       "evidence": [
         {
+          "date": "2026-09-19",
+          "method": "User-reported physical validation with LLLED_FPK 2.1.2 on fnOS kernel 6.18.18.c1032-trim.",
+          "scope": "Exact DMI DX4600: fan control, AC-power recovery and Wake-on-LAN confirmed working. DX4600+/Pro and per-policy/per-port details are not covered. Existing identity, locking and write guards remain required."
+        },
+        {
           "firmware": "Official UGOS Pro 1.17.0.0095, build 20260630.111337, kernel 6.12.30+",
           "input_sha256": "7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0",
           "it8613_module_sha256": "4d3864794d9cdec926b666878aed4431f80b69108acceadfa21322245f1393f4",

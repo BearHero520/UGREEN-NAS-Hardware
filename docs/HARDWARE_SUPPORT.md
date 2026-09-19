@@ -136,7 +136,17 @@ falls back to the model-specific direct map only when that node is absent.
 Direct access requires no vendor or `it87` owner, IT8613 identity, the process
 lock, a `40..255` PWM, and verified manual-mode/PWM readback. All fan,
 AC-recovery, WOL, and software-curve writes require exact DMI matching and
-`--force --apply` until physical validation is available.
+`--force --apply`; retain these guards after validation.
+
+On 2026-09-19 the user confirmed physical DX4600 testing passed for fan
+control, AC-power recovery, and Wake-on-LAN with LLLED_FPK. The supplied
+diagnostic identifies exact DMI `DX4600`, application 2.1.2, and kernel
+6.18.18.c1032-trim. Preserve this working implementation as the merge baseline.
+This is user-reported hardware validation, not an agent-run hardware test;
+it does not extend to DX4600+/Pro or provide per-policy/per-port test details.
+The application restores the saved AC-recovery choice; this does not imply
+that the upstream command writes BIOS NVRAM. Family-wide compatibility values
+remain conservative because this report covers only exact DX4600.
 
 The stock automatic fan policy is the userspace `stock-4600` software curve,
 not an IT8613 hardware automatic mode. LED, beeper, and SATA MMIO operations
