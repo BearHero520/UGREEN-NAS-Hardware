@@ -131,3 +131,6 @@ sudo ugreenctl-fand --config /etc/ugreenctl/fan-curve.conf \
 
 The LLLED_FPK adapter supplies these paths and exposes status; it never writes
 fan sysfs or Super I/O nodes directly.
+
+DXP4800S: UGOS Pro 1.19.1.0126 now uses `dxp4800s.conf`; its thresholds
+and PWM points reconfirm `stock-4800s` unchanged. See [firmware evidence](DXP4800S_1.19.md).

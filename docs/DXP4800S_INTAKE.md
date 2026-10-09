@@ -1,5 +1,7 @@
 # DXP4800S model intake / 新机型接入记录
 
+> Updated firmware evidence and current implementation: [UGOS 1.19.1.0126](DXP4800S_1.19.md).
+
 ## Identity / 身份信息
 
 - Plugin ID: `dxp4800s`
@@ -38,9 +40,9 @@ Reason / 原因：原厂模块的控制器身份、访问时序、风扇和来�
 | Capability | Read tested | Write tested | Safe range | Firmware tested | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Fan RPM | static firmware path only | n/a | n/a | 1.17.0.0095 | HWM `0x1a/0x0f`, `675000/tach`; physical result unknown |
-| Fan PWM | current value unknown | static firmware path only | `64..255` in plugin | 1.17.0.0095 | HWM `0x17/0x73`; 64 is a static safety inference, not a physical stall limit |
+| Fan PWM | implemented hwmon/direct readback; physical test pending | static firmware path only | `40..255` in plugin | 1.17.0.0095 | HWM `0x17/0x73`; 64 is a static safety inference, not a physical stall limit |
 | Fan stop | no | no | blocked | 1.17.0.0095 | Stock module has explicit `off`, but ordinary plugin writes do not expose zero |
-| Automatic fan | no | no | unknown | 1.17.0.0095 | Stock behavior is a user-space temperature daemon, not hardware auto |
+| Automatic fan | unit tests | physical test pending | stock-4800s | 1.17.0.0095 / 1.19.1.0126 | Implemented by ugreenctl-fand, not hardware auto |
 | LED | no | no | unknown | 1.17.0.0095 | Separate HT32F52231 MCU path; not exposed by this plugin |
 | Power recovery | static firmware path only | static firmware path only | on/off/restore | 1.17.0.0095 | Super I/O `0xf2/0xf4`; physical result unknown |
 

@@ -1,5 +1,7 @@
 # DXP4800S reverse-engineering record
 
+> Updated firmware evidence and current implementation: [UGOS 1.19.1.0126](DXP4800S_1.19.md).
+
 This record documents the firmware evidence used by the `dxp4800s` plugin.
 It is not a physical validation report.
 
@@ -54,14 +56,15 @@ The stock `/proc/it86/fan` node is created with mode `0222` and accepts
 `on`, `off`, `set N`, and `SET N`. The `on` command writes PWM `127`; `off`
 writes `0`; numeric writes accept `1..255`.
 
-The plugin deliberately exposes only target `sys` and PWM `64..255`.
+The plugin deliberately exposes only target `sys` and PWM `40..255`.
 `64` is the lowest running point in the stock DXP4800 curve, but it is still
 only a **static safety inference**, not a physically validated stall limit.
 PWM zero is not exposed through the ordinary `fan set` command.
 
-The plugin reports PWM and mode as `unknown`. The firmware provides no
-reliable current-PWM read interface, and the stock automatic mode is a
-user-space policy rather than an IT8613 hardware-auto switch.
+The plugin reads PWM and mode through hwmon, or guarded direct register
+reads when hwmon is absent. The stock automatic mode is a user-space policy
+rather than an IT8613 hardware-auto switch. Physical readback accuracy still
+requires model-specific validation.
 
 ## Stock automatic policy
 
@@ -76,8 +79,8 @@ the resulting PWM to `/proc/it86/fan`. The DXP4800 curve contains:
 
 PWM points are `64 / 128 / 204 / 255`. On another operating system, an
 "automatic" mode therefore requires a separate watchdog/daemon with reliable
-temperature sources. `ugreenctl` currently provides the guarded manual write
-primitive, not that daemon.
+temperature sources. `ugreenctl-fand` implements this software policy via guarded `ugreenctl`
+writes; see [FAN_CURVE.md](FAN_CURVE.md).
 
 ## AC recovery policy
 
@@ -95,8 +98,8 @@ Writes require all of the following:
 
 1. Exact DMI product name `DXP4800S`.
 2. IT8613 chip ID `0x8613` and enabled HWM logical device.
-3. No active `/proc/it86`, `ug_it86x_sio`, or generic IT87 driver owning the
-   same controller.
+3. No vendor `/proc/it86` or `ug_it86x_sio` owner. Generic IT87 may serve
+   hwmon; it must be inactive before direct fallback.
 4. Root or `CAP_SYS_RAWIO`.
 5. `--force --apply` because physical validation is pending.
 6. Independent temperature monitoring and a recovery plan.

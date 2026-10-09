@@ -7,6 +7,8 @@
 #include "fan/it8613_direct.h"
 #include "fan/it8613_hwmon.h"
 
+/* Reconfirmed against 1.19.1.0126 ug_it86x-sio: one sysfan1,
+ * control 0x17, duty 0x73, tachometer 0x1a/0x0f. See docs/DXP4800S_1.19.md. */
 static const struct it8613_hwmon_channel channel = {"sys", 3, 3};
 static const struct it8613_direct_channel direct_channel = {
     "sys", 0x17, 0x73, 0x0f, 0x1a, true

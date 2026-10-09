@@ -118,6 +118,7 @@ install(FILES
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
+  docs/DXP4800S_1.19.md
   docs/DXP4800S_INTAKE.md
   docs/DX4600_INTAKE.md
   docs/FAN_CURVE.md
@@ -166,6 +167,16 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp4800 COMMAND test-it8613-dxp4800)
+  add_executable(test-it8613-dxp4800s
+    tests/test_it8613_dxp4800s.c
+    fan/it8613_dxp4800s.c
+  )
+  target_include_directories(test-it8613-dxp4800s PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp4800s PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp4800s COMMAND test-it8613-dxp4800s)
   add_executable(test-it8613-dx4600
     tests/test_it8613_dx4600.c
     fan/it8613_dx4600.c
