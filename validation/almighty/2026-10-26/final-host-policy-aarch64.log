@@ -1,0 +1,11 @@
+Test project <SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64
+    Start 1: package-runtime
+1/3 Test #1: package-runtime ..................   Passed    0.11 sec
+    Start 2: package-policy
+2/3 Test #2: package-policy ...................   Passed    2.45 sec
+    Start 3: startup-state
+3/3 Test #3: startup-state ....................   Passed    0.16 sec
+
+100% tests passed out of 3
+
+Total Test time (real) =   2.73 sec

@@ -1,0 +1,25 @@
+{
+  "baseline_commit": "a18af13594d1726aa4c2fc0b7c9f2c78740d4de0",
+  "complete": false,
+  "meaning": "Historical isolated Linux/QEMU and host Python results; not evidence for later power-persistence changes",
+  "logs": [
+    {
+      "architecture": "x86_64",
+      "source_sha256": "33f7924c7e94203c485d699ded37f4b4a34ed37a8ba23c50a8083eae14493b17",
+      "export_path": "validation/almighty/history/a18af13/ctest-x86_64.log",
+      "export_sha256": "0396c8fc8de2a6c40bad46ce8229da4bc4240891db03a04293a86c7d311454c4",
+      "redaction": "Only workspace absolute prefix replaced with <SOURCE_ROOT>",
+      "result": "24/24 passed",
+      "hardware_validation": false
+    },
+    {
+      "architecture": "aarch64",
+      "source_sha256": "2c3c097cfbe7169796ef1ffc5b579b474eae591243279e4e9af4976f592a3cfc",
+      "export_path": "validation/almighty/history/a18af13/ctest-aarch64.log",
+      "export_sha256": "bf1140b835317d32417e1caed6a9b9b2ca884636397c80aaefae685fe5d942bd",
+      "redaction": "Only workspace absolute prefix replaced with <SOURCE_ROOT>",
+      "result": "24/24 passed",
+      "hardware_validation": false
+    }
+  ]
+}

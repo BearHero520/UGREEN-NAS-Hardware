@@ -1,0 +1,59 @@
+{
+  "arch": "aarch64",
+  "build_dir": "firmware-inbox/work/almighty-portable-build-aarch64",
+  "steps": [
+    {
+      "step": "configure",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "-S",
+        "<SOURCE_ROOT>",
+        "-B",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "-G",
+        "Ninja",
+        "-DCMAKE_MAKE_PROGRAM=<SOURCE_ROOT>/firmware-inbox/work/tools/cmake-python/bin/ninja.exe",
+        "-DCMAKE_TOOLCHAIN_FILE=<SOURCE_ROOT>/tools/toolchains/zig-linux.cmake",
+        "-DUGREENCTL_TARGET_ARCH=aarch64",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/usr/local",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DUGREENCTL_INSTALL_LED_COMPAT=ON",
+        "-DCMAKE_CROSSCOMPILING_EMULATOR=C:\\Program Files\\Python311\\python.exe;<SOURCE_ROOT>/tools/testing/run_linux.py;--runtime-root;<SOURCE_ROOT>/firmware-inbox/work/almighty-tools"
+      ],
+      "returncode": 0,
+      "seconds": 1.47,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/configure-aarch64.log",
+      "sha256": "44d0812bcfa88963266b8ba24c4794b8aadbbdbb03741105eba47d258376a6b3"
+    },
+    {
+      "step": "build",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--build",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "--parallel",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 23.45,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/build-aarch64.log",
+      "sha256": "e5dd0a090c93644eee1d61883ad53f850bbd4f5f7f8b3920321085ed6feadfcc"
+    },
+    {
+      "step": "ctest",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\ctest.exe",
+        "--test-dir",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "seconds": 82.12,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/ctest-aarch64.log",
+      "sha256": "f6ab9000dfd684002a5315cb5e4eed12bd96d4013a5d9a8bdeaa9d5d9ab19faa"
+    }
+  ],
+  "passed": true,
+  "physical_validation": false
+}

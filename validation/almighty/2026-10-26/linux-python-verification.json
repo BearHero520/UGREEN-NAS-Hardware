@@ -1,0 +1,76 @@
+{
+  "status": "complete",
+  "completed_utc": "2026-10-26T09:25:48.920949+00:00",
+  "artifact_directory": "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-power-persistence-20261026\\linux-python",
+  "final_run": "helper-final-001",
+  "validation": {
+    "total_tests": 37,
+    "passed": 37,
+    "skipped": 0,
+    "guest_exit_code": 0,
+    "real_linux_tests": [
+      "test_real_atomic_save_restart_apply_and_permissions",
+      "test_real_flock_rejects_competing_process_lock",
+      "test_real_symlink_fifo_hardlink_and_bad_ancestor_refuse"
+    ],
+    "real_syscall_probe": {
+      "O_DIRECTORY": true,
+      "O_NOFOLLOW": true,
+      "atomic_replace": true,
+      "dir_fd": true,
+      "directory_fsync": true,
+      "file_fsync": true,
+      "flock_competing_process": true,
+      "kernel": "6.12.110-0-virt",
+      "mode_0700_directory_0600_file": true,
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sysfs_mounted": false,
+      "uid": 0
+    },
+    "test_log": "helper-final-001/tests.log",
+    "full_serial_log": "helper-final-001/console.log",
+    "run_report": "helper-final-001/report.json"
+  },
+  "pinned_source_sha256": {
+    "scripts/ugreenctl-startup.py": "0ea14449ad98c6ba2c7a50c727a24c75fdf0db2f219cde1026dd8fd2253ce7b4",
+    "tests/test_startup_state.py": "582369d237734b9bec2e56185d4d4e490d166ac72a162d32fe061c78d305ba9b"
+  },
+  "runtime": {
+    "manifest": "runtime-manifest.json",
+    "package_count": 17,
+    "package_bytes": 10776564,
+    "total_download_bytes": 20595365,
+    "source": "Debian official HTTPS archive, trixie/main/amd64",
+    "index_sha256_verified_against_release": true,
+    "all_package_sha256_verified_against_index": true,
+    "openpgp_signature_verified": false,
+    "trust": "official HTTPS Debian archive and Release->index->package SHA256/size checks"
+  },
+  "isolation": {
+    "network_adapter": false,
+    "host_mounts": false,
+    "block_drives": false,
+    "passthrough_devices": false,
+    "nas_binaries": false,
+    "sysfs_mounted": false,
+    "backend": "Python FakeBackend/FakeRuntime only",
+    "guest_root": true
+  },
+  "limitations": [
+    "Real Linux filesystem operations ran on an initramfs/RAM filesystem, not persistent hardware media",
+    "Hardware backend and DMI identity were fake; no NAS controller, model register or real power-loss behavior was exercised",
+    "InRelease was retained, but its OpenPGP signature was not validated on the host",
+    "The first smoke attempt failed before guest boot due to QEMU non-ASCII resource paths; later relative-path smoke and final test passed"
+  ],
+  "boundaries": {
+    "host_installation": false,
+    "production_source_changes": false,
+    "application_changes": false,
+    "old_runtime_or_runner_changes": false,
+    "existing_input_files_modified_or_deleted": false,
+    "nas_binary_executed": false,
+    "hardware_io": false,
+    "committed": false,
+    "pushed": false
+  }
+}

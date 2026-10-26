@@ -1,0 +1,4 @@
+# Preserve captured evidence bytes so its recorded SHA-256 survives a clone.
+research/almighty/methods/** -text
+validation/almighty/** -text
+integration/llled/ac-recovery/*.patch -text

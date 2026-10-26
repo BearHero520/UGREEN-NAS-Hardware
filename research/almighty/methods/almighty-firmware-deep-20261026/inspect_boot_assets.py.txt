@@ -1,0 +1,93 @@
+"""Index original boot assets and extract bounded text; no firmware execution."""
+from pathlib import Path
+import hashlib
+import json
+import re
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+SOURCE = ROOT/'firmware-inbox/work/dxp6800plus'
+SEVEN = ROOT/'firmware-inbox/work/tools/7zip/full/7z.exe'
+
+
+def digest(path):
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
+def write_new(path, data):
+    if path.exists():
+        assert path.read_bytes() == data, str(path)
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('xb') as stream:
+            stream.write(data)
+
+
+pattern = re.compile(rb'nvme|n76|mcu|pcie|pci_slot|physical_slot|rename|probe_type', re.I)
+rows = []
+hits = []
+cpio = SOURCE/'initrd-unpack/initrd'
+with cpio.open('rb') as stream:
+    while True:
+        start = stream.tell()
+        head = stream.read(110)
+        if not head or head == b'\0'*110:
+            break
+        assert head[:6] in (b'070701', b'070702'), (start, head[:12])
+        fields = [int(head[6+i*8:14+i*8], 16) for i in range(13)]
+        ino, mode, uid, gid, nlink, mtime, size, dmaj, dmin, rmaj, rmin, nsize, check = fields
+        name = stream.read(nsize).rstrip(b'\0').decode('utf-8', 'surrogateescape')
+        stream.seek((-stream.tell()) % 4, 1)
+        pos = stream.tell()
+        if name == 'TRAILER!!!':
+            rows.append({'name': name, 'header_offset': start})
+            break
+        row = {'name': name, 'mode': oct(mode), 'bytes': size, 'data_offset': pos}
+        rows.append(row)
+        regular = mode & 0o170000 == 0o100000
+        if regular and 0 < size <= 262144:
+            data = stream.read(size)
+            if b'\0' not in data and pattern.search(data):
+                dst = OUT/'initrd-text'/f'{len(hits):03d}-{Path(name).name}.txt'
+                write_new(dst, data)
+                matches = [{'line': i, 'text': line[:600]} for i, line in
+                           enumerate(data.decode('utf-8', 'replace').splitlines(), 1)
+                           if pattern.search(line.encode())]
+                hits.append({'member': name, 'bytes': size,
+                             'sha256': hashlib.sha256(data).hexdigest(),
+                             'saved': dst.relative_to(ROOT).as_posix(), 'matches': matches})
+        stream.seek(pos + size)
+        stream.seek((-stream.tell()) % 4, 1)
+write_new(OUT/'initrd-members.json', (json.dumps(rows, ensure_ascii=True, indent=2)+'\n').encode())
+write_new(OUT/'initrd-text-hits.json', (json.dumps(hits, ensure_ascii=True, indent=2)+'\n').encode())
+
+manifests = []
+for image in ('fw.squashfs', 'kernel.squashfs', 'oem.squashfs'):
+    path = SOURCE/image
+    run = subprocess.run([str(SEVEN), 'l', '-slt', str(path)], capture_output=True, check=True)
+    write_new(OUT/(image+'-listing.txt'), run.stdout)
+    text = run.stdout.decode('utf-8', 'replace')
+    entries = []
+    for block in re.split(r'\r?\n\r?\n', text):
+        item = {}
+        for line in block.splitlines():
+            if ' = ' in line:
+                key, value = line.split(' = ', 1)
+                item[key] = value
+        if 'Path' in item and 'Folder' in item:
+            entries.append(item)
+    names = [x['Path'].replace('\\', '/') for x in entries]
+    manifests.append({'image': image, 'sha256': digest(path), 'members': len(entries),
+                      'named_candidates': [n for n in names if re.search(
+                          r'(udev|modprobe|mcu|n76|acpi|dsdt|ssdt|\.aml$|\.hex$|\.bin$|nvme|slot)', n, re.I)
+                          and '/lib/firmware/' not in '/'+n]})
+write_new(OUT/'boot-asset-index.json', (json.dumps({
+    'initrd': {'path': cpio.relative_to(ROOT).as_posix(), 'sha256': digest(cpio),
+               'members': len(rows), 'bounded_text_hits': len(hits)},
+    'images': manifests, 'limits': 'Filename index and bounded text only; not whole-payload absence proof.'
+}, indent=2)+'\n').encode())
+print(json.dumps({'initrd_members': len(rows), 'text_hits': len(hits),
+                  'squashfs': [{'image': m['image'], 'members': m['members'],
+                               'named_candidates': len(m['named_candidates'])} for m in manifests]}))

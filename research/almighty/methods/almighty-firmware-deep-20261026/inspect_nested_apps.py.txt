@@ -1,0 +1,75 @@
+"""Index selected system UPKs and their nested UGB; extract bounded data only."""
+from pathlib import Path, PurePosixPath
+import hashlib
+import io
+import json
+import re
+import sys
+import tarfile
+
+ROOT=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+source=ROOT/'firmware-inbox/work/dxp6800plus/ugreen.bz2'
+reports=[]
+all_packages=sys.argv[1:]==['all']
+with tarfile.open(source) as outer:
+    for member in outer:
+        if not member.isfile() or not member.name.endswith('.upk'):
+            continue
+        if not all_packages and not any(x in member.name for x in ('com.ugreen.wizard.upk','com.ugreen.ugos_serv.upk')):
+            continue
+        data=outer.extractfile(member).read()
+        headers=[h for h in (b'UGREEN-PKG-FORMAT',b'UGREEN-PKG-V2-FORMAT') if data.startswith(h)]
+        assert len(headers)==1, member.name
+        report={'package':member.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),
+                'format':headers[0].decode(),'fields':[],'nested':[],'bounded_extractions':[],'host_extractions':[]}
+        pos=len(headers[0])
+        while pos<len(data):
+            first=data.index(b':',pos);second=data.index(b':',first+1)
+            key=data[pos:first].decode('ascii');size=int(data[first+1:second]);start=second+1
+            assert size>=0 and start+size<=len(data)
+            raw=data[start:start+size];pos=start+size
+            report['fields'].append({'key':key,'bytes':size,'sha256':hashlib.sha256(raw).hexdigest(),'magic':raw[:12].hex()})
+            if key!='ugb':continue
+            with tarfile.open(fileobj=io.BytesIO(raw)) as container:
+                for item in container:
+                    if not item.isfile() or not item.name.endswith('.ugb'):continue
+                    payload=container.extractfile(item).read()
+                    layer={'name':item.name,'bytes':len(payload),'sha256':hashlib.sha256(payload).hexdigest(),'members':[]}
+                    with tarfile.open(fileobj=io.BytesIO(payload)) as package:
+                        for entry in package:
+                            name=PurePosixPath(entry.name)
+                            assert not name.is_absolute() and '..' not in name.parts
+                            layer['members'].append({'name':entry.name,'bytes':entry.size,'type':entry.type.decode('ascii',errors='replace')})
+                            if entry.isfile() and str(name) in ('sbin/discovery_serv','sbin/ugos_serv','lib/libugos_serv-shared.so'):
+                                assert 0<entry.size<40_000_000
+                                host=package.extractfile(entry).read()
+                                assert host.startswith(b'\x7fELF')
+                                dest=OUT/'nested-apps'/Path(member.name).name/Path(*name.parts)
+                                dest.parent.mkdir(parents=True,exist_ok=True)
+                                if dest.exists():assert dest.read_bytes()==host
+                                else:
+                                    with dest.open('xb') as f:f.write(host)
+                                report['host_extractions'].append({'path':dest.relative_to(ROOT).as_posix(),
+                                    'bytes':len(host),'sha256':hashlib.sha256(host).hexdigest()})
+                            if not entry.isfile() or not 0<entry.size<=1048576:continue
+                            if not (name.suffix in ('.sh','.json','.conf','.ini','.yaml','.yml','.service','.rules') or name.name in ('install','preinst','postinst','start','stop')):continue
+                            content=package.extractfile(entry).read()
+                            if b'\0' in content:continue
+                            dest=OUT/'nested-apps'/Path(member.name).name/Path(*name.parts)
+                            dest.parent.mkdir(parents=True,exist_ok=True)
+                            if dest.exists():assert dest.read_bytes()==content
+                            else:
+                                with dest.open('xb') as f:f.write(content)
+                            hits=[{'line':i,'text':line[:500]} for i,line in enumerate(content.decode('utf-8','replace').splitlines(),1)
+                                  if re.search(r'nvme|pcie|mcu|n76|/sys/class/leds|modprobe|insmod|firmware|slot|ug-load-drive',line,re.I)]
+                            report['bounded_extractions'].append({'name':entry.name,'saved':dest.relative_to(ROOT).as_posix(),
+                                  'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest(),'target_hits':hits})
+                    report['nested'].append(layer)
+        reports.append(report)
+dest=OUT/('all-app-analysis.json' if all_packages else 'nested-app-analysis.json')
+dest.write_text(json.dumps(reports,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'packages':len(reports),'indexed_members':sum(len(x['members']) for r in reports for x in r['nested']),
+    'bounded_text_files':sum(len(r['bounded_extractions']) for r in reports),
+    'hit_files':[{'package':r['package'],'name':f['name'],'hits':f['target_hits'][:12]}
+                for r in reports for f in r['bounded_extractions'] if f['target_hits']]},indent=2))

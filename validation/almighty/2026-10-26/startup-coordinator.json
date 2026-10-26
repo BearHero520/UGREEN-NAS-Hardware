@@ -1,0 +1,100 @@
+{
+  "phase": "standalone-startup-persistence",
+  "updated_at": "2026-10-26T09:25:43.829076+00:00",
+  "changed_files": {
+    "scripts/ugreenctl-startup.py": "0ea14449ad98c6ba2c7a50c727a24c75fdf0db2f219cde1026dd8fd2253ce7b4",
+    "tests/test_startup_state.py": "582369d237734b9bec2e56185d4d4e490d166ac72a162d32fe061c78d305ba9b"
+  },
+  "scope": "Optional Linux Python3 standard-library coordinator; all hardware access delegated to exact-DMI ugreenctl. No model/register/transport mappings copied.",
+  "cli": [
+    "python3 /usr/local/libexec/ugreenctl-startup.py set <on|off|restore|last> --binary /usr/local/bin/ugreenctl [--plugin-dir /usr/local/lib/ugreenctl/models] [--state-dir /var/lib/ugreenctl/startup] [--force --apply]",
+    "python3 /usr/local/libexec/ugreenctl-startup.py apply --binary /usr/local/bin/ugreenctl [--state-dir /var/lib/ugreenctl/startup] [--force --apply]",
+    "python3 /usr/local/libexec/ugreenctl-startup.py show [--state-dir /var/lib/ugreenctl/startup]"
+  ],
+  "state_schema": {
+    "filename": "desired-policy.json",
+    "schema_version": 1,
+    "desired_policy": [
+      "on",
+      "off",
+      "restore"
+    ],
+    "last_alias": "input only; canonical saved value restore",
+    "identity_fields": [
+      "product_name",
+      "product_version",
+      "board_version",
+      "bios_vendor",
+      "bios_version",
+      "bios_date"
+    ],
+    "other_fields_allowed": false,
+    "max_bytes": 4096,
+    "duplicate_keys_allowed": false,
+    "state_is_desired_not_hardware_readback": true
+  },
+  "flow": [
+    "Without both flags: read existing state/DMI metadata only; never run backend, create lock/directories or save any file.",
+    "Apply with no saved record: no backend invocation or file mutation.",
+    "Writes check Linux/root and secure root-owned non-writable ancestors plus private state directory, checked no-follow dirfd state/lock regular single-link files and exclusive nonblocking flock.",
+    "Before write: strict state and exact DMI/BIOS match for apply; literal unknown pre-read is allowed, but failed/malformed/timeout pre-read blocks write.",
+    "Explicit set may rebind a valid saved record to changed identity; apply never does. Bad records require administrator intervention and are never silently replaced.",
+    "Backend receives absolute executable/plugin paths, explicit --force --apply, shell=False, clean fixed locale/PATH environment and timeout; never --model.",
+    "After successful set: get must match desired policy and identity must remain unchanged. Only explicit set then atomically persists; lifecycle apply reasserts existing desire without rewriting it.",
+    "Save uses exclusive0600 temp, fsync(file), dirfd atomic replace, fsync(directory). A final directory fsync failure reports persistence_uncertain=true.",
+    "Failure before set reports hardware_written=false. Backend set nonzero/timeout reports hardware_written=null and hardware_write_attempted=true because physical effects are unknown. Successful set followed by failed postread/save reports hardware_written=true and state_saved=false."
+  ],
+  "tests": {
+    "command": "python -B tests/test_startup_state.py",
+    "windows": {
+      "passed": 34,
+      "skipped": 3,
+      "total": 37,
+      "scope": "Coordinator plus injected POSIX safety call contracts; no claim of actual Linux semantics from this run",
+      "log": "firmware-inbox/work/almighty-power-persistence-20261026/standalone/windows-unit-r3.log",
+      "sha256": "cc0592782ca1ca5bd253be324b0d4753fe60a004b969df7b052b3e1eb1b52a41"
+    },
+    "isolated_linux": {
+      "passed": 37,
+      "skipped": 0,
+      "total": 37,
+      "seconds": 0.245,
+      "exit_code": 0,
+      "scope": "Pinned source snapshot, real Linux root dirfd/O_NOFOLLOW/FIFO/hardlink/flock/fsync/atomic rename plus injected backend; no NAS execution or DMI/sysfs access",
+      "report": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/helper-final-001/report.json",
+      "report_sha256": "553b19890351eec5856fe49492222caf0e407b9ed9eaab9b8fb258ac16886ecb",
+      "log": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/helper-final-001/tests.log",
+      "log_sha256": "f603d1cedd5c4ae024d89d929404cca465e73df2d009f30e3bf37e77a7b71b81"
+    },
+    "coverage": [
+      "existing ten exact startup-product names x three policy fixture coordination",
+      "unknown to known explicit set and repeated start/stop/reboot apply",
+      "no saved config and dry-run zero mutation",
+      "unsupported backend and pre-read error zero set invocation",
+      "all identity fields including BIOS changes and before/after-write identity races",
+      "postread unknown/mismatch/failure preserve old desired state",
+      "backend nonzero/timeout leaves old state and reports unknown physical outcome",
+      "bad schema/duplicate keys/oversize/UTF8/surrogates",
+      "nonroot, symlink/FIFO/socket/hardlink, unsafe owner/mode/ancestor/lock",
+      "atomic sync ordering, partial writes, failed file sync/rename, postrename directory durability failure",
+      "CLI/argv no model override, no shell and no inherited identity/loader overrides"
+    ],
+    "full_release_and_ctest": "Parent owns registration and complete project configure/build/CTest; not run by this subtask"
+  },
+  "limits": [
+    "Python3 is optional and must exist in the target environment; no claim it is built into Unraid or every distribution.",
+    "No service/unit/autostart hook is installed or enabled by this helper. Parent owns systemd/TrueNAS integration and user-facing deployment instructions.",
+    "No physical NAS, complete Linux distribution, BIOS retention or power-cycle verification performed.",
+    "Preflight backend reads do not reserve the hardware between subprocesses. The existing binary remains responsible for exact identity, chip checks, owner conflicts, process lock and register readback on every actual operation.",
+    "A save failure after hardware changed cannot undo that already completed transaction. Final directory fsync failure cannot prove persistence durability."
+  ],
+  "not_modified": [
+    "CMakeLists.txt by this subtask",
+    "packager/docs/index/remotes by this subtask",
+    "LLLED_FPK"
+  ],
+  "original_firmware_execution": false,
+  "hardware_IO": false,
+  "LLLED_FPK_access_or_modification": false,
+  "ownership_note": "Only the two assigned source/test files and this subtask work logs/report were written. Other agents may concurrently modify project registration/packaging."
+}

@@ -1,0 +1,81 @@
+"""Bounded static call/data trace of vendor LED and upgrade hosts."""
+from pathlib import Path
+import bisect
+import hashlib
+import io
+import json
+import re
+import struct
+import sys
+
+ROOT=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs,CS_ARCH_X86,CS_MODE_64
+from capstone.x86 import X86_OP_IMM,X86_OP_MEM,X86_REG_RIP
+
+jobs=[(ROOT/'firmware-inbox/work/dxp6800plus/ctlmgr-fields/sbin/ctl_serv',
+       r'/hardwaresrv/led\.\(\*ledServer\)\.(?:GetState|build|AdjustColor|AdjustLight|AdjustTrigger)$'),
+      (ROOT/'firmware-inbox/work/dxp6800plus/ugupdate',r'^main\.'),
+      (ROOT/'firmware-inbox/work/dxp6800plus/ugdevice',r'^main\.|/device\.GetModel$'),
+      (ROOT/'firmware-inbox/work/dxp6800plus/disk-mapping-1.20/sbin/storage_serv',
+       r'/hardware\.GetHardwareInfo$')]
+reports=[]
+for path,pattern in jobs:
+    blob=path.read_bytes();elf=ELFFile(io.BytesIO(blob))
+    sections=[(s['sh_addr'],s.data()) for s in elf.iter_sections()
+              if s['sh_type']!='SHT_NOBITS' and s['sh_size']]
+    def read(addr,size):
+        for start,data in sections:
+            if start<=addr and addr+size<=start+len(data):
+                return data[addr-start:addr-start+size]
+        return b''
+    d=elf.get_section_by_name('.gopclntab').data()
+    nf,nfile,text,names,cu,files,pct,pcln=struct.unpack_from('<8Q',d,8)
+    funcs={}
+    for i in range(nf):
+        ent,fun=struct.unpack_from('<II',d,pcln+i*8)
+        noff=struct.unpack_from('<i',d,pcln+fun+4)[0]
+        name=d[names+noff:d.find(b'\0',names+noff)].decode()
+        end=struct.unpack_from('<I',d,pcln+(i+1)*8)[0]
+        funcs[text+ent]={'name':name,'size':end-ent}
+    addresses=sorted(funcs)
+    def owner(addr):
+        ix=bisect.bisect_right(addresses,addr)-1
+        if ix<0:return None
+        start=addresses[ix]
+        return funcs[start]['name'] if addr<start+funcs[start]['size'] else None
+    md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+    lines=['INPUT '+path.relative_to(ROOT).as_posix(),'SHA256 '+hashlib.sha256(blob).hexdigest()]
+    functions=[]
+    for addr,f in funcs.items():
+        if not re.search(pattern,f['name']):continue
+        calls=[];references=[]
+        lines.append(f'\nFUNCTION {f["name"]} @{addr:#x} bytes={f["size"]}')
+        for ins in md.disasm(read(addr,f['size']),addr):
+            annotations=[]
+            for op in ins.operands:
+                if ins.mnemonic in ('call','jmp') and op.type==X86_OP_IMM:
+                    name=owner(op.imm)
+                    if name:
+                        annotations.append(name)
+                        if ins.mnemonic=='call':calls.append({'at':hex(ins.address),'target':hex(op.imm),'function':name})
+                if op.type==X86_OP_MEM and op.mem.base==X86_REG_RIP:
+                    target=ins.address+ins.size+op.mem.disp
+                    raw=read(target,100).split(b'\0',1)[0]
+                    if raw and all(32<=x<127 for x in raw[:32]):
+                        annotations.append(f'{target:#x} {raw!r}')
+                        references.append({'at':hex(ins.address),'address':hex(target),'prefix_only':raw.decode('ascii',errors='replace')})
+            lines.append(f'{ins.address:x}: {ins.mnemonic:8} {ins.op_str}'+(' ; '+' | '.join(annotations) if annotations else ''))
+        functions.append({'name':f['name'],'address':hex(addr),'bytes':f['size'],'calls':calls,'string_prefix_references':references})
+    dest=OUT/(path.name+'-control-disassembly.txt')
+    dest.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    reports.append({'input':path.relative_to(ROOT).as_posix(),'sha256':hashlib.sha256(blob).hexdigest(),
+                    'disassembly':dest.relative_to(ROOT).as_posix(),'functions':functions})
+(OUT/'control-host-trace.json').write_text(json.dumps(reports,indent=2)+'\n',encoding='utf-8')
+for r in reports:
+    print(Path(r['input']).name,'functions',len(r['functions']))
+    for f in r['functions']:
+        print(f['name'], '->',', '.join(sorted({c['function'] for c in f['calls'] if not c['function'].startswith(('runtime.','sync.'))}))[:900])

@@ -1,4 +1,10 @@
 build/
+/build-*/
+/build-*.exe
+/build-*.pdb
+/dist/
+__pycache__/
+*.py[cod]
 compile_commands.json
 *.o
 *.so

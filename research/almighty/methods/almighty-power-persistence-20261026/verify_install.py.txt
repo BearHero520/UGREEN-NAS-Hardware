@@ -1,0 +1,40 @@
+"""Stage the current frozen source/ELF and rerun final host policy tests."""
+from pathlib import Path
+import hashlib,importlib.util,json,os,subprocess,sys
+ROOT=Path(__file__).resolve().parents[3];OUT=Path(__file__).resolve().parent
+sys.dont_write_bytecode=True
+BIN=ROOT/'firmware-inbox/work/tools/cmake-python/cmake/data/bin'
+env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1',PYTHONDONTWRITEBYTECODE='1',UGREENCTL_ZIG=str(ROOT/'firmware-inbox/work/tools/zig-0.15.2/zig.exe'))
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+freeze=json.loads((OUT/'binary-freeze.json').read_text())
+assert all(sha(ROOT/p)==h for p,h in freeze['source_sha256'].items())
+assert all(sha(ROOT/p)==h for p,h in freeze['binary_sha256'].items())
+spec=importlib.util.spec_from_file_location('stage_packager',ROOT/'scripts/package-almighty.py');p=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)
+reports={}
+for arch in ('x86_64','aarch64'):
+    build=ROOT/f'firmware-inbox/work/almighty-portable-build-{arch}';stage=OUT/('stage-'+arch)
+    assert not stage.exists();steps=[]
+    commands=[('configure',[str(BIN/'cmake.exe'),'-S',str(ROOT),'-B',str(build),'-DCMAKE_BUILD_TYPE=Release']),
+              ('build',[str(BIN/'cmake.exe'),'--build',str(build),'--parallel','2']),
+              ('install',[str(BIN/'cmake.exe'),'--install',str(build),'--prefix',stage.as_posix()]),
+              ('host-policy',[str(BIN/'ctest.exe'),'--test-dir',str(build),'-R','^(package-runtime|package-policy|startup-state)$','--output-on-failure'])]
+    for name,cmd in commands:
+        log=OUT/f'final-{name}-{arch}.log'
+        with log.open('xb') as stream:r=subprocess.run(cmd,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+        steps.append({'step':name,'returncode':r.returncode,'path':log.relative_to(ROOT).as_posix(),'sha256':sha(log)});assert r.returncode==0,(arch,name)
+    checks={}
+    for name in p.PROGRAMS+tuple('models/'+x+'.so' for x in p.PLUGINS):
+        dest=stage/('lib/ugreenctl/'+name if name.startswith('models/') else 'bin/'+name)
+        assert sha(dest)==sha(build/name);checks[dest.relative_to(stage).as_posix()]=sha(dest)
+    for name in p.EXAMPLES:
+        dest=stage/'share/doc/ugreenctl/examples'/Path(name).name
+        assert sha(dest)==sha(ROOT/name);checks[dest.relative_to(stage).as_posix()]=sha(dest)
+    for name in ('docs/ALMIGHTY_STATUS.zh-CN.md','docs/BUILD_REPRODUCIBILITY.zh-CN.md','docs/AC_RECOVERY_PERSISTENCE.zh-CN.md',
+                 'integration/llled/ac-recovery/README.zh-CN.md','integration/llled/ac-recovery/source-hashes.json','integration/llled/ac-recovery/llled-startup-persistence.patch'):
+        dest=stage/'share/doc/ugreenctl'/name
+        assert sha(dest)==sha(ROOT/name);checks[dest.relative_to(stage).as_posix()]=sha(dest)
+    reports[arch]={'stage':stage.relative_to(ROOT).as_posix(),'steps':steps,'sha256':checks}
+assert all(sha(ROOT/p)==h for p,h in freeze['source_sha256'].items())
+assert all(sha(ROOT/p)==h for p,h in freeze['binary_sha256'].items())
+(OUT/'staged-install.json').write_text(json.dumps({'passed':True,'architectures':reports,'host_system_installed':False,'service_enabled':False},indent=2)+'\n',encoding='utf-8')
+print('Both staged installs passed;13 release ELF and helper/service/docs/patch hashes each; final3 host checks per arch passed')

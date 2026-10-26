@@ -1,0 +1,53 @@
+from datetime import datetime, timezone
+from pathlib import Path
+import hashlib
+import json
+import re
+
+root = Path(__file__).resolve().parent
+run = json.loads((root / "helper-final-001/report.json").read_text(encoding="utf-8"))
+runtime = json.loads((root / "runtime-manifest.json").read_text(encoding="utf-8"))
+pin = json.loads((root / "pinned-snapshot.json").read_text(encoding="utf-8"))
+log = (root / "helper-final-001/tests.log").read_text(encoding="utf-8").replace("\r", "")
+assert run["exit_code"] == 0
+assert {item["path"]: item["sha256"] for item in run["snapshot"]} == pin
+assert "Ran 37 tests" in log and "\nOK\n" in log and "skipped" not in log.lower()
+real_tests = re.findall(r"^(test_real_\S+) .*? \.\.\. ok$", log, re.M)
+assert len(real_tests) == 3, real_tests
+probe = json.loads(next(line.split("=", 1)[1] for line in log.splitlines()
+                        if line.startswith("REAL_LINUX_SECURITY_PROBE=")))
+report = {
+    "status": "complete",
+    "completed_utc": datetime.now(timezone.utc).isoformat(),
+    "artifact_directory": str(root),
+    "final_run": "helper-final-001",
+    "validation": {"total_tests": 37, "passed": 37, "skipped": 0,
+                   "guest_exit_code": 0, "real_linux_tests": real_tests,
+                   "real_syscall_probe": probe,
+                   "test_log": "helper-final-001/tests.log",
+                   "full_serial_log": "helper-final-001/console.log",
+                   "run_report": "helper-final-001/report.json"},
+    "pinned_source_sha256": pin,
+    "runtime": {"manifest": "runtime-manifest.json",
+                "package_count": len(runtime["packages"]),
+                "package_bytes": sum(item["size"] for item in runtime["packages"]),
+                "total_download_bytes": runtime["total_bytes"],
+                "source": runtime["source"],
+                "index_sha256_verified_against_release": runtime["index"]["release_sha256_verified"],
+                "all_package_sha256_verified_against_index": all(item["index_sha256_verified"] for item in runtime["packages"]),
+                "openpgp_signature_verified": False,
+                "trust": "official HTTPS Debian archive and Release->index->package SHA256/size checks"},
+    "isolation": run["isolation"],
+    "limitations": ["Real Linux filesystem operations ran on an initramfs/RAM filesystem, not persistent hardware media",
+                    "Hardware backend and DMI identity were fake; no NAS controller, model register or real power-loss behavior was exercised",
+                    "InRelease was retained, but its OpenPGP signature was not validated on the host",
+                    "The first smoke attempt failed before guest boot due to QEMU non-ASCII resource paths; later relative-path smoke and final test passed"],
+    "boundaries": {"host_installation": False, "production_source_changes": False,
+                   "application_changes": False, "old_runtime_or_runner_changes": False,
+                   "existing_input_files_modified_or_deleted": False,
+                   "nas_binary_executed": False, "hardware_io": False,
+                   "committed": False, "pushed": False},
+}
+(root / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(json.dumps({"status": "complete", "passed": 37, "skipped": 0,
+                  "real_linux_tests": len(real_tests), "guest_exit_code": 0}))

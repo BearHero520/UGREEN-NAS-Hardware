@@ -1,0 +1,91 @@
+from pathlib import Path
+import sys, io, struct, json, hashlib, re, bisect
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[3]
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+from capstone.x86 import X86_OP_IMM, X86_OP_MEM, X86_REG_RIP
+b=(OUT/'vmlinux.raw.elf').read_bytes()
+elf=ELFFile(io.BytesIO(b))
+sections=list(elf.iter_sections())
+def section_at(addr):
+    return next((s for s in sections if s['sh_flags']&2 and s['sh_addr']<=addr<s['sh_addr']+s['sh_size'] and s['sh_type']!='SHT_NOBITS'),None)
+def read(addr,size):
+    s=section_at(addr)
+    if s is None:return b''
+    return b[s['sh_offset']+addr-s['sh_addr']:s['sh_offset']+addr-s['sh_addr']+size]
+def string(addr):
+    v=read(addr,256).split(b'\0',1)[0]
+    return v.decode('ascii') if len(v)>=3 and all(32<=c<127 or c in (9,10) for c in v) else None
+# Explicit offsets independently retained in symbol-recovery.log, checked against embedded self symbols.
+count=struct.unpack_from('<I',b,0x13a69f8)[0]
+assert count==173029
+tokens=[]
+for j in range(256):
+    off=0x15ebae8+struct.unpack_from('<H',b,0x15ebea0+j*2)[0]
+    tokens.append(b[off:b.find(b'\0',off)].decode('ascii'))
+names=[]; pos=0x13a6a00
+for j in range(count):
+    n=b[pos];pos+=1
+    if n&0x80: n=(n&0x7f)|(b[pos]<<7);pos+=1
+    name=''.join(tokens[v] for v in b[pos:pos+n]);pos+=n
+    names.append(name)
+offsets=struct.unpack_from('<'+str(count)+'I',b,0x15ec0a0)
+base=0xffffffff81000000
+syms=[{'address':base+v,'type':n[0],'name':n[1:]} for n,v in zip(names,offsets)]
+byname={s['name']:s for s in syms}
+checks={name:{'actual':hex(byname[name]['address']),'expected':hex(expected),'match':byname[name]['address']==expected} for name,expected in {'_text':base,'kallsyms_names':0xffffffff821a6a00,'kallsyms_token_table':0xffffffff823ebae8,'kallsyms_offsets':0xffffffff823ec0a0}.items() if name in byname}
+assert all(v['match'] for v in checks.values()), checks
+(OUT/'symbols.tsv').write_text(''.join(f"{s['address']:016x}\t{s['type']}\t{s['name']}\n" for s in syms),encoding='utf-8')
+addrmap={}
+for s in syms:addrmap.setdefault(s['address'],[]).append(s['name'])
+addresses=sorted(addrmap)
+def label(addr):
+    if addr in addrmap:return '|'.join(addrmap[addr])
+    idx=bisect.bisect_right(addresses,addr)-1
+    if idx>=0 and addr-addresses[idx]<0x10000:return '|'.join(addrmap[addresses[idx]])+f'+0x{addr-addresses[idx]:x}'
+    return hex(addr)
+md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+def function(name):
+    s=byname.get(name)
+    if not s:return None
+    start=s['address'];sec=section_at(start)
+    if sec is None or s['type'].lower() not in ('t','w'):return None
+    idx=bisect.bisect_right(addresses,start)
+    end=min(addresses[idx] if idx<len(addresses) else start+0x10000,sec['sh_addr']+sec['sh_size'])
+    return start,end
+def disassemble(name):
+    bounds=function(name)
+    if not bounds:return []
+    start,end=bounds
+    lines=[f'\nFUNCTION {name} {start:#x}..{end:#x}']
+    for ins in md.disasm(read(start,end-start),start):
+        annotations=[]
+        for op in ins.operands:
+            target=None
+            if op.type==X86_OP_IMM:target=op.imm&((1<<64)-1)
+            elif op.type==X86_OP_MEM and op.mem.base==X86_REG_RIP:target=(ins.address+ins.size+op.mem.disp)&((1<<64)-1)
+            if target is not None:
+                st=string(target)
+                if st:annotations.append(repr(st))
+                if section_at(target):annotations.append(label(target))
+        lines.append(f'{ins.address:016x}: {ins.mnemonic:8} {ins.op_str}'+(' ; '+' | '.join(annotations) if annotations else ''))
+    return lines
+targets=['pci_subsys_init','pci_acpi_init','pci_acpi_scan_root','pci_scan_root_bus_bridge','pci_scan_child_bus','pci_scan_child_bus_extend','pci_scan_slot','pci_scan_single_device','pci_device_add','pci_bus_add_devices','pci_register_driver','__pci_register_driver','pci_call_probe','pci_device_probe','local_pci_probe','really_probe','driver_probe_device','device_initial_probe','__device_attach_driver','__device_attach','acpi_pci_root_add','acpi_pci_root_create','pci_acpi_scan_root','pcibios_scan_root','pci_scan_bus','pcibios_init','pci_apply_final_quirks','pci_fixup_device','pci_fixup_bus','dmi_pci_set_dma_mask','ugreen_pci_init','nvme_init_ctrl']
+targets=list(dict.fromkeys(targets))
+(OUT/'pci-boot-disassembly.txt').write_text('\n'.join([f'RAW ELF SHA256 {hashlib.sha256(b).hexdigest()}']+[line for name in targets for line in disassemble(name)])+'\n',encoding='utf-8')
+strings=[]
+for sec in sections:
+    if sec['sh_type']!='SHT_PROGBITS' or not sec['sh_flags']&2:continue
+    data=sec.data()
+    for m in re.finditer(rb'[ -~]{4,}',data):
+        if re.search(rb'ugreen|DXP|DX4600|DX4700|DH2600|M\.2|NVMe|nvme[0-9]|pci=|probe_order',m.group(),re.I):
+            strings.append({'section':sec.name,'address':hex(sec['sh_addr']+m.start()),'offset':hex(sec['sh_offset']+m.start()),'value':m.group().decode('ascii')[:512]})
+(OUT/'target-strings.json').write_text(json.dumps(strings,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+interesting=[s for s in syms if re.search(r'ugreen|dxp|dx4600|dx4700|dh2600|nvme|pci.*(order|sort|dmi|quirk)|.*dmi.*pci|acpi.*slot|pci.*slot|pci_subsys_init|pci_acpi_init|pci_acpi_scan_root|pci_scan_|acpi_pci_root|pcibios_init',s['name'],re.I)]
+r={'sha256':hashlib.sha256(b).hexdigest(),'symbol_count':len(syms),'checks':checks,'selected_symbols':[{**s,'address':hex(s['address'])} for s in interesting],'target_functions':[{'name':n,'bounds':[hex(v) for v in function(n)]} for n in targets if function(n)],'target_string_count':len(strings)}
+(OUT/'kernel-index.json').write_text(json.dumps(r,indent=2)+'\n',encoding='utf-8')
+if __name__=='__main__':
+    print(json.dumps({'checks':checks,'selected_symbols':len(interesting),'target_functions':[n for n in targets if function(n)],'target_string_count':len(strings)},indent=2))

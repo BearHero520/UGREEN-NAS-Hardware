@@ -1,0 +1,28 @@
+import inspect_kernel as k
+import struct,bisect,json
+OUT=k.OUT
+findings=[];names=set()
+for val in ['UGREEN','DXP2800S','DXP4800 GT']:
+    strs=[x for x in json.loads((OUT/'target-strings.json').read_text()) if x['value']==val]
+    for st in strs:
+        target=int(st['address'],16)
+        for sec in k.sections:
+            if not sec['sh_flags']&4 or sec['sh_type']!='SHT_PROGBITS':continue
+            blob=sec.data();needle=struct.pack('<I',target&0xffffffff);pos=0
+            while True:
+                i=blob.find(needle,pos)
+                if i<0:break
+                addr=sec['sh_addr']+i;idx=bisect.bisect_right(k.addresses,addr)-1;fn=k.addrmap[k.addresses[idx]][-1]
+                bounds=k.function(fn)
+                if bounds:
+                    start,end=bounds
+                    for ins in k.md.disasm(k.read(start,end-start),start):
+                        if ins.address<=addr<ins.address+ins.size:
+                            if any(op.type==2 and op.imm&((1<<64)-1)==target for op in ins.operands):
+                                names.add(fn);findings.append({'value':val,'function':fn,'instruction':hex(ins.address),'code':ins.mnemonic+' '+ins.op_str})
+                pos=i+1
+lines=[]
+for n in sorted(names):lines.extend(k.disassemble(n))
+(OUT/'ugreen-string-branch-disassembly.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+(OUT/'ugreen-code-references.json').write_text(json.dumps(findings,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(findings,indent=2))

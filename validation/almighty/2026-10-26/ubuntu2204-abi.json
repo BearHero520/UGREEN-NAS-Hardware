@@ -1,0 +1,953 @@
+{
+  "started_at": "2026-10-26T09:35:06.167159+00:00",
+  "verification_path": "firmware-inbox/work/almighty-power-persistence-20261026/binary-freeze.json",
+  "verification_sha256": "01d034b03469ccc5dc0d2eaf344ec6baf0f2338d41d7e59b1fa39bd50b563c53",
+  "shared_codec_script_sha256": "c3e03b09c692e7f9bf74273e26ea585666e1659a915cffb338f27cf339bf755e",
+  "harness_sha256": "57a11dc336210b38037c60252385acbfd9091ca55bad726b15d3d2594c76dbc8",
+  "results": {
+    "x86_64": {
+      "architecture": "x86_64",
+      "ok": true,
+      "checks": {
+        "qemu_completed": true,
+        "twelve_cases_expected_exit": true,
+        "four_help_entrypoints_reached": true,
+        "ubuntu_loader_version": true,
+        "ubuntu_libc_version": true,
+        "runtime_hashes_match_official_package": true,
+        "runtime_hashes_after_negative_control_unchanged": true,
+        "missing_libc_control_refuses_without_fallback": true,
+        "loader_list_uses_target_libs": true,
+        "nine_plugins_listed": true,
+        "nine_default_plugins_listed": true,
+        "nine_default_plugins_in_loader_debug": true,
+        "nine_plugins_in_loader_debug": true,
+        "no_unexpected_loader_errors_in_positive_cases": true,
+        "base_contains_no_glibc_version_providers": true,
+        "all_final_glibc_providers_from_ubuntu_package": true
+      },
+      "package": {
+        "architecture": "x86_64",
+        "deb_architecture": "amd64",
+        "package": "libc6",
+        "version": "2.35-0ubuntu3.15",
+        "url": "https://security.ubuntu.com/ubuntu/pool/main/g/glibc/libc6_2.35-0ubuntu3.15_amd64.deb",
+        "path": "firmware-inbox/input/libc6_2.35-0ubuntu3.15_amd64.deb",
+        "sha256": "79e35256227e16a607c154cdeb8d76ff12d20e31de286ea7fd9ad3b96fe0452d",
+        "bytes": 3234380,
+        "reused_input": false,
+        "index_url": "https://security.ubuntu.com/ubuntu/dists/jammy-security/main/binary-amd64/Packages.gz",
+        "index_sha256": "74969d65a0c12f401ffed892f8822bb12424f8176b729f9dcb312e0e36d19ba9",
+        "verification": "SHA256 and Size match the official HTTPS Packages.gz stanza; no GPG verification claimed"
+      },
+      "runtime_providers": {
+        "/lib64/ld-linux-x86-64.so.2": {
+          "resolved_path": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "41daf7836f7fce21a40ca63a00c5caf21b05a35a76ccc075d86f1716212cdf01",
+          "bytes": 240936
+        },
+        "/lib/x86_64-linux-gnu/libc.so.6": {
+          "resolved_path": "/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "b2cf6c33b74d2f22543b7a469a75b538911e690f769d0b238843a49465b83793",
+          "bytes": 2220400
+        },
+        "/lib/x86_64-linux-gnu/libdl.so.2": {
+          "resolved_path": "/lib/x86_64-linux-gnu/libdl.so.2",
+          "sha256": "3eaaa4aefd9c28f3867c96a427c3cbec9191cb61c4c9d0a2cb4a765d66064499",
+          "bytes": 14432
+        },
+        "/lib/x86_64-linux-gnu/libpthread.so.0": {
+          "resolved_path": "/lib/x86_64-linux-gnu/libpthread.so.0",
+          "sha256": "fbed9505adacada2abb37c6b43be2df6de81e742712c6025694ba48de62c7e78",
+          "bytes": 21448
+        }
+      },
+      "final_image_glibc_providers": {
+        "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": {
+          "sha256": "41daf7836f7fce21a40ca63a00c5caf21b05a35a76ccc075d86f1716212cdf01",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.34",
+            "GLIBC_2.35",
+            "GLIBC_2.4",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libBrokenLocale.so.1": {
+          "sha256": "cd8b8d5ab686d2bc9f323dd0ae6504a6bfd86156ec9e678efa7ac1857e3be9d7",
+          "defined_versions": [
+            "GLIBC_2.2.5"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libanl.so.1": {
+          "sha256": "29bb120cd7e124602be9db4dd76bdf63d698d9e28547024042f96ddebb695730",
+          "defined_versions": [
+            "GLIBC_2.2.5"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libc.so.6": {
+          "sha256": "b2cf6c33b74d2f22543b7a469a75b538911e690f769d0b238843a49465b83793",
+          "defined_versions": [
+            "GLIBC_2.10",
+            "GLIBC_2.11",
+            "GLIBC_2.12",
+            "GLIBC_2.13",
+            "GLIBC_2.14",
+            "GLIBC_2.15",
+            "GLIBC_2.16",
+            "GLIBC_2.17",
+            "GLIBC_2.18",
+            "GLIBC_2.2.5",
+            "GLIBC_2.2.6",
+            "GLIBC_2.22",
+            "GLIBC_2.23",
+            "GLIBC_2.24",
+            "GLIBC_2.25",
+            "GLIBC_2.26",
+            "GLIBC_2.27",
+            "GLIBC_2.28",
+            "GLIBC_2.29",
+            "GLIBC_2.3",
+            "GLIBC_2.3.2",
+            "GLIBC_2.3.3",
+            "GLIBC_2.3.4",
+            "GLIBC_2.30",
+            "GLIBC_2.31",
+            "GLIBC_2.32",
+            "GLIBC_2.33",
+            "GLIBC_2.34",
+            "GLIBC_2.35",
+            "GLIBC_2.4",
+            "GLIBC_2.5",
+            "GLIBC_2.6",
+            "GLIBC_2.7",
+            "GLIBC_2.8",
+            "GLIBC_2.9",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libc_malloc_debug.so.0": {
+          "sha256": "3be457f3e74a6aea73dab81ab9a0493693f7ecfe98f895615c59acdcd55083ed",
+          "defined_versions": [
+            "GLIBC_2.10",
+            "GLIBC_2.16",
+            "GLIBC_2.2.5",
+            "GLIBC_2.33"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libdl.so.2": {
+          "sha256": "3eaaa4aefd9c28f3867c96a427c3cbec9191cb61c4c9d0a2cb4a765d66064499",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3.3",
+            "GLIBC_2.3.4"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libm.so.6": {
+          "sha256": "3dd5511ae94785c9f921429b0f2b2f7aabb461b6f0e6de6dfdbef15f24bdfee6",
+          "defined_versions": [
+            "GLIBC_2.15",
+            "GLIBC_2.18",
+            "GLIBC_2.2.5",
+            "GLIBC_2.23",
+            "GLIBC_2.24",
+            "GLIBC_2.25",
+            "GLIBC_2.26",
+            "GLIBC_2.27",
+            "GLIBC_2.28",
+            "GLIBC_2.29",
+            "GLIBC_2.31",
+            "GLIBC_2.32",
+            "GLIBC_2.35",
+            "GLIBC_2.4"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libmvec.so.1": {
+          "sha256": "44e31b0cd6dcb6f8147ffc820f51e7140c429a6e0e7724dd00ad0ea4d18f4f51",
+          "defined_versions": [
+            "GLIBC_2.22",
+            "GLIBC_2.35"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libnsl.so.1": {
+          "sha256": "9e8d8d2da0389c857e68c999562550200231c77b0cb8407208d9976c9e6f2903",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libnss_compat.so.2": {
+          "sha256": "95b9179b7b0051a2b21814dbd98879f50d1fc33e5c1b4956f8e7c1b9a852ecc9",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libnss_dns.so.2": {
+          "sha256": "10c3e1560711a52e4ec36b1e3220ae1c43e9a1638f449c3734b71c113e331dbb",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libnss_files.so.2": {
+          "sha256": "18e1c21547f4b955ae8c08ae8460d7bf665ca74ace4af215678008cd764ffd67",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libnss_hesiod.so.2": {
+          "sha256": "e8eaed792623b84bb76a6a9bd5b3e0d4f2ba530e78be67af7532d090fe2b721a",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libpthread.so.0": {
+          "sha256": "fbed9505adacada2abb37c6b43be2df6de81e742712c6025694ba48de62c7e78",
+          "defined_versions": [
+            "GLIBC_2.11",
+            "GLIBC_2.12",
+            "GLIBC_2.18",
+            "GLIBC_2.2.5",
+            "GLIBC_2.2.6",
+            "GLIBC_2.28",
+            "GLIBC_2.3.2",
+            "GLIBC_2.3.3",
+            "GLIBC_2.3.4",
+            "GLIBC_2.30",
+            "GLIBC_2.31",
+            "GLIBC_2.4"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libresolv.so.2": {
+          "sha256": "7230adfc1d3676f2485bec78f2d5c916d6becb15bc554ff95901f46800215194",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3.2",
+            "GLIBC_2.9",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/librt.so.1": {
+          "sha256": "5f20d34fb3bb4d84b4edeb6ca11fa5b48c705207253741619acab7cc758185fb",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3.3",
+            "GLIBC_2.3.4",
+            "GLIBC_2.4",
+            "GLIBC_2.7"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libthread_db.so.1": {
+          "sha256": "a11bca0edf692281aeb5f837e5647585fb63ae036f27b6182fa462207b821454",
+          "defined_versions": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.3.3"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/x86_64-linux-gnu/libutil.so.1": {
+          "sha256": "ee98a316fe33727cf23cc81d3a7f9628350d6ef75e905c7b713e5f5e68e177dc",
+          "defined_versions": [
+            "GLIBC_2.2.5"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        }
+      },
+      "base_glibc_providers": [],
+      "base_rootfs": {
+        "path": "firmware-inbox/work/almighty-tools/rootfs.tar.gz",
+        "sha256": "412454ed98025ad9cd910d13f3d448b184e81502baa83180e89f98d0f13674be",
+        "role": "Alpine musl shell/init only; no glibc overlay"
+      },
+      "product_payloads": {
+        "/work/bin/ugreenctl": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl",
+          "sha256": "2bb3a6673270dac2d5031982e0e36f8339a58ef17d5dd1cd19d2fa0d6712b6d3",
+          "bytes": 710992
+        },
+        "/work/bin/ugreen_leds_cli": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/ugreen_leds_cli",
+          "sha256": "52549b94d04312f52afff3b57dc194c16a69013477a1692719e2f5600221c755",
+          "bytes": 594760
+        },
+        "/work/bin/ugreenctl-fand": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-fand",
+          "sha256": "ee17d17b1c80a29b442d369ec72e08ec43e2edcd64f882359f9362a54ed01102",
+          "bytes": 90416
+        },
+        "/work/bin/ugreenctl-ledd": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-ledd",
+          "sha256": "dbeb8d83ab670a10369bd1753b00457fa3cf22ab04c34626856916842d7d452f",
+          "bytes": 353088
+        },
+        "/work/models/dx4600.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dx4600.so",
+          "sha256": "34ff5fc705cf3d9156918bb4a775ae99b764b9404de90534ff958257e02535d3",
+          "bytes": 102216
+        },
+        "/work/models/dxp2800.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp2800.so",
+          "sha256": "3bddd1fb642e9d3a73db6b563b750ff8e954f9a40f0ec8eb1ff751a034296836",
+          "bytes": 6664
+        },
+        "/work/models/dxp4800.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800.so",
+          "sha256": "4d261145b97ab91ab745526f99fe8015e5a3736ca075de62990a37c242a8873c",
+          "bytes": 102104
+        },
+        "/work/models/dxp4800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800plus.so",
+          "sha256": "f72801adcb10fa1af4ec68916b11016b0b3f2e8ffec9368f6dc8d2a46163b306",
+          "bytes": 101384
+        },
+        "/work/models/dxp4800s.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800s.so",
+          "sha256": "8e29e13d796a77369db8a7af172ca86a91cc83264e1384605ad80a80ab2b3a6f",
+          "bytes": 102120
+        },
+        "/work/models/dxp480tplus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp480tplus.so",
+          "sha256": "3c9807b7669428ad55d07771ab26f029ae2595ef42b36f0308d096581125c45b",
+          "bytes": 101904
+        },
+        "/work/models/dxp6800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800plus.so",
+          "sha256": "d86635aff5b1a38ca79c63f64de0a2607609bdfc181945cf46c451a174e0cf62",
+          "bytes": 75648
+        },
+        "/work/models/dxp6800pro.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800pro.so",
+          "sha256": "87c6bfb7c426905e8a3e71264e5504ae429ff602a0a02a631f096c38d33ca933",
+          "bytes": 103264
+        },
+        "/work/models/dxp8800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp8800plus.so",
+          "sha256": "cd230c6da5a103881b30cc2bf4669176a78b39f858a868c25cfdbf641b0bf6e5",
+          "bytes": 6672
+        }
+      },
+      "model_ids": [
+        "dx4600",
+        "dxp2800",
+        "dxp4800",
+        "dxp4800plus",
+        "dxp4800s",
+        "dxp480tplus",
+        "dxp6800plus",
+        "dxp6800pro",
+        "dxp8800plus"
+      ],
+      "default_model_ids": [
+        "dx4600",
+        "dxp2800",
+        "dxp4800",
+        "dxp4800plus",
+        "dxp4800s",
+        "dxp480tplus",
+        "dxp6800plus",
+        "dxp6800pro",
+        "dxp8800plus"
+      ],
+      "cases": {
+        "loader_version": {
+          "exit_code": 0,
+          "output": "ld.so (Ubuntu GLIBC 2.35-0ubuntu3.15) stable release version 2.35.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\n"
+        },
+        "libc_version": {
+          "exit_code": 0,
+          "output": "GNU C Library (Ubuntu GLIBC 2.35-0ubuntu3.15) stable release version 2.35.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 11.4.0.\nlibc ABIs: UNIQUE IFUNC ABSOLUTE\nFor bug reporting instructions, please see:\n<https://bugs.launchpad.net/ubuntu/+source/glibc/+bugs>.\n"
+        },
+        "runtime_hashes": {
+          "exit_code": 0,
+          "output": "41daf7836f7fce21a40ca63a00c5caf21b05a35a76ccc075d86f1716212cdf01  /lib64/ld-linux-x86-64.so.2\nb2cf6c33b74d2f22543b7a469a75b538911e690f769d0b238843a49465b83793  /lib/x86_64-linux-gnu/libc.so.6\n3eaaa4aefd9c28f3867c96a427c3cbec9191cb61c4c9d0a2cb4a765d66064499  /lib/x86_64-linux-gnu/libdl.so.2\nfbed9505adacada2abb37c6b43be2df6de81e742712c6025694ba48de62c7e78  /lib/x86_64-linux-gnu/libpthread.so.0\n"
+        },
+        "loader_list": {
+          "exit_code": 0,
+          "output": "\tlinux-vdso.so.1 (0x00007f1c65507000)\n\tlibpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f1c654fc000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f1c652d3000)\n\tlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f1c652ce000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007f1c65509000)\n"
+        },
+        "help_ugreenctl": {
+          "exit_code": 0,
+          "output": "       467:\t\n       467:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       467:\tfind library=libpthread.so.0 [0]; searching\n       467:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       467:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       467:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       467:\t\n       467:\tfile=libpthread.so.0 [0];  generating link map\n       467:\t  dynamic: 0x00007f7c8aa44e10  base: 0x00007f7c8aa41000   size: 0x0000000000004028\n       467:\t    entry: 0x00007f7c8aa41000  phdr: 0x00007f7c8aa41040  phnum:                 11\n       467:\t\n       467:\t\n       467:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       467:\tfind library=libc.so.6 [0]; searching\n       467:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       467:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       467:\t\n       467:\tfile=libc.so.6 [0];  generating link map\n       467:\t  dynamic: 0x00007f7c8aa31bc0  base: 0x00007f7c8a818000   size: 0x0000000000228e50\n       467:\t    entry: 0x00007f7c8a841f50  phdr: 0x00007f7c8a818040  phnum:                 14\n       467:\t\n       467:\t\n       467:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       467:\tfind library=libdl.so.2 [0]; searching\n       467:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       467:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       467:\t\n       467:\tfile=libdl.so.2 [0];  generating link map\n       467:\t  dynamic: 0x00007f7c8a816e10  base: 0x00007f7c8a813000   size: 0x0000000000004028\n       467:\t    entry: 0x00007f7c8a813000  phdr: 0x00007f7c8a813040  phnum:                 11\n       467:\t\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       467:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       467:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       467:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       467:\t\n       467:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       467:\t\n       467:\t\n       467:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       467:\t\n       467:\t\n       467:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       467:\t\n       467:\t\n       467:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       467:\t\n       467:\t\n       467:\tinitialize program: /work/bin/ugreenctl\n       467:\t\n       467:\t\n       467:\ttransferring control: /work/bin/ugreenctl\n       467:\t\nugreenctl 0.2.0 - UGREEN NAS Hardware Management Utility\n\nUsage:\n  ugreenctl [options] models\n  ugreenctl [options] info\n  ugreenctl [options] thermal status\n  ugreenctl [options] fan status\n  ugreenctl [options] fan set <fan-id> <0-255>\n  ugreenctl [options] power startup get\n  ugreenctl [options] power startup set <on|off|restore>\n  ugreenctl [options] power rtc-wake get\n  ugreenctl [options] power rtc-wake set <unix-epoch>\n  ugreenctl [options] power rtc-wake clear\n  ugreenctl [options] network wol get\n  ugreenctl [options] network wol set <on|off>\n  ugreenctl led list\n  ugreenctl led status [all|power|netdev|diskN...] [--json]\n  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>\n              [--brightness <0-255|N%>] [--mode on|off|blink|breath]\n              [--on-ms N --off-ms N] [--force --apply]\n  ugreenctl led on|off <targets...> [--force --apply]\n  ugreenctl led identify <target> [--seconds N] [--force --apply]\n  ugreenctl disk list|map [--json]\n  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\nOptions (LED/disk options may also follow the command):\n  --model <id>        use a specific model plugin\n  --plugin-dir <dir>  directory containing model .so files\n  --apply             perform a requested write (writes are dry runs otherwise)\n  --force             acknowledge an experimental model write\n  --json              structured output for LED/disk commands\n  --version           print the version\n  --help              print this help\n\nFan control prefers the Linux hwmon node named it8613. If it is absent,\na guarded direct Super I/O fallback is available only with no active owner.\nWrites require an exact DMI match and always select manual PWM mode.\n       467:\t\n       467:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       467:\t\n       467:\t\n       467:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       467:\t\n"
+        },
+        "help_ugreen_leds_cli": {
+          "exit_code": 0,
+          "output": "       468:\t\n       468:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreen_leds_cli [0]\n       468:\tfind library=libpthread.so.0 [0]; searching\n       468:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       468:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       468:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       468:\t\n       468:\tfile=libpthread.so.0 [0];  generating link map\n       468:\t  dynamic: 0x00007f4639445e10  base: 0x00007f4639442000   size: 0x0000000000004028\n       468:\t    entry: 0x00007f4639442000  phdr: 0x00007f4639442040  phnum:                 11\n       468:\t\n       468:\t\n       468:\tfile=libc.so.6 [0];  needed by /work/bin/ugreen_leds_cli [0]\n       468:\tfind library=libc.so.6 [0]; searching\n       468:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       468:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       468:\t\n       468:\tfile=libc.so.6 [0];  generating link map\n       468:\t  dynamic: 0x00007f4639432bc0  base: 0x00007f4639219000   size: 0x0000000000228e50\n       468:\t    entry: 0x00007f4639242f50  phdr: 0x00007f4639219040  phnum:                 14\n       468:\t\n       468:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       468:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       468:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       468:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       468:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       468:\t\n       468:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       468:\t\n       468:\t\n       468:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       468:\t\n       468:\t\n       468:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       468:\t\n       468:\t\n       468:\tinitialize program: /work/bin/ugreen_leds_cli\n       468:\t\n       468:\t\n       468:\ttransferring control: /work/bin/ugreen_leds_cli\n       468:\t\nUsage: ugreen_leds_cli TARGET ... [ACTION ...] [--apply] [--force] [--json]\nTARGET: power, netdev, disk1..disk8, all (availability depends on model).\nActions, executed in the given order:\n  -on | -off\n  -color R G B          each component 0..255\n  -brightness N         0..255\n  -blink ON_MS OFF_MS | -breath ON_MS OFF_MS (total 1..65535 ms)\n  -status               query complete LED state\nNo action means -status. Put all targets before action flags.\n\nThis entry point provides argument compatibility with ugreen_leds_cli.\nWrites default to preview and require --apply; experimental profiles also\nrequire --force. Existing scripts must explicitly acknowledge these options.\nDMI, MCU identity, owner checks and locks always apply.\n       468:\t\n       468:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       468:\t\n"
+        },
+        "help_ugreenctl-fand": {
+          "exit_code": 1,
+          "output": "       469:\t\n       469:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl-fand [0]\n       469:\tfind library=libpthread.so.0 [0]; searching\n       469:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       469:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       469:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       469:\t\n       469:\tfile=libpthread.so.0 [0];  generating link map\n       469:\t  dynamic: 0x00007f57f0f94e10  base: 0x00007f57f0f91000   size: 0x0000000000004028\n       469:\t    entry: 0x00007f57f0f91000  phdr: 0x00007f57f0f91040  phnum:                 11\n       469:\t\n       469:\t\n       469:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl-fand [0]\n       469:\tfind library=libc.so.6 [0]; searching\n       469:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       469:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       469:\t\n       469:\tfile=libc.so.6 [0];  generating link map\n       469:\t  dynamic: 0x00007f57f0f81bc0  base: 0x00007f57f0d68000   size: 0x0000000000228e50\n       469:\t    entry: 0x00007f57f0d91f50  phdr: 0x00007f57f0d68040  phnum:                 14\n       469:\t\n       469:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl-fand [0]\n       469:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-fand [0]\n       469:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-fand [0]\n       469:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-fand [0]\n       469:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       469:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       469:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       469:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       469:\t\n       469:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       469:\t\n       469:\t\n       469:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       469:\t\n       469:\t\n       469:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       469:\t\n       469:\t\n       469:\tinitialize program: /work/bin/ugreenctl-fand\n       469:\t\n       469:\t\n       469:\ttransferring control: /work/bin/ugreenctl-fand\n       469:\t\nUsage: ugreenctl-fand --config <file> --state <file> --ugreenctl <file>\n                      --plugin-dir <dir> [--once]\n\nRuns a software temperature curve and sends every PWM update through\nthe guarded ugreenctl model plugin. It is not a hardware auto mode.\n       469:\t\n       469:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       469:\t\n"
+        },
+        "help_ugreenctl-ledd": {
+          "exit_code": 0,
+          "output": "       470:\t\n       470:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl-ledd [0]\n       470:\tfind library=libpthread.so.0 [0]; searching\n       470:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       470:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       470:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       470:\t\n       470:\tfile=libpthread.so.0 [0];  generating link map\n       470:\t  dynamic: 0x00007f1776933e10  base: 0x00007f1776930000   size: 0x0000000000004028\n       470:\t    entry: 0x00007f1776930000  phdr: 0x00007f1776930040  phnum:                 11\n       470:\t\n       470:\t\n       470:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl-ledd [0]\n       470:\tfind library=libc.so.6 [0]; searching\n       470:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       470:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       470:\t\n       470:\tfile=libc.so.6 [0];  generating link map\n       470:\t  dynamic: 0x00007f1776920bc0  base: 0x00007f1776707000   size: 0x0000000000228e50\n       470:\t    entry: 0x00007f1776730f50  phdr: 0x00007f1776707040  phnum:                 14\n       470:\t\n       470:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       470:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       470:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       470:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       470:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       470:\t\n       470:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       470:\t\n       470:\t\n       470:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       470:\t\n       470:\t\n       470:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       470:\t\n       470:\t\n       470:\tinitialize program: /work/bin/ugreenctl-ledd\n       470:\t\n       470:\t\n       470:\ttransferring control: /work/bin/ugreenctl-ledd\n       470:\t\nUsage: ugreenctl-ledd --force --apply [--takeover-flow]\nForeground LED holder for verified ARM GPIO models and DXP2800 GT.\nKeeps controller resources and locks until SIGINT/SIGTERM.\nRoot-only clients use /run/ugreenctl-ledd.sock through ugreenctl.\nNo kernel modules are loaded or unloaded; no implicit backgrounding.\nGPIO: stopping releases lines; output persistence is not guaranteed.\nGT: --takeover-flow explicitly disables global autonomous effects while running.\nGT: requires active Host2EC; restores all four LEDs and original FLOW on clean exit.\nThe original autonomous animation phase cannot be restored.\n       470:\t\n       470:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       470:\t\n"
+        },
+        "models": {
+          "exit_code": 0,
+          "output": "       471:\t\n       471:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       471:\tfind library=libpthread.so.0 [0]; searching\n       471:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       471:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       471:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       471:\t\n       471:\tfile=libpthread.so.0 [0];  generating link map\n       471:\t  dynamic: 0x00007f00c8421e10  base: 0x00007f00c841e000   size: 0x0000000000004028\n       471:\t    entry: 0x00007f00c841e000  phdr: 0x00007f00c841e040  phnum:                 11\n       471:\t\n       471:\t\n       471:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       471:\tfind library=libc.so.6 [0]; searching\n       471:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       471:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       471:\t\n       471:\tfile=libc.so.6 [0];  generating link map\n       471:\t  dynamic: 0x00007f00c840ebc0  base: 0x00007f00c81f5000   size: 0x0000000000228e50\n       471:\t    entry: 0x00007f00c821ef50  phdr: 0x00007f00c81f5040  phnum:                 14\n       471:\t\n       471:\t\n       471:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       471:\tfind library=libdl.so.2 [0]; searching\n       471:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       471:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       471:\t\n       471:\tfile=libdl.so.2 [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81f3e10  base: 0x00007f00c81f0000   size: 0x0000000000004028\n       471:\t    entry: 0x00007f00c81f0000  phdr: 0x00007f00c81f0040  phnum:                 11\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       471:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       471:\t\n       471:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       471:\t\n       471:\t\n       471:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       471:\t\n       471:\t\n       471:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       471:\t\n       471:\t\n       471:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       471:\t\n       471:\t\n       471:\tinitialize program: /work/bin/ugreenctl\n       471:\t\n       471:\t\n       471:\ttransferring control: /work/bin/ugreenctl\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp8800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp8800plus.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81ec528  base: 0x00007f00c81ea000   size: 0x0000000000003000\n       471:\t    entry: 0x00007f00c81ea000  phdr: 0x00007f00c81ea040  phnum:                  8\n       471:\t\n       471:\t\n       471:\tcalling init: /work/models/dxp8800plus.so\n       471:\t\n       471:\topening file=/work/models/dxp8800plus.so [0]; direct_opencount=1\n       471:\t\n       471:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       471:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       471:\t\n       471:\tfile=/work/models/dxp6800pro.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp6800pro.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81e9880  base: 0x00007f00c81e2000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81e2000  phdr: 0x00007f00c81e2040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp6800pro.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800pro.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800pro.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800pro.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp6800pro.so\n       471:\t\n       471:\topening file=/work/models/dxp6800pro.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp6800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp6800plus.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81e0f00  base: 0x00007f00c81db000   size: 0x0000000000007000\n       471:\t    entry: 0x00007f00c81db000  phdr: 0x00007f00c81db040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp6800plus.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800plus.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800plus.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp6800plus.so\n       471:\t\n       471:\topening file=/work/models/dxp6800plus.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp480tplus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp480tplus.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81da840  base: 0x00007f00c81d3000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81d3000  phdr: 0x00007f00c81d3040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp480tplus.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp480tplus.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp480tplus.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp480tplus.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp480tplus.so\n       471:\t\n       471:\topening file=/work/models/dxp480tplus.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800s.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp4800s.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81d26b0  base: 0x00007f00c81cb000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81cb000  phdr: 0x00007f00c81cb040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800s.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800s.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800s.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800s.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp4800s.so\n       471:\t\n       471:\topening file=/work/models/dxp4800s.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp4800plus.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81ca760  base: 0x00007f00c81c3000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81c3000  phdr: 0x00007f00c81c3040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800plus.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800plus.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800plus.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800plus.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp4800plus.so\n       471:\t\n       471:\topening file=/work/models/dxp4800plus.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp4800.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81c26b0  base: 0x00007f00c81bb000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81bb000  phdr: 0x00007f00c81bb040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dxp4800.so\n       471:\t\n       471:\topening file=/work/models/dxp4800.so [0]; direct_opencount=1\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp2800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dxp2800.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81ba528  base: 0x00007f00c81b8000   size: 0x0000000000003000\n       471:\t    entry: 0x00007f00c81b8000  phdr: 0x00007f00c81b8040  phnum:                  8\n       471:\t\n       471:\t\n       471:\tcalling init: /work/models/dxp2800.so\n       471:\t\n       471:\topening file=/work/models/dxp2800.so [0]; direct_opencount=1\n       471:\t\n       471:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       471:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       471:\t\n       471:\tfile=/work/models/dx4600.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       471:\tfile=/work/models/dx4600.so [0];  generating link map\n       471:\t  dynamic: 0x00007f00c81b76f0  base: 0x00007f00c81b0000   size: 0x0000000000008000\n       471:\t    entry: 0x00007f00c81b0000  phdr: 0x00007f00c81b0040  phnum:                  8\n       471:\t\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dx4600.so [0]\n       471:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dx4600.so [0]\n       471:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dx4600.so [0]\n       471:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/models/dx4600.so [0]\n       471:\t\n       471:\tcalling init: /work/models/dx4600.so\n       471:\t\n       471:\topening file=/work/models/dx4600.so [0]; direct_opencount=1\n       471:\t\ndxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n       471:\t\n       471:\tcalling fini: /work/models/dxp8800plus.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp8800plus.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp6800pro.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp6800pro.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp6800plus.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp6800plus.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp480tplus.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp480tplus.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp4800s.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800s.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp4800plus.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800plus.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp4800.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp4800.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dxp2800.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dxp2800.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /work/models/dx4600.so [0]\n       471:\t\n       471:\t\n       471:\tfile=/work/models/dx4600.so [0];  destroying link map\n       471:\t\n       471:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       471:\t\n       471:\t\n       471:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       471:\t\n"
+        },
+        "models_default": {
+          "exit_code": 0,
+          "output": "       472:\t\n       472:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       472:\tfind library=libpthread.so.0 [0]; searching\n       472:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu\t\t(system search path)\n       472:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       472:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       472:\t\n       472:\tfile=libpthread.so.0 [0];  generating link map\n       472:\t  dynamic: 0x00007fd4ce149e10  base: 0x00007fd4ce146000   size: 0x0000000000004028\n       472:\t    entry: 0x00007fd4ce146000  phdr: 0x00007fd4ce146040  phnum:                 11\n       472:\t\n       472:\t\n       472:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       472:\tfind library=libc.so.6 [0]; searching\n       472:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       472:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       472:\t\n       472:\tfile=libc.so.6 [0];  generating link map\n       472:\t  dynamic: 0x00007fd4ce136bc0  base: 0x00007fd4cdf1d000   size: 0x0000000000228e50\n       472:\t    entry: 0x00007fd4cdf46f50  phdr: 0x00007fd4cdf1d040  phnum:                 14\n       472:\t\n       472:\t\n       472:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       472:\tfind library=libdl.so.2 [0]; searching\n       472:\t search path=/lib/x86_64-linux-gnu\t\t(system search path)\n       472:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       472:\t\n       472:\tfile=libdl.so.2 [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdf1be10  base: 0x00007fd4cdf18000   size: 0x0000000000004028\n       472:\t    entry: 0x00007fd4cdf18000  phdr: 0x00007fd4cdf18040  phnum:                 11\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       472:\t\n       472:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       472:\t\n       472:\t\n       472:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       472:\t\n       472:\t\n       472:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       472:\t\n       472:\t\n       472:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       472:\t\n       472:\t\n       472:\tinitialize program: /work/bin/ugreenctl\n       472:\t\n       472:\t\n       472:\ttransferring control: /work/bin/ugreenctl\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdf14528  base: 0x00007fd4cdf12000   size: 0x0000000000003000\n       472:\t    entry: 0x00007fd4cdf12000  phdr: 0x00007fd4cdf12040  phnum:                  8\n       472:\t\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0]; direct_opencount=1\n       472:\t\n       472:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       472:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdf11880  base: 0x00007fd4cdf0a000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cdf0a000  phdr: 0x00007fd4cdf0a040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdf08f00  base: 0x00007fd4cdf03000   size: 0x0000000000007000\n       472:\t    entry: 0x00007fd4cdf03000  phdr: 0x00007fd4cdf03040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdf02840  base: 0x00007fd4cdefb000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cdefb000  phdr: 0x00007fd4cdefb040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdefa6b0  base: 0x00007fd4cdef3000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cdef3000  phdr: 0x00007fd4cdef3040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp4800s.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdef2760  base: 0x00007fd4cdeeb000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cdeeb000  phdr: 0x00007fd4cdeeb040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdeea6b0  base: 0x00007fd4cdee3000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cdee3000  phdr: 0x00007fd4cdee3040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp4800.so [0]; direct_opencount=1\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdee2528  base: 0x00007fd4cdee0000   size: 0x0000000000003000\n       472:\t    entry: 0x00007fd4cdee0000  phdr: 0x00007fd4cdee0040  phnum:                  8\n       472:\t\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dxp2800.so [0]; direct_opencount=1\n       472:\t\n       472:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       472:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       472:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  generating link map\n       472:\t  dynamic: 0x00007fd4cdedf6f0  base: 0x00007fd4cded8000   size: 0x0000000000008000\n       472:\t    entry: 0x00007fd4cded8000  phdr: 0x00007fd4cded8040  phnum:                  8\n       472:\t\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       472:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       472:\t\n       472:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       472:\t\n       472:\topening file=/usr/local/lib/ugreenctl/models/dx4600.so [0]; direct_opencount=1\n       472:\t\ndxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       472:\t\n       472:\t\n       472:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  destroying link map\n       472:\t\n       472:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       472:\t\n       472:\t\n       472:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       472:\t\n"
+        },
+        "missing_libc_control": {
+          "exit_code": 127,
+          "output": "/work/bin/ugreenctl: error while loading shared libraries: libc.so.6: cannot open shared object file: No such file or directory\n"
+        },
+        "runtime_hashes_after": {
+          "exit_code": 0,
+          "output": "41daf7836f7fce21a40ca63a00c5caf21b05a35a76ccc075d86f1716212cdf01  /lib64/ld-linux-x86-64.so.2\nb2cf6c33b74d2f22543b7a469a75b538911e690f769d0b238843a49465b83793  /lib/x86_64-linux-gnu/libc.so.6\n3eaaa4aefd9c28f3867c96a427c3cbec9191cb61c4c9d0a2cb4a765d66064499  /lib/x86_64-linux-gnu/libdl.so.2\nfbed9505adacada2abb37c6b43be2df6de81e742712c6025694ba48de62c7e78  /lib/x86_64-linux-gnu/libpthread.so.0\n"
+        }
+      },
+      "strict_loader_diagnostics": {
+        "loader_version": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "libc_version": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "runtime_hashes": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "loader_list": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreen_leds_cli": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl-fand": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl-ledd": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "models": {
+          "permitted_optional_probes": [
+            "       471:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       471:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       471:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       471:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ],
+          "unexpected_loader_errors": []
+        },
+        "models_default": {
+          "permitted_optional_probes": [
+            "       472:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       472:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       472:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       472:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ],
+          "unexpected_loader_errors": []
+        },
+        "runtime_hashes_after": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        }
+      },
+      "expected_exit_codes": {
+        "loader_version": 0,
+        "libc_version": 0,
+        "runtime_hashes": 0,
+        "loader_list": 0,
+        "help_ugreenctl": 0,
+        "help_ugreen_leds_cli": 0,
+        "help_ugreenctl-fand": 1,
+        "help_ugreenctl-ledd": 0,
+        "models": 0,
+        "models_default": 0,
+        "missing_libc_control": 127,
+        "runtime_hashes_after": 0
+      },
+      "existing_cli_behavior": "ugreenctl-fand --help prints its usage and exits1 in the unchanged product; all other help commands and models exit0",
+      "serial_log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/x86_64/serial.log",
+        "sha256": "36078c02a3d9c35aa9cbed6ef734495ea96dbcef76b6af939ec0ad59038e3ff8"
+      },
+      "qemu_returncode": 0,
+      "timeout": false,
+      "initrd": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/x86_64/ubuntu-libc-smoke.cpio.gz",
+        "sha256": "2739bfee35d509e3a694d4e40734ec8083f7351a75f865b2d85b65a69834a90b"
+      },
+      "isolation": "No host mount, drive, network or hardware passthrough. Product commands: --help and models only.",
+      "limitation": "ABI/loader smoke only under existing isolated VM kernel; not Ubuntu whole-system validation, target NAS testing, LED control or disk mapping validation."
+    },
+    "aarch64": {
+      "architecture": "aarch64",
+      "ok": true,
+      "checks": {
+        "qemu_completed": true,
+        "twelve_cases_expected_exit": true,
+        "four_help_entrypoints_reached": true,
+        "ubuntu_loader_version": true,
+        "ubuntu_libc_version": true,
+        "runtime_hashes_match_official_package": true,
+        "runtime_hashes_after_negative_control_unchanged": true,
+        "missing_libc_control_refuses_without_fallback": true,
+        "loader_list_uses_target_libs": true,
+        "nine_plugins_listed": true,
+        "nine_default_plugins_listed": true,
+        "nine_default_plugins_in_loader_debug": true,
+        "nine_plugins_in_loader_debug": true,
+        "no_unexpected_loader_errors_in_positive_cases": true,
+        "base_contains_no_glibc_version_providers": true,
+        "all_final_glibc_providers_from_ubuntu_package": true
+      },
+      "package": {
+        "architecture": "aarch64",
+        "deb_architecture": "arm64",
+        "package": "libc6",
+        "version": "2.35-0ubuntu3.15",
+        "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glibc/libc6_2.35-0ubuntu3.15_arm64.deb",
+        "path": "firmware-inbox/input/libc6_2.35-0ubuntu3.15_arm64.deb",
+        "sha256": "dd88cc85dcfbac19c0c9b606676b7b1b87f851d75afa5c830fc5ba1293a30833",
+        "bytes": 2709356,
+        "reused_input": false,
+        "index_url": "https://ports.ubuntu.com/ubuntu-ports/dists/jammy-security/main/binary-arm64/Packages.gz",
+        "index_sha256": "14b180d2a12e432ff4c0f0f7d18aaebed1208c895a6e70ecc4fc945a90c991d4",
+        "verification": "SHA256 and Size match the official HTTPS Packages.gz stanza; no GPG verification claimed"
+      },
+      "runtime_providers": {
+        "/lib/ld-linux-aarch64.so.1": {
+          "resolved_path": "/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
+          "sha256": "1f4fe51e11324b5bcc01ef1fd3859b5dd344ec16a8674d74ce618ef65016fbaf",
+          "bytes": 187776
+        },
+        "/lib/aarch64-linux-gnu/libc.so.6": {
+          "resolved_path": "/lib/aarch64-linux-gnu/libc.so.6",
+          "sha256": "79fd4ecae5fb5fab4e17ec4f145d2b79026559dce52f01a478b0a04fef3dff06",
+          "bytes": 1661968
+        },
+        "/lib/aarch64-linux-gnu/libdl.so.2": {
+          "resolved_path": "/lib/aarch64-linux-gnu/libdl.so.2",
+          "sha256": "8c36dc9f7c826ac79575bc079c3e35f3467a4700e59f6cde49996fa232317871",
+          "bytes": 6152
+        },
+        "/lib/aarch64-linux-gnu/libpthread.so.0": {
+          "resolved_path": "/lib/aarch64-linux-gnu/libpthread.so.0",
+          "sha256": "63c2e3d0d288006a9be6781c22e1e810a41b26a29963513dec7cdec10ee16cc8",
+          "bytes": 13752
+        }
+      },
+      "final_image_glibc_providers": {
+        "/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1": {
+          "sha256": "1f4fe51e11324b5bcc01ef1fd3859b5dd344ec16a8674d74ce618ef65016fbaf",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_2.34",
+            "GLIBC_2.35",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libBrokenLocale.so.1": {
+          "sha256": "f66d5dec1684b194c0faa403a4da607047634740a1a77fca5b1a6e112887968b",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libanl.so.1": {
+          "sha256": "d20852b874f1fe2cc1a37a167011b824a8b8cf0dfe7c53e09c4b32b0ec556d1f",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libc.so.6": {
+          "sha256": "79fd4ecae5fb5fab4e17ec4f145d2b79026559dce52f01a478b0a04fef3dff06",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_2.18",
+            "GLIBC_2.22",
+            "GLIBC_2.23",
+            "GLIBC_2.24",
+            "GLIBC_2.25",
+            "GLIBC_2.26",
+            "GLIBC_2.27",
+            "GLIBC_2.28",
+            "GLIBC_2.29",
+            "GLIBC_2.30",
+            "GLIBC_2.31",
+            "GLIBC_2.32",
+            "GLIBC_2.33",
+            "GLIBC_2.34",
+            "GLIBC_2.35",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libc_malloc_debug.so.0": {
+          "sha256": "7e041ca840898e5e93610a696005b7277f14c62b8af4d3e5ecee231600e3694e",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_2.33"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libdl.so.2": {
+          "sha256": "8c36dc9f7c826ac79575bc079c3e35f3467a4700e59f6cde49996fa232317871",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libm.so.6": {
+          "sha256": "4272b01b52991e751427228625655626ff4e0c51f8724fe14bb95b88b72a76ae",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_2.18",
+            "GLIBC_2.23",
+            "GLIBC_2.24",
+            "GLIBC_2.25",
+            "GLIBC_2.27",
+            "GLIBC_2.28",
+            "GLIBC_2.29",
+            "GLIBC_2.31",
+            "GLIBC_2.32",
+            "GLIBC_2.35"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libnsl.so.1": {
+          "sha256": "02363dbccc284e1e31808899c7074917c995fd117282d31c1ad127b3190c0517",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libnss_compat.so.2": {
+          "sha256": "bafcee43006118d8e4c838e6f224bb36dccc083ebf07aecd53a5fca23d8d066f",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libnss_dns.so.2": {
+          "sha256": "0361236ef86611a4ff0334e24564ea6af7e4949e532de47eda622be25359c314",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libnss_files.so.2": {
+          "sha256": "516ddb052542d4ee33feaacb2a21f2dc4614c39a8b091d8d1391544487952526",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libnss_hesiod.so.2": {
+          "sha256": "f789e8c2114c018e502ea63e467274a99e28adf276780138ea9921787dd772bb",
+          "defined_versions": [
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libpthread.so.0": {
+          "sha256": "63c2e3d0d288006a9be6781c22e1e810a41b26a29963513dec7cdec10ee16cc8",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_2.18",
+            "GLIBC_2.28",
+            "GLIBC_2.30",
+            "GLIBC_2.31"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libresolv.so.2": {
+          "sha256": "17a5286700f2cb755a1902e754e0755ed8a03e97f58f773195726a372c112e7b",
+          "defined_versions": [
+            "GLIBC_2.17",
+            "GLIBC_PRIVATE"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/librt.so.1": {
+          "sha256": "b306cb1e1d5290f1948dad0cc58377edd89af74e02d71f7b88b688c59d47d098",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libthread_db.so.1": {
+          "sha256": "a9359177c34390a421055f27a212f2a6c9a1d21773d0ee5b1c7e36fbfe6b3ddb",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        },
+        "/lib/aarch64-linux-gnu/libutil.so.1": {
+          "sha256": "339489a748479de72d53a7560e6489419431656c27cf83dd1ba8baa58d1a262e",
+          "defined_versions": [
+            "GLIBC_2.17"
+          ],
+          "origin": "official Ubuntu libc6 package"
+        }
+      },
+      "base_glibc_providers": [],
+      "base_rootfs": {
+        "path": "firmware-inbox/work/almighty-tools/arm64/rootfs.tar.gz",
+        "sha256": "6bf491907b705caa5fc65773fbbc1d0954530b6c455d4446f670a4c1fdcea489",
+        "role": "Alpine musl shell/init only; no glibc overlay"
+      },
+      "product_payloads": {
+        "/work/bin/ugreenctl": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl",
+          "sha256": "145e89d9377927d4a128c645847be3a0c5b72469066df3b6c21257b0ad310a04",
+          "bytes": 683752
+        },
+        "/work/bin/ugreen_leds_cli": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/ugreen_leds_cli",
+          "sha256": "87dd16ac7789f55e459382e3e1b06032786a00021e6b7aa07f202df8147bb5be",
+          "bytes": 568632
+        },
+        "/work/bin/ugreenctl-fand": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-fand",
+          "sha256": "a3978e33f89364d4086cc9aa02ceb429507a6880787194bea7e7845dd6ca1134",
+          "bytes": 91280
+        },
+        "/work/bin/ugreenctl-ledd": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-ledd",
+          "sha256": "a5ba307ed4ae94991bb6427ffb751b3735c16eb6a41178c799591d090b88a582",
+          "bytes": 344048
+        },
+        "/work/models/dx4600.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dx4600.so",
+          "sha256": "8f8651715d0ee7cc7ae66ddb2f94f9d7697466f69d715dfce567218071b36417",
+          "bytes": 96392
+        },
+        "/work/models/dxp2800.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp2800.so",
+          "sha256": "b6f9a473dd851cb9278dedce7d49274ca2b9e95fe13f9da752d23dcbed7e5d38",
+          "bytes": 6840
+        },
+        "/work/models/dxp4800.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800.so",
+          "sha256": "7b77c019e773fab550d50bd9539d21ef39bde80efc5eb68c9a741e74f83d75ce",
+          "bytes": 96376
+        },
+        "/work/models/dxp4800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800plus.so",
+          "sha256": "22c1453a00a7913d32361cc59a41ebb2bd447930989c8b40a2fbd338b109a3f6",
+          "bytes": 95544
+        },
+        "/work/models/dxp4800s.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800s.so",
+          "sha256": "11d821040317dc9c50008076afb6c3c4a233cc271dee2f044089b18083552989",
+          "bytes": 96408
+        },
+        "/work/models/dxp480tplus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp480tplus.so",
+          "sha256": "bcaef5e99d6c4edadfc9ca2804ce62c2976933b92a43e831c4e366afad76d271",
+          "bytes": 96024
+        },
+        "/work/models/dxp6800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800plus.so",
+          "sha256": "bb486c98ba390c654a6cba2d39440dc16d0ae557c63d9f3e7b3c668b21ae021a",
+          "bytes": 68144
+        },
+        "/work/models/dxp6800pro.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800pro.so",
+          "sha256": "96b01b1ed584bf9be83dcad7b7f82770fad07615d910bd06064b48372976a0f8",
+          "bytes": 97480
+        },
+        "/work/models/dxp8800plus.so": {
+          "source": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp8800plus.so",
+          "sha256": "8e13513c30cb6dc858d7d2be16553a0861051dbf05a49715ac27b01e7bb69d66",
+          "bytes": 6856
+        }
+      },
+      "model_ids": [
+        "dx4600",
+        "dxp2800",
+        "dxp4800",
+        "dxp4800plus",
+        "dxp4800s",
+        "dxp480tplus",
+        "dxp6800plus",
+        "dxp6800pro",
+        "dxp8800plus"
+      ],
+      "default_model_ids": [
+        "dx4600",
+        "dxp2800",
+        "dxp4800",
+        "dxp4800plus",
+        "dxp4800s",
+        "dxp480tplus",
+        "dxp6800plus",
+        "dxp6800pro",
+        "dxp8800plus"
+      ],
+      "cases": {
+        "loader_version": {
+          "exit_code": 0,
+          "output": "ld.so (Ubuntu GLIBC 2.35-0ubuntu3.15) stable release version 2.35.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\n"
+        },
+        "libc_version": {
+          "exit_code": 0,
+          "output": "GNU C Library (Ubuntu GLIBC 2.35-0ubuntu3.15) stable release version 2.35.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 11.4.0.\nlibc ABIs: UNIQUE ABSOLUTE\nFor bug reporting instructions, please see:\n<https://bugs.launchpad.net/ubuntu/+source/glibc/+bugs>.\n"
+        },
+        "runtime_hashes": {
+          "exit_code": 0,
+          "output": "1f4fe51e11324b5bcc01ef1fd3859b5dd344ec16a8674d74ce618ef65016fbaf  /lib/ld-linux-aarch64.so.1\n79fd4ecae5fb5fab4e17ec4f145d2b79026559dce52f01a478b0a04fef3dff06  /lib/aarch64-linux-gnu/libc.so.6\n8c36dc9f7c826ac79575bc079c3e35f3467a4700e59f6cde49996fa232317871  /lib/aarch64-linux-gnu/libdl.so.2\n63c2e3d0d288006a9be6781c22e1e810a41b26a29963513dec7cdec10ee16cc8  /lib/aarch64-linux-gnu/libpthread.so.0\n"
+        },
+        "loader_list": {
+          "exit_code": 0,
+          "output": "\tlinux-vdso.so.1 (0x0000ffff9bbe8000)\n\tlibpthread.so.0 => /lib/aarch64-linux-gnu/libpthread.so.0 (0x0000ffff9bb90000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff9b9e0000)\n\tlibdl.so.2 => /lib/aarch64-linux-gnu/libdl.so.2 (0x0000ffff9b9c0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffff9bbb0000)\n"
+        },
+        "help_ugreenctl": {
+          "exit_code": 0,
+          "output": "       349:\t\n       349:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       349:\tfind library=libpthread.so.0 [0]; searching\n       349:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       349:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       349:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       349:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       349:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       349:\t\n       349:\tfile=libpthread.so.0 [0];  generating link map\n       349:\t  dynamic: 0x0000ffffb8340dc0  base: 0x0000ffffb8330000   size: 0x0000000000011020\n       349:\t    entry: 0x0000ffffb8330000  phdr: 0x0000ffffb8330040  phnum:                  7\n       349:\t\n       349:\t\n       349:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       349:\tfind library=libc.so.6 [0]; searching\n       349:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       349:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       349:\t\n       349:\tfile=libc.so.6 [0];  generating link map\n       349:\t  dynamic: 0x0000ffffb8320ba8  base: 0x0000ffffb8180000   size: 0x00000000001aee68\n       349:\t    entry: 0x0000ffffb81a75f0  phdr: 0x0000ffffb8180040  phnum:                 10\n       349:\t\n       349:\t\n       349:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       349:\tfind library=libdl.so.2 [0]; searching\n       349:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       349:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       349:\t\n       349:\tfile=libdl.so.2 [0];  generating link map\n       349:\t  dynamic: 0x0000ffffb8170dc0  base: 0x0000ffffb8160000   size: 0x0000000000011020\n       349:\t    entry: 0x0000ffffb8160000  phdr: 0x0000ffffb8160040  phnum:                  7\n       349:\t\n       349:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       349:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       349:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       349:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       349:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       349:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       349:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       349:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       349:\t\n       349:\tcalling init: /lib/ld-linux-aarch64.so.1\n       349:\t\n       349:\t\n       349:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       349:\t\n       349:\t\n       349:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       349:\t\n       349:\t\n       349:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       349:\t\n       349:\t\n       349:\tinitialize program: /work/bin/ugreenctl\n       349:\t\n       349:\t\n       349:\ttransferring control: /work/bin/ugreenctl\n       349:\t\nugreenctl 0.2.0 - UGREEN NAS Hardware Management Utility\n\nUsage:\n  ugreenctl [options] models\n  ugreenctl [options] info\n  ugreenctl [options] thermal status\n  ugreenctl [options] fan status\n  ugreenctl [options] fan set <fan-id> <0-255>\n  ugreenctl [options] power startup get\n  ugreenctl [options] power startup set <on|off|restore>\n  ugreenctl [options] power rtc-wake get\n  ugreenctl [options] power rtc-wake set <unix-epoch>\n  ugreenctl [options] power rtc-wake clear\n  ugreenctl [options] network wol get\n  ugreenctl [options] network wol set <on|off>\n  ugreenctl led list\n  ugreenctl led status [all|power|netdev|diskN...] [--json]\n  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>\n              [--brightness <0-255|N%>] [--mode on|off|blink|breath]\n              [--on-ms N --off-ms N] [--force --apply]\n  ugreenctl led on|off <targets...> [--force --apply]\n  ugreenctl led identify <target> [--seconds N] [--force --apply]\n  ugreenctl disk list|map [--json]\n  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\nOptions (LED/disk options may also follow the command):\n  --model <id>        use a specific model plugin\n  --plugin-dir <dir>  directory containing model .so files\n  --apply             perform a requested write (writes are dry runs otherwise)\n  --force             acknowledge an experimental model write\n  --json              structured output for LED/disk commands\n  --version           print the version\n  --help              print this help\n\nFan control prefers the Linux hwmon node named it8613. If it is absent,\na guarded direct Super I/O fallback is available only with no active owner.\nWrites require an exact DMI match and always select manual PWM mode.\n       349:\t\n       349:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       349:\t\n       349:\t\n       349:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       349:\t\n"
+        },
+        "help_ugreen_leds_cli": {
+          "exit_code": 0,
+          "output": "       350:\t\n       350:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreen_leds_cli [0]\n       350:\tfind library=libpthread.so.0 [0]; searching\n       350:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       350:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       350:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       350:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       350:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       350:\t\n       350:\tfile=libpthread.so.0 [0];  generating link map\n       350:\t  dynamic: 0x0000ffff9aa40dc0  base: 0x0000ffff9aa30000   size: 0x0000000000011020\n       350:\t    entry: 0x0000ffff9aa30000  phdr: 0x0000ffff9aa30040  phnum:                  7\n       350:\t\n       350:\t\n       350:\tfile=libc.so.6 [0];  needed by /work/bin/ugreen_leds_cli [0]\n       350:\tfind library=libc.so.6 [0]; searching\n       350:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       350:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       350:\t\n       350:\tfile=libc.so.6 [0];  generating link map\n       350:\t  dynamic: 0x0000ffff9aa20ba8  base: 0x0000ffff9a880000   size: 0x00000000001aee68\n       350:\t    entry: 0x0000ffff9a8a75f0  phdr: 0x0000ffff9a880040  phnum:                 10\n       350:\t\n       350:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreen_leds_cli [0]\n       350:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreen_leds_cli [0]\n       350:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       350:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       350:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       350:\t\n       350:\tcalling init: /lib/ld-linux-aarch64.so.1\n       350:\t\n       350:\t\n       350:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       350:\t\n       350:\t\n       350:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       350:\t\n       350:\t\n       350:\tinitialize program: /work/bin/ugreen_leds_cli\n       350:\t\n       350:\t\n       350:\ttransferring control: /work/bin/ugreen_leds_cli\n       350:\t\nUsage: ugreen_leds_cli TARGET ... [ACTION ...] [--apply] [--force] [--json]\nTARGET: power, netdev, disk1..disk8, all (availability depends on model).\nActions, executed in the given order:\n  -on | -off\n  -color R G B          each component 0..255\n  -brightness N         0..255\n  -blink ON_MS OFF_MS | -breath ON_MS OFF_MS (total 1..65535 ms)\n  -status               query complete LED state\nNo action means -status. Put all targets before action flags.\n\nThis entry point provides argument compatibility with ugreen_leds_cli.\nWrites default to preview and require --apply; experimental profiles also\nrequire --force. Existing scripts must explicitly acknowledge these options.\nDMI, MCU identity, owner checks and locks always apply.\n       350:\t\n       350:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       350:\t\n"
+        },
+        "help_ugreenctl-fand": {
+          "exit_code": 1,
+          "output": "       351:\t\n       351:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl-fand [0]\n       351:\tfind library=libpthread.so.0 [0]; searching\n       351:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       351:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       351:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       351:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       351:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       351:\t\n       351:\tfile=libpthread.so.0 [0];  generating link map\n       351:\t  dynamic: 0x0000ffff9ef80dc0  base: 0x0000ffff9ef70000   size: 0x0000000000011020\n       351:\t    entry: 0x0000ffff9ef70000  phdr: 0x0000ffff9ef70040  phnum:                  7\n       351:\t\n       351:\t\n       351:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl-fand [0]\n       351:\tfind library=libc.so.6 [0]; searching\n       351:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       351:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       351:\t\n       351:\tfile=libc.so.6 [0];  generating link map\n       351:\t  dynamic: 0x0000ffff9ef60ba8  base: 0x0000ffff9edc0000   size: 0x00000000001aee68\n       351:\t    entry: 0x0000ffff9ede75f0  phdr: 0x0000ffff9edc0040  phnum:                 10\n       351:\t\n       351:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl-fand [0]\n       351:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-fand [0]\n       351:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-fand [0]\n       351:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       351:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       351:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       351:\t\n       351:\tcalling init: /lib/ld-linux-aarch64.so.1\n       351:\t\n       351:\t\n       351:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       351:\t\n       351:\t\n       351:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       351:\t\n       351:\t\n       351:\tinitialize program: /work/bin/ugreenctl-fand\n       351:\t\n       351:\t\n       351:\ttransferring control: /work/bin/ugreenctl-fand\n       351:\t\nUsage: ugreenctl-fand --config <file> --state <file> --ugreenctl <file>\n                      --plugin-dir <dir> [--once]\n\nRuns a software temperature curve and sends every PWM update through\nthe guarded ugreenctl model plugin. It is not a hardware auto mode.\n       351:\t\n       351:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       351:\t\n"
+        },
+        "help_ugreenctl-ledd": {
+          "exit_code": 0,
+          "output": "       352:\t\n       352:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl-ledd [0]\n       352:\tfind library=libpthread.so.0 [0]; searching\n       352:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       352:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       352:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       352:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       352:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       352:\t\n       352:\tfile=libpthread.so.0 [0];  generating link map\n       352:\t  dynamic: 0x0000ffff81bb0dc0  base: 0x0000ffff81ba0000   size: 0x0000000000011020\n       352:\t    entry: 0x0000ffff81ba0000  phdr: 0x0000ffff81ba0040  phnum:                  7\n       352:\t\n       352:\t\n       352:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl-ledd [0]\n       352:\tfind library=libc.so.6 [0]; searching\n       352:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       352:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       352:\t\n       352:\tfile=libc.so.6 [0];  generating link map\n       352:\t  dynamic: 0x0000ffff81b90ba8  base: 0x0000ffff819f0000   size: 0x00000000001aee68\n       352:\t    entry: 0x0000ffff81a175f0  phdr: 0x0000ffff819f0040  phnum:                 10\n       352:\t\n       352:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl-ledd [0]\n       352:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl-ledd [0]\n       352:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       352:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       352:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       352:\t\n       352:\tcalling init: /lib/ld-linux-aarch64.so.1\n       352:\t\n       352:\t\n       352:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       352:\t\n       352:\t\n       352:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       352:\t\n       352:\t\n       352:\tinitialize program: /work/bin/ugreenctl-ledd\n       352:\t\n       352:\t\n       352:\ttransferring control: /work/bin/ugreenctl-ledd\n       352:\t\nUsage: ugreenctl-ledd --force --apply [--takeover-flow]\nForeground LED holder for verified ARM GPIO models and DXP2800 GT.\nKeeps controller resources and locks until SIGINT/SIGTERM.\nRoot-only clients use /run/ugreenctl-ledd.sock through ugreenctl.\nNo kernel modules are loaded or unloaded; no implicit backgrounding.\nGPIO: stopping releases lines; output persistence is not guaranteed.\nGT: --takeover-flow explicitly disables global autonomous effects while running.\nGT: requires active Host2EC; restores all four LEDs and original FLOW on clean exit.\nThe original autonomous animation phase cannot be restored.\n       352:\t\n       352:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       352:\t\n"
+        },
+        "models": {
+          "exit_code": 0,
+          "output": "       353:\t\n       353:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       353:\tfind library=libpthread.so.0 [0]; searching\n       353:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       353:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       353:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       353:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       353:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       353:\t\n       353:\tfile=libpthread.so.0 [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87b00dc0  base: 0x0000ffff87af0000   size: 0x0000000000011020\n       353:\t    entry: 0x0000ffff87af0000  phdr: 0x0000ffff87af0040  phnum:                  7\n       353:\t\n       353:\t\n       353:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       353:\tfind library=libc.so.6 [0]; searching\n       353:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       353:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       353:\t\n       353:\tfile=libc.so.6 [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87ae0ba8  base: 0x0000ffff87940000   size: 0x00000000001aee68\n       353:\t    entry: 0x0000ffff879675f0  phdr: 0x0000ffff87940040  phnum:                 10\n       353:\t\n       353:\t\n       353:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       353:\tfind library=libdl.so.2 [0]; searching\n       353:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       353:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       353:\t\n       353:\tfile=libdl.so.2 [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87930dc0  base: 0x0000ffff87920000   size: 0x0000000000011020\n       353:\t    entry: 0x0000ffff87920000  phdr: 0x0000ffff87920040  phnum:                  7\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       353:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       353:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       353:\t\n       353:\tcalling init: /lib/ld-linux-aarch64.so.1\n       353:\t\n       353:\t\n       353:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       353:\t\n       353:\t\n       353:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       353:\t\n       353:\t\n       353:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       353:\t\n       353:\t\n       353:\tinitialize program: /work/bin/ugreenctl\n       353:\t\n       353:\t\n       353:\ttransferring control: /work/bin/ugreenctl\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp8800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp8800plus.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87910500  base: 0x0000ffff878f0000   size: 0x0000000000021000\n       353:\t    entry: 0x0000ffff878f0000  phdr: 0x0000ffff878f0040  phnum:                  8\n       353:\t\n       353:\t\n       353:\tcalling init: /work/models/dxp8800plus.so\n       353:\t\n       353:\topening file=/work/models/dxp8800plus.so [0]; direct_opencount=1\n       353:\t\n       353:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       353:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       353:\t\n       353:\tfile=/work/models/dxp6800pro.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp6800pro.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff878e50b8  base: 0x0000ffff878c0000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff878c0000  phdr: 0x0000ffff878c0040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp6800pro.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800pro.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp6800pro.so\n       353:\t\n       353:\topening file=/work/models/dxp6800pro.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp6800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp6800plus.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff878b3748  base: 0x0000ffff87890000   size: 0x0000000000024000\n       353:\t    entry: 0x0000ffff87890000  phdr: 0x0000ffff87890040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp6800plus.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp6800plus.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp6800plus.so\n       353:\t\n       353:\topening file=/work/models/dxp6800plus.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp480tplus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp480tplus.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87885018  base: 0x0000ffff87860000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff87860000  phdr: 0x0000ffff87860040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp480tplus.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp480tplus.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp480tplus.so\n       353:\t\n       353:\topening file=/work/models/dxp480tplus.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800s.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp4800s.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87854ef8  base: 0x0000ffff87830000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff87830000  phdr: 0x0000ffff87830040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800s.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800s.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp4800s.so\n       353:\t\n       353:\topening file=/work/models/dxp4800s.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp4800plus.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87824f70  base: 0x0000ffff87800000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff87800000  phdr: 0x0000ffff87800040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800plus.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800plus.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp4800plus.so\n       353:\t\n       353:\topening file=/work/models/dxp4800plus.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp4800.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff877f4ee8  base: 0x0000ffff877d0000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff877d0000  phdr: 0x0000ffff877d0040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dxp4800.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dxp4800.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dxp4800.so\n       353:\t\n       353:\topening file=/work/models/dxp4800.so [0]; direct_opencount=1\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp2800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dxp2800.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff877c04f8  base: 0x0000ffff877a0000   size: 0x0000000000021000\n       353:\t    entry: 0x0000ffff877a0000  phdr: 0x0000ffff877a0040  phnum:                  8\n       353:\t\n       353:\t\n       353:\tcalling init: /work/models/dxp2800.so\n       353:\t\n       353:\topening file=/work/models/dxp2800.so [0]; direct_opencount=1\n       353:\t\n       353:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       353:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       353:\t\n       353:\tfile=/work/models/dx4600.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       353:\tfile=/work/models/dx4600.so [0];  generating link map\n       353:\t  dynamic: 0x0000ffff87794f18  base: 0x0000ffff87770000   size: 0x0000000000026000\n       353:\t    entry: 0x0000ffff87770000  phdr: 0x0000ffff87770040  phnum:                  8\n       353:\t\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/models/dx4600.so [0]\n       353:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/models/dx4600.so [0]\n       353:\t\n       353:\tcalling init: /work/models/dx4600.so\n       353:\t\n       353:\topening file=/work/models/dx4600.so [0]; direct_opencount=1\n       353:\t\ndxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n       353:\t\n       353:\tcalling fini: /work/models/dxp8800plus.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp8800plus.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp6800pro.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp6800pro.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp6800plus.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp6800plus.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp480tplus.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp480tplus.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp4800s.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800s.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp4800plus.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800plus.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp4800.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp4800.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dxp2800.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dxp2800.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /work/models/dx4600.so [0]\n       353:\t\n       353:\t\n       353:\tfile=/work/models/dx4600.so [0];  destroying link map\n       353:\t\n       353:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       353:\t\n       353:\t\n       353:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       353:\t\n"
+        },
+        "models_default": {
+          "exit_code": 0,
+          "output": "       354:\t\n       354:\tfile=libpthread.so.0 [0];  needed by /work/bin/ugreenctl [0]\n       354:\tfind library=libpthread.so.0 [0]; searching\n       354:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu\t\t(system search path)\n       354:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       354:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       354:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       354:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       354:\t\n       354:\tfile=libpthread.so.0 [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92730dc0  base: 0x0000ffff92720000   size: 0x0000000000011020\n       354:\t    entry: 0x0000ffff92720000  phdr: 0x0000ffff92720040  phnum:                  7\n       354:\t\n       354:\t\n       354:\tfile=libc.so.6 [0];  needed by /work/bin/ugreenctl [0]\n       354:\tfind library=libc.so.6 [0]; searching\n       354:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       354:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       354:\t\n       354:\tfile=libc.so.6 [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92710ba8  base: 0x0000ffff92570000   size: 0x00000000001aee68\n       354:\t    entry: 0x0000ffff925975f0  phdr: 0x0000ffff92570040  phnum:                 10\n       354:\t\n       354:\t\n       354:\tfile=libdl.so.2 [0];  needed by /work/bin/ugreenctl [0]\n       354:\tfind library=libdl.so.2 [0]; searching\n       354:\t search path=/lib/aarch64-linux-gnu\t\t(system search path)\n       354:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       354:\t\n       354:\tfile=libdl.so.2 [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92560dc0  base: 0x0000ffff92550000   size: 0x0000000000011020\n       354:\t    entry: 0x0000ffff92550000  phdr: 0x0000ffff92550040  phnum:                  7\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /work/bin/ugreenctl [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       354:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /work/bin/ugreenctl [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /work/bin/ugreenctl [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       354:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       354:\t\n       354:\tcalling init: /lib/ld-linux-aarch64.so.1\n       354:\t\n       354:\t\n       354:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       354:\t\n       354:\t\n       354:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       354:\t\n       354:\t\n       354:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       354:\t\n       354:\t\n       354:\tinitialize program: /work/bin/ugreenctl\n       354:\t\n       354:\t\n       354:\ttransferring control: /work/bin/ugreenctl\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92540500  base: 0x0000ffff92520000   size: 0x0000000000021000\n       354:\t    entry: 0x0000ffff92520000  phdr: 0x0000ffff92520040  phnum:                  8\n       354:\t\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0]; direct_opencount=1\n       354:\t\n       354:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       354:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff925150b8  base: 0x0000ffff924f0000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff924f0000  phdr: 0x0000ffff924f0040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff924e3748  base: 0x0000ffff924c0000   size: 0x0000000000024000\n       354:\t    entry: 0x0000ffff924c0000  phdr: 0x0000ffff924c0040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff924b5018  base: 0x0000ffff92490000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff92490000  phdr: 0x0000ffff92490040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92484ef8  base: 0x0000ffff92460000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff92460000  phdr: 0x0000ffff92460040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp4800s.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92454f70  base: 0x0000ffff92430000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff92430000  phdr: 0x0000ffff92430040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff92424ee8  base: 0x0000ffff92400000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff92400000  phdr: 0x0000ffff92400040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp4800.so [0]; direct_opencount=1\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff923f04f8  base: 0x0000ffff923d0000   size: 0x0000000000021000\n       354:\t    entry: 0x0000ffff923d0000  phdr: 0x0000ffff923d0040  phnum:                  8\n       354:\t\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dxp2800.so [0]; direct_opencount=1\n       354:\t\n       354:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       354:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  dynamically loaded by /work/bin/ugreenctl [0]\n       354:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  generating link map\n       354:\t  dynamic: 0x0000ffff923c4f18  base: 0x0000ffff923a0000   size: 0x0000000000026000\n       354:\t    entry: 0x0000ffff923a0000  phdr: 0x0000ffff923a0040  phnum:                  8\n       354:\t\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       354:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       354:\t\n       354:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       354:\t\n       354:\topening file=/usr/local/lib/ugreenctl/models/dx4600.so [0]; direct_opencount=1\n       354:\t\ndxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp8800plus.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800pro.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp6800plus.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp480tplus.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800s.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800plus.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp4800.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dxp2800.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       354:\t\n       354:\t\n       354:\tfile=/usr/local/lib/ugreenctl/models/dx4600.so [0];  destroying link map\n       354:\t\n       354:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       354:\t\n       354:\t\n       354:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       354:\t\n"
+        },
+        "missing_libc_control": {
+          "exit_code": 127,
+          "output": "/work/bin/ugreenctl: error while loading shared libraries: libc.so.6: cannot open shared object file: No such file or directory\n"
+        },
+        "runtime_hashes_after": {
+          "exit_code": 0,
+          "output": "1f4fe51e11324b5bcc01ef1fd3859b5dd344ec16a8674d74ce618ef65016fbaf  /lib/ld-linux-aarch64.so.1\n79fd4ecae5fb5fab4e17ec4f145d2b79026559dce52f01a478b0a04fef3dff06  /lib/aarch64-linux-gnu/libc.so.6\n8c36dc9f7c826ac79575bc079c3e35f3467a4700e59f6cde49996fa232317871  /lib/aarch64-linux-gnu/libdl.so.2\n63c2e3d0d288006a9be6781c22e1e810a41b26a29963513dec7cdec10ee16cc8  /lib/aarch64-linux-gnu/libpthread.so.0\n"
+        }
+      },
+      "strict_loader_diagnostics": {
+        "loader_version": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "libc_version": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "runtime_hashes": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "loader_list": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreen_leds_cli": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl-fand": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "help_ugreenctl-ledd": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        },
+        "models": {
+          "permitted_optional_probes": [
+            "       353:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       353:\t/work/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       353:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       353:\t/work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ],
+          "unexpected_loader_errors": []
+        },
+        "models_default": {
+          "permitted_optional_probes": [
+            "       354:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       354:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       354:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       354:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ],
+          "unexpected_loader_errors": []
+        },
+        "runtime_hashes_after": {
+          "permitted_optional_probes": [],
+          "unexpected_loader_errors": []
+        }
+      },
+      "expected_exit_codes": {
+        "loader_version": 0,
+        "libc_version": 0,
+        "runtime_hashes": 0,
+        "loader_list": 0,
+        "help_ugreenctl": 0,
+        "help_ugreen_leds_cli": 0,
+        "help_ugreenctl-fand": 1,
+        "help_ugreenctl-ledd": 0,
+        "models": 0,
+        "models_default": 0,
+        "missing_libc_control": 127,
+        "runtime_hashes_after": 0
+      },
+      "existing_cli_behavior": "ugreenctl-fand --help prints its usage and exits1 in the unchanged product; all other help commands and models exit0",
+      "serial_log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/aarch64/serial.log",
+        "sha256": "2618b357edbbcb6bc23f392f99741ae42975a80ea8966bee24a0206a88ba4671"
+      },
+      "qemu_returncode": 0,
+      "timeout": false,
+      "initrd": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/aarch64/ubuntu-libc-smoke.cpio.gz",
+        "sha256": "361b7820ddbd326ac6c90a6bda778a590fd0d09de94107ca4a5504cd6d92fc60"
+      },
+      "isolation": "No host mount, drive, network or hardware passthrough. Product commands: --help and models only.",
+      "limitation": "ABI/loader smoke only under existing isolated VM kernel; not Ubuntu whole-system validation, target NAS testing, LED control or disk mapping validation."
+    }
+  },
+  "strict_loader_whitelist_selftest": {
+    "exact_allowed_line_accepted": true,
+    "five_unexpected_variants_rejected": true,
+    "optional_probe_rejected_outside_models_case": true
+  },
+  "snapshot_directory": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469",
+  "ok": true
+}

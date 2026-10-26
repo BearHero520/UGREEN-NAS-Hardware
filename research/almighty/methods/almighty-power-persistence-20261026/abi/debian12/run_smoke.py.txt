@@ -1,0 +1,214 @@
+"""Read-only product ABI smoke in QEMU with Debian12 libc6, not a Debian OS test."""
+from pathlib import Path
+import argparse
+import gzip
+import hashlib
+import importlib.util
+import json
+import re
+import shlex
+import stat
+import subprocess
+import sys
+import tempfile
+
+sys.dont_write_bytecode = True
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[4]
+TOOLS = ROOT / 'firmware-inbox/work/almighty-tools'
+PROGRAMS = ('ugreenctl', 'ugreen_leds_cli', 'ugreenctl-fand', 'ugreenctl-ledd')
+PLUGINS = {'dx4600','dxp2800','dxp4800','dxp4800plus','dxp4800s','dxp480tplus','dxp6800pro','dxp6800plus','dxp8800plus'}
+EXPECTED_EXITS = {'ugreenctl-fand-help': 1}
+OPTIONAL_ABI_PROBE = re.compile(
+    r'^\s*\d+:\s+/usr/local/lib/ugreenctl/models/(dxp2800|dxp8800plus)\.so: '
+    r'error: symbol lookup error: undefined symbol: ugreenctl_plugin_v([45]) \(fatal\)\s*$')
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    instance = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(instance)
+    return instance
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--binary-freeze', type=Path, required=True, help='Parent-provided frozen binary_sha256 JSON, not the stale full verification report')
+    parser.add_argument('--snapshot', required=True, help='New snapshot directory name below this ignored harness directory; existing snapshots are never overwritten')
+    options = parser.parse_args()
+    snapshot = (HERE / options.snapshot).resolve()
+    assert snapshot != HERE and snapshot.is_relative_to(HERE), 'snapshot must stay under the harness directory'
+    assert not snapshot.exists(), 'snapshot already exists; choose a new name'
+    base = module('base_vm_serialization', TOOLS / 'run_linux.py')
+    runtime_parser = module('audited_elf_parser', ROOT / 'scripts/package-almighty.py')
+    freeze_path = options.binary_freeze.resolve()
+    freeze_data = freeze_path.read_bytes()
+    freeze = json.loads(freeze_data)
+    expected_paths = {
+        f'firmware-inbox/work/{build}/{item}'
+        for build in ('almighty-portable-build-x86_64', 'almighty-portable-build-aarch64')
+        for item in (*PROGRAMS, *(f'models/{name}.so' for name in PLUGINS))
+    }
+    assert set(freeze['binary_sha256']) == expected_paths, 'frozen binary set must be exactly 4 programs + 9 plugins per architecture'
+    assert all(sha((ROOT / path).read_bytes()) == digest for path, digest in freeze['binary_sha256'].items()), 'frozen product SHA mismatch'
+    snapshot.mkdir(parents=True, exist_ok=False)
+    package_data = (HERE / 'packages.json').read_bytes()
+    packages = json.loads(package_data)
+    runner_hash = sha((TOOLS / 'run_linux.py').read_bytes())
+    summary = {
+        'kind': 'Debian12 libc6 user-space ABI smoke only', 'scope_complete': False,
+        'not_validated': ['Debian full OS installation', 'NAS hardware', 'LED writes', 'systemd integration', 'target distributions'],
+        'isolation': 'Disposable RAM-only QEMU initramfs; no network, host mounts or hardware passthrough. Only --help, models and loader provenance commands.',
+        'base_runner': {'path': (TOOLS / 'run_linux.py').relative_to(ROOT).as_posix(), 'sha256': runner_hash,
+                        'usage': 'Imported entry/archive_files serialization only. Did not invoke run() or include either existing Debian libc overlay.'},
+        'binary_freeze': {'path': freeze_path.relative_to(ROOT).as_posix(), 'sha256': sha(freeze_data), 'status': freeze.get('status')},
+        'packages_json_sha256': sha(package_data),
+        'libc6_version': packages['version'], 'architectures': {},
+        'help_contract_note': 'Existing ugreenctl-fand --help prints Usage to stderr and exits 1. This smoke requires that exact status, successful glibc initialization, and the usage output; it does not assert an exit-0 help contract.',
+        'optional_abi_probe_note': 'Legacy dxp2800/dxp8800plus expose ABI v3. LD_DEBUG reports failed optional dlsym v5/v4 probes as fatal diagnostics even though the loader falls back and loads all nine plugins successfully. Only these exact optional probes are allowed; raw stderr remains recorded.',
+    }
+    for architecture, build_name, triplet, interpreter in (
+        ('amd64', 'almighty-portable-build-x86_64', 'x86_64-linux-gnu', '/lib64/ld-linux-x86-64.so.2'),
+        ('arm64', 'almighty-portable-build-aarch64', 'aarch64-linux-gnu', '/lib/ld-linux-aarch64.so.1'),
+    ):
+        work = snapshot / architecture
+        work.mkdir()
+        build = ROOT / 'firmware-inbox/work' / build_name
+        vm_base = TOOLS / 'arm64' if architecture == 'arm64' else TOOLS
+        package = packages['architectures'][architecture]
+        original = ROOT / package['input']
+        assert sha(original.read_bytes()) == package['sha256']
+        data_tar = ROOT / package['data_tar']
+        assert sha(data_tar.read_bytes()) == package['data_tar_sha256']
+        files = base.archive_files(vm_base / 'rootfs.tar.gz')
+        # Alpine's musl only runs the init shell and BusyBox. No Debian13 or
+        # previous arm64 glibc overlay is used, nor can it serve as fallback.
+        assert not any(path.endswith('/libc.so.6') or '/ld-linux-' in path for path in files)
+        overlay = base.archive_files(data_tar)
+        files.update(overlay)
+        files.pop('etc/ld.so.cache', None)
+        files.pop('etc/ld.so.preload', None)
+        libc = 'lib/' + triplet + '/libc.so.6'
+        loader = next(path for path in overlay if path.startswith('lib/' + triplet + '/ld-linux-') and stat.S_ISREG(overlay[path][0]))
+        expected_files = {libc: sha(overlay[libc][1]), loader: sha(overlay[loader][1])}
+        observed = {}
+        for name in PROGRAMS:
+            path = build / name
+            data = path.read_bytes()
+            assert sha(data) == freeze['binary_sha256'][path.relative_to(ROOT).as_posix()]
+            observed[name] = {'sha256': sha(data), 'elf_runtime': runtime_parser.elf_runtime(data, name)}
+            assert observed[name]['elf_runtime']['interpreter'] == interpreter
+            files['usr/local/bin/' + name] = (stat.S_IFREG | 0o755, data)
+        assert {path.stem for path in (build / 'models').glob('*.so')} == PLUGINS
+        for name in sorted(PLUGINS):
+            path = build / 'models' / (name + '.so')
+            data = path.read_bytes()
+            assert sha(data) == freeze['binary_sha256'][path.relative_to(ROOT).as_posix()]
+            observed['models/' + name + '.so'] = {'sha256': sha(data), 'elf_runtime': runtime_parser.elf_runtime(data, name)}
+            files['usr/local/lib/ugreenctl/models/' + name + '.so'] = (stat.S_IFREG | 0o755, data)
+        needed = {library for info in observed.values() for library in info['elf_runtime']['needed_libraries']}
+        assert all(any(path.rsplit('/', 1)[-1] == library for path in overlay) for library in needed), needed
+        cases = [('package-hashes', ['/bin/busybox', 'sha256sum', '/' + loader, '/' + libc]),
+                 ('loader-version', [interpreter, '--version']),
+                 ('libc-version', ['/' + libc]),
+                 ('loader-list', [interpreter, '--list', '/usr/local/bin/ugreenctl'])]
+        cases += [(name + '-help', ['/usr/local/bin/' + name, '--help']) for name in PROGRAMS]
+        cases += [('models-default', ['/usr/local/bin/ugreenctl', 'models']),
+                  ('models-explicit', ['/usr/local/bin/ugreenctl', '--plugin-dir', '/usr/local/lib/ugreenctl/models', 'models'])]
+        script = ('#!/bin/sh\n'
+                  'mount -t proc proc /proc\nmount -t sysfs sysfs /sys\nmount -t devtmpfs devtmpfs /dev\n'
+                  'mkdir -p /work /tmp /run\nexport PATH=/bin:/sbin:/usr/bin:/usr/sbin\nexport LC_ALL=C\n'
+                  'unset LD_LIBRARY_PATH LD_PRELOAD LD_AUDIT\n'
+                  'echo UGREENCTL_ABI_BEGIN\nuname -rm\noverall=0\n')
+        for number, (name, arguments) in enumerate(cases):
+            command = ' '.join(shlex.quote(arg) for arg in arguments)
+            expected_exit = EXPECTED_EXITS.get(name, 0)
+            script += (f'echo ABI_CASE_BEGIN:{name}\n'
+                       f'LD_DEBUG=libs,versions {command} >/work/out-{number} 2>/work/err-{number}\n'
+                       'case_result=$?\n'
+                       f'echo ABI_STDOUT:{name}\ncat /work/out-{number}\n'
+                       f'echo ABI_STDERR:{name}\ncat /work/err-{number}\n'
+                       f'echo ABI_CASE_END:{name}:$case_result\n'
+                       f'if [ "$case_result" -ne {expected_exit} ]; then overall=1; fi\n')
+        script += 'echo UGREENCTL_ABI_EXIT=$overall\npoweroff -f\n'
+        files['init'] = (stat.S_IFREG | 0o755, script.encode())
+        for path in ('usr', 'usr/local', 'usr/local/bin', 'usr/local/lib', 'usr/local/lib/ugreenctl', 'usr/local/lib/ugreenctl/models', 'work'):
+            files[path] = (stat.S_IFDIR | 0o755, b'')
+        ordered = sorted(files.items(), key=lambda item: (item[0].count('/'), item[0]))
+        initramfs = b''.join(base.entry(path, *value, ino=index + 1) for index, (path, value) in enumerate(ordered))
+        initramfs += base.entry('TRAILER!!!', 0)
+        initrd = work / 'initrd.cpio.gz'
+        initrd.write_bytes(gzip.compress(initramfs, compresslevel=1, mtime=0))
+        arm = architecture == 'arm64'
+        emulator = TOOLS / 'qemu' / ('qemu-system-aarch64.exe' if arm else 'qemu-system-x86_64.exe')
+        command = [str(emulator), '-machine', 'virt' if arm else 'q35', '-accel', 'tcg', '-m', '256', '-smp', '1',
+                   '-display', 'none', '-serial', 'stdio', '-monitor', 'none', '-nic', 'none', '-no-reboot',
+                   '-L', 'qemu/share', '-kernel', 'arm64/vmlinuz-virt' if arm else 'vmlinuz-virt',
+                   '-append', ('console=ttyAMA0' if arm else 'console=ttyS0') + ' rdinit=/init panic=-1 quiet']
+        if arm:
+            command += ['-cpu', 'cortex-a72']
+        # The bundled Windows QEMU cannot open some non-ASCII host filenames.
+        # As in run_linux.py, only its disposable initrd gets an ASCII temp path.
+        with tempfile.TemporaryDirectory(prefix='ugreenctl-bookworm-abi-') as temporary:
+            temporary_initrd = Path(temporary) / 'test.cpio.gz'
+            temporary_initrd.write_bytes(initrd.read_bytes())
+            completed = subprocess.run(command + ['-initrd', str(temporary_initrd)], cwd=TOOLS,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=45)
+        log = completed.stdout
+        (work / 'serial.log').write_bytes(log)
+        (work / 'qemu-host-stderr.log').write_bytes(completed.stderr)
+        assert completed.returncode == 0, completed.stderr.decode('utf-8', errors='replace')
+        text = log.decode('utf-8', errors='replace').replace('\r', '')
+        assert 'UGREENCTL_ABI_BEGIN\n' in text and 'UGREENCTL_ABI_EXIT=0' in text, text[-4000:]
+        results = {}
+        for name, arguments in cases:
+            match = re.search(r'ABI_CASE_BEGIN:' + re.escape(name) + r'\nABI_STDOUT:' + re.escape(name)
+                              + r'\n(.*?)ABI_STDERR:' + re.escape(name) + r'\n(.*?)ABI_CASE_END:' + re.escape(name) + r':([0-9]+)\n', text, re.S)
+            expected_exit = EXPECTED_EXITS.get(name, 0)
+            assert match and int(match[3]) == expected_exit, name
+            stdout, stderr = match[1], match[2]
+            results[name] = {'argv': arguments, 'exit_code': int(match[3]), 'expected_exit_code': expected_exit,
+                             'stdout': stdout, 'stderr': stderr}
+            if name.endswith('-help'):
+                assert re.search(r'usage:', stdout + stderr, re.I), name
+                # Normal PT_INTERP execution must actually load Debian libc.
+                assert 'libc.so.6' in stderr and '/lib/' + triplet + '/libc.so.6' in stderr, name
+            if name.startswith('models-'):
+                ids = [line.split()[0] for line in stdout.splitlines() if line.strip()]
+                assert set(ids) == PLUGINS and len(ids) == 9, ids
+                optional_probes = [line for line in stderr.splitlines() if OPTIONAL_ABI_PROBE.fullmatch(line)]
+                remaining_stderr = '\n'.join(line for line in stderr.splitlines() if not OPTIONAL_ABI_PROBE.fullmatch(line))
+                assert not re.search(r'skipping|cannot load|failed to load|undefined symbol', remaining_stderr, re.I), stderr
+                assert all('calling init: /usr/local/lib/ugreenctl/models/' + model + '.so' in stderr for model in PLUGINS)
+                results[name]['allowed_optional_abi_probes'] = optional_probes
+        for path, digest in expected_files.items():
+            assert digest + '  /' + path in results['package-hashes']['stdout']
+        assert packages['version'] in results['loader-version']['stdout']
+        assert packages['version'] in results['libc-version']['stdout']
+        assert '/' + libc in results['loader-list']['stdout']
+        summary['architectures'][architecture] = {
+            'passed': True, 'package': {key: value for key, value in package.items() if key != 'files'},
+            'base_rootfs_sha256': sha((vm_base / 'rootfs.tar.gz').read_bytes()),
+            'kernel_sha256': sha((vm_base / 'vmlinuz-virt').read_bytes()),
+            'qemu_sha256': sha(emulator.read_bytes()), 'initrd_sha256': sha(initrd.read_bytes()),
+            'qemu_exit_code': completed.returncode,
+            'qemu_host_stderr_log': (work / 'qemu-host-stderr.log').relative_to(snapshot).as_posix(),
+            'qemu_host_stderr_sha256': sha(completed.stderr),
+            'serial_log': (work / 'serial.log').relative_to(snapshot).as_posix(), 'serial_log_sha256': sha(log),
+            'guest_package_file_sha256': expected_files, 'glibc_overlay_source_only': package['data_tar'],
+            'existing_glibc_overlay_included': False, 'payloads': observed, 'checks': results,
+        }
+        print(architecture, packages['version'], len(cases), 'checks passed; 9/9 plugins default and explicit')
+    assert sha((TOOLS / 'run_linux.py').read_bytes()) == runner_hash
+    assert all(sha((ROOT / path).read_bytes()) == digest for path, digest in freeze['binary_sha256'].items()), 'frozen products changed during smoke'
+    summary['passed'] = True
+    summary['harness_sha256'] = sha(Path(__file__).read_bytes())
+    (snapshot / 'result.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+
+
+if __name__ == '__main__':
+    main()

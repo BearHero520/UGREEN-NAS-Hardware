@@ -1,0 +1,61 @@
+"""Independently check reported artifact hashes and selected original bytes."""
+from pathlib import Path
+import hashlib, io, json, struct, sys
+ROOT=Path(__file__).resolve().parents[3]; OUT=Path(__file__).resolve().parent
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+from capstone.x86 import X86_OP_IMM
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+read=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
+checks=[]
+def check(name,value):
+    assert value,name
+    checks.append({'name':name,'passed':True})
+artifact_count=0
+for folder,key in (('kernel','artifacts'),('native','artifact_hashes')):
+    for r in read(OUT/folder/'report.json')[key]:
+        check(folder+'/'+r['name'],sha(OUT/folder/r['name'])==r['sha256']);artifact_count+=1
+for r in read(OUT/'n76/ugpt-analysis.json')['members']:
+    if 'path' in r: check('ugpt member '+r['name'],sha(ROOT/r['path'])==r['sha256']);artifact_count+=1
+baseline=read(OUT/'verification-root-before.json')
+changes=[p for p,h in baseline['source_sha256'].items() if sha(ROOT/p)!=h]
+check('Only the evidence documentation changed',changes==['docs/FIRMWARE_RUNTIME_TRACE_20261026.zh-CN.md'])
+check('All38 product/test binary hashes unchanged',all(sha(ROOT/p)==h for p,h in baseline['binary_sha256'].items()))
+def elf(path):
+    data=path.read_bytes(); e=ELFFile(io.BytesIO(data))
+    def get(addr,size):
+        for s in e.iter_sections():
+            if s['sh_type']!='SHT_NOBITS' and s['sh_addr']<=addr and addr+size<=s['sh_addr']+s['sh_size']:
+                return s.data()[addr-s['sh_addr']:addr-s['sh_addr']+size]
+        raise AssertionError(hex(addr))
+    return e,get
+md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+core=ROOT/'firmware-inbox/work/almighty-firmware-deep-20261026/nested-apps/19_amd64_com.ugreen.ugos_serv.upk/lib/libugos_serv-shared.so'
+e,get=elf(core)
+relocs=[]
+for s in e.iter_sections():
+    if s['sh_type'] not in ('SHT_RELA','SHT_REL'):continue
+    tab=e.get_section(s['sh_link'])
+    for r in s.iter_relocations():
+        if r['r_offset']==0x1c9c30: relocs.append(tab.get_symbol(r['r_info_sym']))
+check('Native HardwareInfo vtable retains undefined base import',len(relocs)==1 and '15GetHardwareInfo' in relocs[0].name and relocs[0]['st_shndx']=='SHN_UNDEF')
+_,proto=elf(OUT/'native/libproto-ugos.so');ins=list(md.disasm(proto(0xfdd380,50),0xfdd380))
+check('Actual getter returns0x0c without calls',sum(i.size for i in ins)==50 and proto(0xfdd384,6)==bytes.fromhex('c7070c000000') and all(i.mnemonic!='call' for i in ins) and ins[-1].mnemonic=='ret')
+k,kg=elf(OUT/'kernel/vmlinux.raw.elf')
+check('Original kernel bytes match decompressed SHA256',sha(OUT/'kernel/vmlinux.raw.elf')=='4420385c4328e15dbff6ee3c120f94e29feacacd33a1fc6d49b5ed8f0fe238bf')
+scan=list(md.disasm(kg(0xffffffff819ffc40,0x70),0xffffffff819ffc40))
+check('Original PCI scan loop actually calls pci_scan_slot',any(i.mnemonic=='call' and any(o.type==X86_OP_IMM and o.imm&0xffffffffffffffff==0xffffffff819fe460 for o in i.operands) for i in scan))
+check('Original PCI loop adds8 then compares0x100',any(i.mnemonic=='add' and i.op_str.endswith(', 8') for i in scan) and any(i.mnemonic=='cmp' and i.op_str.endswith(', 0x100') for i in scan))
+check('Original PCI fixup shape',k.get_section_by_name('.pci_fixup')['sh_size']==990*16)
+up=read(OUT/'n76/report.json');check('Seven MCU routing assertions passed',len(up['checks'])==7 and all(r['passed'] for r in up['checks']))
+for arch in ('x86_64','aarch64'):
+    run=read(OUT/f'release-checks-{arch}.json')
+    check(arch+' complete Release suite',run['passed'] and len(run['steps'])==3 and all(r['returncode']==0 and sha(ROOT/r['path'])==r['sha256'] for r in run['steps']))
+    check(arch+'24 tests', '100% tests passed out of 24' in (OUT/f'ctest-{arch}.log').read_text(encoding='utf-8'))
+stage=read(OUT/'staged-install.json')
+check('Both staged installations match',stage['passed'] and all(sha(ROOT/r['stage']/p)==h for r in stage['architectures'].values() for p,h in r['sha256'].items()))
+result={'passed':True,'independent_checks':checks,'artifact_hashes_checked':artifact_count,'source_changes':changes,'binary_hashes_unchanged':38,'hardware_validation':False}
+(OUT/'independent-verification.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+print('Independent checks:',len(checks),'artifact hashes:',artifact_count,'passed')

@@ -1,0 +1,35 @@
+import inspect_kernel as k
+import struct,json,hashlib
+from capstone.x86 import X86_OP_IMM,X86_OP_MEM,X86_REG_RIP
+OUT=k.OUT
+btf=json.loads((OUT/'btf-selected-types.json').read_text())
+ft=next(t for t in btf.values() if t['name']=='pci_fixup')
+assert ft['size_or_type']==16
+entries=[]
+for group in ['early','header','final','enable','resume','suspend','resume_early','suspend_late']:
+    start=k.byname['__start_pci_fixups_'+group]['address'];end=k.byname['__end_pci_fixups_'+group]['address']
+    assert (end-start)%16==0
+    for addr in range(start,end,16):
+        vendor,device,cls,shift,hook=struct.unpack('<HHIIi',k.read(addr,16));target=addr+12+hook
+        entries.append({'stage':group,'address':hex(addr),'vendor':f'{vendor:04x}','device':f'{device:04x}','class':hex(cls),'class_shift':shift,'hook':hex(target),'function':k.label(target)})
+functions=sorted({e['function'] for e in entries})
+calls=[]; lines=[]
+for name in functions:
+    bounds=k.function(name)
+    if not bounds:continue
+    start,end=bounds
+    relevant=[]
+    for ins in k.md.disasm(k.read(start,end-start),start):
+        if ins.mnemonic in ('call','jmp'):
+            for op in ins.operands:
+                if op.type==X86_OP_IMM:
+                    target=op.imm&((1<<64)-1);callee=k.label(target)
+                    if callee.startswith(('dmi_','pci_scan_','device_rename','dev_set_name')):
+                        relevant.append({'instruction':hex(ins.address),'callee':callee})
+    if relevant:
+        calls.append({'hook':name,'address':hex(start),'calls':relevant})
+        lines.extend(k.disassemble(name))
+summary={'entry_count':len(entries),'unique_hook_count':len(functions),'stages':{g:sum(e['stage']==g for e in entries) for g in sorted({e['stage'] for e in entries})},'nvme_name_or_class':[e for e in entries if 'nvme' in e['function'].lower() or e['class'] in ('0x108','0x10802')],'hooks_with_direct_dmi_or_scan_or_rename':calls}
+(OUT/'pci-fixup-index.json').write_text(json.dumps({'summary':summary,'entries':entries},indent=2)+'\n',encoding='utf-8')
+(OUT/'pci-fixup-dmi-disassembly.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+print(json.dumps(summary,indent=2))

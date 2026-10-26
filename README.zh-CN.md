@@ -207,6 +207,12 @@ hwmon 存在时，`all` 对应原厂 `set` 命令，按原厂顺序写入两个�
 
 ## 安全说明
 
+来电策略写入和跨重启恢复是两件事。`ugreenctl power startup set` 只写入并回读当前寄存器；
+需要保存选择及在服务启动/停止时恢复，请使用[来电策略持久化说明](docs/AC_RECOVERY_PERSISTENCE.zh-CN.md)。
+DXP4800 Plus / Pro 等已支持机型不能仅靠替换二进制获得应用生命周期修复。
+当前25款状态见[开发状态](docs/ALMIGHTY_STATUS.zh-CN.md)，完整源码构建及可选交叉验证见
+[构建复现说明](docs/BUILD_REPRODUCIBILITY.zh-CN.md)。
+
 - 所有 IT8613 插件发现原厂 `/proc/it86` 驱动仍在运行时都会拒绝访问，避免并发操作
   寄存器。
 - 每次控制器访问都会使用 /run/ugreenctl-it8613.lock 进行进程锁定。

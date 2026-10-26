@@ -1,0 +1,22 @@
+from pathlib import Path
+import hashlib, json, tarfile, struct
+
+OUT=Path(__file__).resolve().parent
+SOURCE=Path(r'E:\工作台\固件\6800plus.img')
+report={'input':str(SOURCE),'size':SOURCE.stat().st_size}
+h=hashlib.sha256()
+with SOURCE.open('rb') as f:
+    for b in iter(lambda:f.read(4<<20), b''): h.update(b)
+report['sha256']=h.hexdigest()
+assert report['sha256']=='73862c9c619f3e8b2279252326654f4915234dc8f437a71eb9a0067a724062c5'
+with tarfile.open(SOURCE,'r:') as t:
+    members=[m for m in t.getmembers() if m.isfile() and m.name.rsplit('/',1)[-1]=='vmlinuz']
+    assert len(members)==1, members
+    m=members[0]
+    b=t.extractfile(m).read()
+    (OUT/'vmlinuz').write_bytes(b)
+    report['member']={'name':m.name,'size':len(b),'tar_data_offset':m.offset_data,'sha256':hashlib.sha256(b).hexdigest()}
+report['header']={'magic':b[:64].hex(),'HdrS':b[0x202:0x206].decode('ascii','replace'),'setup_sects':b[0x1f1],'version':hex(struct.unpack_from('<H',b,0x206)[0]),'payload_offset':hex(struct.unpack_from('<I',b,0x248)[0]),'payload_length':struct.unpack_from('<I',b,0x24c)[0]}
+report['magic_candidates']={k:[hex(i) for i in range(len(b)) if b.startswith(v,i)][:30] for k,v in [('gzip',b'\x1f\x8b\x08'),('xz',b'\xfd7zXZ\x00'),('zstd',b'\x28\xb5\x2f\xfd'),('lz4',b'\x02\x21\x4c\x18'),('elf',b'\x7fELF')]}
+(OUT/'extraction.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(report,ensure_ascii=False,indent=2))

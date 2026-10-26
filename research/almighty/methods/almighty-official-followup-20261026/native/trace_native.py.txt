@@ -1,0 +1,78 @@
+from pathlib import Path
+import sys,json,hashlib,subprocess,re,io
+ROOT=Path(__file__).resolve().parents[4]
+OUT=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from elftools.elf.relocation import RelocationSection
+from capstone import Cs,CS_ARCH_X86,CS_MODE_64
+from capstone.x86 import X86_OP_IMM,X86_OP_MEM,X86_REG_RIP
+for name in ('libcore-ugos.so','libproto-ugos.so'):
+    dest=OUT/name
+    if not dest.exists():
+        data=subprocess.run([str(ROOT/'firmware-inbox/work/tools/7zip/full/7z.exe'),'x','-so',str(ROOT/'firmware-inbox/work/dxp6800plus/fw.squashfs'),'usr/local/ugreen_lib/v1/'+name],capture_output=True,check=True).stdout
+        assert data[:4]==b'\x7fELF'
+        dest.write_bytes(data)
+paths=[ROOT/'firmware-inbox/work/almighty-firmware-deep-20261026/nested-apps/19_amd64_com.ugreen.ugos_serv.upk/lib/libugos_serv-shared.so',OUT/'libcore-ugos.so',OUT/'libproto-ugos.so']
+mode=sys.argv[1] if len(sys.argv)>1 else 'index'
+filters=sys.argv[2:]
+report=[];dis=[]
+for path in paths:
+    raw=path.read_bytes();elf=ELFFile(io.BytesIO(raw))
+    syms={};symrows=[];got={};plt={}
+    for sec in elf.iter_sections():
+        if sec['sh_type'] in ('SHT_SYMTAB','SHT_DYNSYM'):
+            for s in sec.iter_symbols():
+                if s['st_value']:syms.setdefault(s['st_value'],[]).append(s.name)
+                if s['st_info']['type']=='STT_FUNC':symrows.append(s)
+        if isinstance(sec,RelocationSection):
+            st=elf.get_section(sec['sh_link'])
+            for i,r in enumerate(sec.iter_relocations()):
+                if r['r_info_sym']:
+                    n=st.get_symbol(r['r_info_sym']).name;got[r['r_offset']]=n
+                    if sec.name=='.rela.plt':
+                        ps=elf.get_section_by_name('.plt.sec') or elf.get_section_by_name('.plt')
+                        plt[ps['sh_addr']+(i+(0 if ps.name=='.plt.sec' else 1))*16]=n
+    def readva(addr,count=120):
+        for s in elf.iter_sections():
+            if s['sh_type']!='SHT_NOBITS' and s['sh_flags']&2 and s['sh_addr']<=addr<s['sh_addr']+s['sh_size']:
+                off=s['sh_offset']+addr-s['sh_addr'];return raw[off:off+count]
+        return b''
+    def annotation(addr):
+        if addr in plt:return 'PLT '+plt[addr]
+        if addr in got:return 'GOT '+got[addr]
+        if addr in syms:return 'SYM '+' | '.join(dict.fromkeys(syms[addr]))
+        data=readva(addr);s=data.split(b'\0')[0]
+        if s and all(x in (9,10,13) or 32<=x<127 for x in s):return 'STR '+repr(s.decode())
+        return ''
+    dyn=elf.get_section_by_name('.dynamic')
+    row={'path':path.relative_to(ROOT).as_posix(),'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'needed':[t.needed for t in dyn.iter_tags() if t.entry.d_tag=='DT_NEEDED'],'symbols':[]}
+    seen=set();md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+    for s in sorted(symrows,key=lambda s:s['st_value']):
+        n=s.name;a=s['st_value'];sz=s['st_size']
+        if (a,n) in seen:continue
+        seen.add((a,n))
+        if mode=='index':
+            if re.search('[Hh]ardware|[Mm]odel|[Bb]ios|[Ss]lot|[Pp]hysical|[Nn]vme|[Cc]ontroller|[Ss]ata|[Dd]mi|[Dd]evice|[Pp]ci',n):row['symbols'].append({'name':n,'address':hex(a),'bytes':sz,'defined':s['st_shndx']!='SHN_UNDEF'})
+        elif a and sz and any(f in n or f==hex(a) for f in filters):
+            row['symbols'].append({'name':n,'address':hex(a),'bytes':sz})
+            dis.append('\nFILE '+str(path.relative_to(ROOT))+'\nSHA256 '+row['sha256']+'\n'+n+' '+hex(a)+' bytes '+str(sz))
+            for i in md.disasm(readva(a,sz),a):
+                notes=[]
+                for op in i.operands:
+                    target=None
+                    if op.type==X86_OP_IMM:target=op.imm
+                    elif op.type==X86_OP_MEM and op.mem.base==X86_REG_RIP:target=i.address+i.size+op.mem.disp
+                    if target is not None:
+                        note=annotation(target)
+                        if note:notes.append(hex(target)+' '+note)
+                dis.append(f'{i.address:#x}: {i.mnemonic:8} {i.op_str}'+(' ; '+'; '.join(notes) if notes else ''))
+    report.append(row)
+if mode=='index':
+    (OUT/'dependencies-target-index.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+    print(json.dumps([{'path':r['path'],'sha256':r['sha256'],'needed':r['needed'],'symbol_count':len(r['symbols'])} for r in report],indent=2))
+else:
+    label=re.sub('[^A-Za-z0-9_.-]','_',filters[0])
+    (OUT/(label+'-disassembly.txt')).write_text('\n'.join(dis)+'\n',encoding='utf-8')
+    (OUT/(label+'-selection.json')).write_text(json.dumps(report,indent=2),encoding='utf-8')
+    print(json.dumps({'file':str(OUT/(label+'-disassembly.txt')),'selected':sum(len(r['symbols']) for r in report),'lines':len(dis)}))

@@ -1,0 +1,110 @@
+from pathlib import Path
+import sys,io,json,hashlib,struct,re
+ROOT=Path(__file__).resolve().parents[4];OUT=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs,CS_ARCH_X86,CS_MODE_64
+from capstone.x86 import X86_OP_IMM,X86_OP_MEM,X86_OP_REG,X86_REG_RIP,X86_REG_RSP
+shared=ROOT/'firmware-inbox/work/almighty-firmware-deep-20261026/nested-apps/19_amd64_com.ugreen.ugos_serv.upk/lib/libugos_serv-shared.so'
+raw=shared.read_bytes();elf=ELFFile(io.BytesIO(raw))
+def readva(addr,size):
+    for s in elf.iter_sections():
+        if s['sh_flags']&2 and s['sh_type']!='SHT_NOBITS' and s['sh_addr']<=addr<s['sh_addr']+s['sh_size']:
+            off=s['sh_offset']+addr-s['sh_addr'];return raw[off:off+size]
+    raise ValueError(hex(addr))
+md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+# Decode the compiler's table construction, never execute firmware.
+regs={};stack=bytearray(0x240);writes=[]
+for i in md.disasm(readva(0x811b7,0x814dc-0x811b7),0x811b7):
+    ops=i.operands
+    if i.mnemonic=='lea' and len(ops)==2 and ops[0].type==X86_OP_REG and ops[1].type==X86_OP_MEM and ops[1].mem.base==X86_REG_RIP:
+        regs[ops[0].reg]=i.address+i.size+ops[1].mem.disp
+    if i.mnemonic in ('mov','movabs') and len(ops)==2:
+        val=ops[1].imm if ops[1].type==X86_OP_IMM else regs.get(ops[1].reg) if ops[1].type==X86_OP_REG else None
+        if val is not None:
+            if ops[0].type==X86_OP_REG:regs[ops[0].reg]=val
+            elif ops[0].type==X86_OP_MEM and ops[0].mem.base==X86_REG_RSP:
+                off=ops[0].mem.disp;size=ops[0].size
+                if 0<=off<len(stack)-size:
+                    stack[off:off+size]=val.to_bytes(size,'little',signed=False)
+                    writes.append({'address':hex(i.address),'stack_offset':hex(off),'size':size,'value':hex(val)})
+models=[]
+for offset in range(0x30,0x230,0x10):
+    enum,ptr=struct.unpack_from('<I4xQ',stack,offset)
+    name=readva(ptr,100).split(b'\0',1)[0].decode('ascii')
+    models.append({'enum':enum,'name':name,'name_address':hex(ptr),'initializer_pair_stack':hex(offset)})
+assert len(models)==32 and [x['enum'] for x in models]==list(range(32))
+assert models[0]['name']=='DXP2800' and models[1]['name']=='DXP2800S' and models[5]['name']=='DXP4800 Pro' and models[30]['name']=='DXP2800A'
+(OUT/'native-model-table.json').write_text(json.dumps({'method':'Capstone decode of immediate and RIP-relative LEA/MOV stack stores at 0x811b7..0x814db; omitted initial rep stosq accounts for enum0 zero','initializer_address':'0x81180','models':models,'decoded_stores':writes},indent=2),encoding='utf-8')
+def sha(path):
+    h=hashlib.sha256()
+    with path.open('rb') as f:
+        while b:=f.read(8*1024*1024):h.update(b)
+    return h.hexdigest()
+original=Path('E:/工作台/固件/6800plus.img');original_hash=sha(original)
+assert original_hash=='73862c9c619f3e8b2279252326654f4915234dc8f437a71eb9a0067a724062c5'
+inventory=json.loads((OUT/'native-elf-inventory.json').read_text(encoding='utf-8'))
+deps=json.loads((OUT/'dependencies-target-index.json').read_text(encoding='utf-8'))
+xrefs=json.loads((OUT/'native-xrefs.json').read_text(encoding='utf-8'))
+rpc='_ZN5ugidl9ugos_serv4info11InfoService7Service15GetHardwareInfoEPN4grpc13ServerContextEPKNS1_22GetHardwareInfoRequestEPNS1_23GetHardwareInfoResponseE'
+proto_raw=(OUT/'libproto-ugos.so').read_bytes();proto_elf=ELFFile(io.BytesIO(proto_raw))
+proto_symbol=next(s for s in proto_elf.get_section_by_name('.dynsym').iter_symbols() if s.name==rpc)
+shared_symbol=next(s for s in elf.get_section_by_name('.dynsym').iter_symbols() if s.name==rpc)
+assert shared_symbol['st_shndx']=='SHN_UNDEF' and proto_symbol['st_value']==0xfdd380 and proto_symbol['st_size']==50
+assert any(r['offset']=='0x1c9c30' and r['type']==1 and r['symbol']==rpc and r['value']=='0x0' for r in xrefs['vtable_relocations'])
+proto_section=next(s for s in proto_elf.iter_sections() if s['sh_addr']<=0xfdd380<s['sh_addr']+s['sh_size'] and s['sh_flags']&2)
+proto_off=proto_section['sh_offset']+0xfdd380-proto_section['sh_addr'];proto_body=proto_raw[proto_off:proto_off+50]
+assert proto_body[4:10]==bytes.fromhex('c7070c000000') and proto_body[-1:]==b'\xc3'
+assert not any(i.mnemonic=='call' for i in md.disasm(proto_body,0xfdd380))
+assert 'libugos_serv-shared.so' in inventory[0]['needed'] and {'libcore-ugos.so','libproto-ugos.so'}<=set(inventory[1]['needed'])
+assert readva(0xfe262,5)==bytes.fromhex('e81996f5ff')
+assert readva(0xfe27e,4)==bytes.fromhex('48894510')
+assert readva(0x12d91f,5)==bytes.fromhex('668138454d')
+assert readva(0x12d9f0,4)==bytes.fromhex('8078025f')
+assert readva(0x12d9fa,3)==bytes.fromhex('4939c6')
+assert readva(0x12da59,6)==bytes.fromhex('c70172657631')
+assert readva(0x12daef,6)==bytes.fromhex('c70172657632')
+binary_assertions={'DT_NEEDED_chain':True,'HardwareInfo_import_undefined_in_shared':True,'HardwareInfo_proto_symbol_address_size':True,'HardwareInfo_vtable_relocation':True,'HardwareInfo_status_bytes_0x0c_and_ret':True,'HardwareInfo_body_has_no_calls':True,'InfoService_construction_vtable_install_bytes':True,'EM_prefix_word_underscore_start_checks':True,'rev1_rev2_write_bytes':True,'recovered_model_enums':True}
+(OUT/'binary-assertions.json').write_text(json.dumps(binary_assertions,indent=2)+'\n',encoding='utf-8')
+checks=[]
+for selection in OUT.glob('*-selection.json'):
+    for entry in json.loads(selection.read_text(encoding='utf-8')):
+        p=ROOT/entry['path'];data=p.read_bytes();e=ELFFile(io.BytesIO(data))
+        for sym in entry['symbols']:
+            addr=int(sym['address'],16);size=sym['bytes']
+            section=next(s for s in e.iter_sections() if s['sh_addr']<=addr<s['sh_addr']+s['sh_size'] and s['sh_flags']&2)
+            off=section['sh_offset']+addr-section['sh_addr'];decoded=sum(i.size for i in md.disasm(data[off:off+size],addr))
+            assert decoded==size,(p,sym,decoded)
+            checks.append({'file':entry['path'],'address':sym['address'],'bytes':size,'decoded_bytes':decoded})
+report={
+ 'scope':'Read-only native ELF follow-up; all new artifacts restricted to firmware-inbox/work/almighty-official-followup-20261026/native/',
+ 'original_input':{'path':str(original),'bytes':original.stat().st_size,'sha256':original_hash,'hash_recomputed':True,'version':'UGOS Pro 1.20.0.0142, prior container provenance'},
+ 'elf_inputs':[{'path':e['path'],'sha256':e['sha256'],'bytes':e['bytes'],'needed':e['needed']} for e in inventory]+[{'path':e['path'],'sha256':e['sha256'],'bytes':e['bytes'],'needed':e['needed']} for e in deps[1:]],
+ 'dependency_extractions':[{'container':'firmware-inbox/work/dxp6800plus/fw.squashfs','member':'usr/local/ugreen_lib/v1/'+name,'saved':str((OUT/name).relative_to(ROOT)),'sha256':sha(OUT/name)} for name in ('libcore-ugos.so','libproto-ugos.so')],
+ 'firmware_evidence':[
+  {'claim':'ugos_serv depends on libugos_serv-shared.so; the shared library depends on libcore-ugos.so and libproto-ugos.so. HardwareInfo is an undefined base-service import, not an implementation in the executable.','evidence':['native-elf-inventory.json','dependencies-target-index.json']},
+  {'claim':'The constructed InfoServiceImpl installs its own vtable, whose GetHardwareInfo slot remains the imported ugidl base method.','addresses':{'GetGrpcService':'0xfe1b0','base_constructor_call':'0xfe262','vtable_load':'0xfe267','install_vptr':'0xfe27e','vtable':'0x1c9c08','GetHardwareInfo_relocation':'0x1c9c30'},'evidence':['InfoServiceImpl12GetBasicInfo-disassembly.txt','native-xrefs.json']},
+  {'claim':'Imported GetHardwareInfo resolves in the extracted libproto-ugos.so to a 50-byte method that writes status code 0x0c and two empty strings, then returns. It has no calls or hardware/file accesses. Several other default methods share the same address.','addresses':{'GetHardwareInfo':'0xfdd380','status_code_write':'0xfdd384','return':'0xfdd3b1'},'evidence':['0xfdd380-disassembly.txt','dependencies-target-index.json']},
+  {'claim':'A real native model implementation exists independently: get_model checks UGREEN_DEVICE_MODEL_OVERRIDE; otherwise caches the trimmed DMI product_name, converts it through an exact string hash map, and attempts writing its factory cache. It does not read a disk/controller/PCI map.','addresses':{'get_model':'0x137840','override_name':'0x18bbb0','override_getenv':'0x137858','product_name_assembled':'0x13797c..0x1379c2','read_DMI':'0x1379c7','string_to_model':'0x137b72','cache_WriteFile_call':'0x137d93','model_table_initializer':'0x81180'},'evidence':['get_model-disassembly.txt','0x81180-disassembly.txt','native-model-table.json']},
+  {'claim':'read_dmi_info reads UGREEN_DEVICE_DMI_DIR or default /sys/class/dmi/id, appends the provided field, calls libcore File::ReadFile with 4 MiB limit, and trims its successful result.','addresses':{'read_dmi_info':'0x136cb0','env':'0x136cdf','path_assembly':'0x136d01..0x136d55','ReadFile_call':'0x136ebf','trim':'0x136fc6','ReadFile_impl_libcore':'0x138b10','file_size':'0x138bd5','filebuf_open':'0x138cf5','istream_read':'0x1391ff'},'evidence':['get_model-disassembly.txt','4File8ReadFile-disassembly.txt']},
+  {'claim':'Native get_hw_version is a separate cached helper. This amd64 build get_current_arch sets enum1. For model enum0/1/30 (DXP2800/DXP2800S/DXP2800A), it reads product_version and returns rev1 only when it starts EM_; other values go to rev2. For enum5 (DXP4800 Pro), it lowercases get_cpu and chooses rev2 if i3-1315u occurs, else rev1. Other models use rev1.','addresses':{'get_hw_version':'0x12d2e0','arch_cmp':'0x12d475','model_checks':'0x12d590..0x12d5aa','cpu_substring':'0x12d65a..0x12d685','product_version_assembly':'0x12d89f..0x12d8ca','read_dmi_info_call':'0x12d8d3','EM_compare':'0x12d91f','underscore_and_start_check':'0x12d9f0..0x12d9fd','rev1':'0x12da59','rev2':'0x12daef'},'evidence':['get_model-disassembly.txt','get_current_arch-disassembly.txt','native-model-table.json']},
+  {'claim':'The native get_cpu helper first returns nonempty DMI product_version. Only when it is empty does it read UGREEN_DEVICE_CPUINFO_FILE or /proc/cpuinfo and parse model name. Thus the CPU-named branch must be described by the actual getter source order, not assumed to query a processor register.','addresses':{'get_cpu':'0x11e990','product_version_field':'0x11e992','read_dmi_info_call':'0x11e9d9','nonempty_test':'0x11ea04','cpuinfo_path':'0x11ea58..0x11ea74','ReadFile_call':'0x11ea84','model_name_parse':'0x11ebe0'},'evidence':['device7get_cpu-disassembly.txt']},
+  {'claim':'The native model table recovered from all 32 constructed pairs contains DXP2800, DXP2800S and DXP2800A, but no DXP2800 GT or DXP4800 GT entry. This is a statement about this exact table, not all firmware.','evidence':['native-model-table.json','0x81180-disassembly.txt']}
+ ],
+ 'static_inference':[
+  {'claim':'Status code 0x0c with empty strings is consistent with the generated gRPC UNIMPLEMENTED default. The vtable and body therefore close this candidate as a slot-map entry point for this shipped native InfoServiceImpl.','basis':['native-xrefs.json','0xfdd380-disassembly.txt']},
+  {'claim':'Native get_hw_version does not provide evidence for GT BIOS-to-SATA selection: this recovered helper reads product_version/CPU, its model map lacks GT, and no disk operation occurs in the body. Its rev labels must not be equated to the Go storage_serv hardware-revision map.','basis':['get_model-disassembly.txt','native-model-table.json']},
+  {'claim':'No direct call or tail-jump to native get_hw_version was found when decoding the shared library .text. It is a real callable implementation, but its runtime reachability via indirect/dynamic calls was not established.','basis':['native-xrefs.json']}
+ ],
+ 'unknown':{
+  'M2_physical_slots':['DX4600','DX4600+','DX4600 Pro','DX4700','DH2600','DXP2800','DXP4800','DXP4800S'],
+  'GT_BIOS_SATA':'No BIOS version/board identity paired to physical SATA order established by this native chain.',
+  'controller_or_physicalslot':'No positive native implementation establishing controller registration order to board silk-screen slot order recovered. Generated request/response fields do not establish such mapping.',
+  'hardware_validation':'No NAS programs executed; no physical device reads/writes or live validation.'
+ },
+ 'validation':{'binary_assertions':binary_assertions,'selected_functions_full_capstone_decode':checks,'asserted_model_enum_table':True,'production_build_tests':'Not run: no production code, documentation, build files or tests modified by this subtask. Root handles project checks if required.','firmware_executed':False,'LLLED_FPK_accessed_or_modified':False,'committed_or_pushed':False},
+ 'next_positive_entrypoint':{'native_chain':'This concrete native InfoService HardwareInfo chain is closed: default method, no implementation to extend. RegisterRoutes 0xfe0e0 only checks whether a service exists and returns a status; it does not register hidden hardware HTTP handlers.','outside_native_candidate':{'caller':'storage_serv getNvmeSlot 0x12efc28','callee':'gitlab.ugnas.com/ugos-pro/ugnas/hardware/pci.GetPciInfoByDevice 0x12b58e0','positive_evidence_existing':'firmware-inbox/work/almighty-firmware-deep-20261026/storage-runtime-disassembly.txt line containing call at 0x12efc28','bounded_question':'Trace this already-proven callee implementation only if controller/physical-slot PCI provenance still needs resolving. It is the pcie_bridge_id branch and is bypassed by the eight block_name successes, so it cannot be advertised as closing those eight physical slots without new evidence.'}}
+}
+report['artifact_hashes']=[{'name':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in OUT.iterdir() if p.is_file() and p.name not in ('report.json',)]
+(OUT/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'report':str(OUT/'report.json'),'model_count':len(models),'decoded_functions':len(checks),'input_sha256':original_hash},ensure_ascii=False))

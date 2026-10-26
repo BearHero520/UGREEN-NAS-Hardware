@@ -1,0 +1,53 @@
+Test project <SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64
+      Start  1: package-runtime
+ 1/24 Test  #1: package-runtime ..................   Passed    0.20 sec
+      Start  2: cli-help
+ 2/24 Test  #2: cli-help .........................   Passed    2.37 sec
+      Start  3: led-cli-help
+ 3/24 Test  #3: led-cli-help .....................   Passed    2.33 sec
+      Start  4: led-compat-help
+ 4/24 Test  #4: led-compat-help ..................   Passed    2.34 sec
+      Start  5: led-holder-help
+ 5/24 Test  #5: led-holder-help ..................   Passed    2.35 sec
+      Start  6: led
+ 6/24 Test  #6: led ..............................   Passed    3.10 sec
+      Start  7: led-holder
+ 7/24 Test  #7: led-holder .......................   Passed    5.74 sec
+      Start  8: led-cs201x
+ 8/24 Test  #8: led-cs201x .......................   Passed    2.41 sec
+      Start  9: disk-mapping
+ 9/24 Test  #9: disk-mapping .....................   Passed    7.57 sec
+      Start 10: identity
+10/24 Test #10: identity .........................   Passed    2.43 sec
+      Start 11: hardware-cli
+11/24 Test #11: hardware-cli .....................   Passed    2.58 sec
+      Start 12: it8613-hwmon
+12/24 Test #12: it8613-hwmon .....................   Passed    2.45 sec
+      Start 13: it8613-direct
+13/24 Test #13: it8613-direct ....................   Passed    2.51 sec
+      Start 14: it8613-power
+14/24 Test #14: it8613-power .....................   Passed    2.46 sec
+      Start 15: it8613-dxp4800
+15/24 Test #15: it8613-dxp4800 ...................   Passed    2.42 sec
+      Start 16: it8613-dxp4800s
+16/24 Test #16: it8613-dxp4800s ..................   Passed    2.37 sec
+      Start 17: it8613-dx4600
+17/24 Test #17: it8613-dx4600 ....................   Passed    2.45 sec
+      Start 18: dx4600-plugin
+18/24 Test #18: dx4600-plugin ....................   Passed    2.40 sec
+      Start 19: wol-dxp4800
+19/24 Test #19: wol-dxp4800 ......................   Passed    2.45 sec
+      Start 20: rtc-wake
+20/24 Test #20: rtc-wake .........................   Passed    2.44 sec
+      Start 21: it8613-dxp480t
+21/24 Test #21: it8613-dxp480t ...................   Passed    2.47 sec
+      Start 22: it8613-dxp6800pro
+22/24 Test #22: it8613-dxp6800pro ................   Passed    2.37 sec
+      Start 23: it8613-dxp6800plus
+23/24 Test #23: it8613-dxp6800plus ...............   Passed    2.49 sec
+      Start 24: thermal-curve
+24/24 Test #24: thermal-curve ....................   Passed    2.55 sec
+
+100% tests passed out of 24
+
+Total Test time (real) =  65.28 sec

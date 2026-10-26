@@ -1,0 +1,343 @@
+{
+  "date": "2026-10-26",
+  "catalog_source": "models/compatibility.json",
+  "official_catalog_count": 27,
+  "target_count": 25,
+  "excluded_by_user": [
+    "DH2100",
+    "DH2100+"
+  ],
+  "scope_complete": false,
+  "per_model": [
+    {
+      "product_name": "DH2300",
+      "scope": "target",
+      "architecture": "aarch64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "not-applicable",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Physical GPIO/DT and holder validation on the target board"
+      ]
+    },
+    {
+      "product_name": "DH2600",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-vendor-driver-required",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence",
+        "Kernel-driver-independent N76 output/brightness readback evidence and implementation"
+      ]
+    },
+    {
+      "product_name": "DH4300 Plus",
+      "scope": "target",
+      "architecture": "aarch64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "not-applicable",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Physical GPIO/DT and holder validation on the target board"
+      ]
+    },
+    {
+      "product_name": "DX4600",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DX4600 Pro",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DX4600+",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DX4700",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DX4700+",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP2800",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DXP2800 GT",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "unknown-bios-routing",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Physical ARGB readback and board validation; inactive Host2EC LDN remains unsupported",
+        "Exact BIOS/board to SATA physical-slot pairing; stock LL_/else selector is not a BIOS allowlist"
+      ]
+    },
+    {
+      "product_name": "DXP4800",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DXP4800 GT",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP4800 Plus",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP4800 Pro",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP4800S",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "unknown-block-name-only",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Independent physical M.2 connector to PCI topology evidence"
+      ]
+    },
+    {
+      "product_name": "DXP480T Plus",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-vendor-driver-required",
+      "sata_physical_slots": "not-applicable",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": [
+        "Kernel-driver-independent N76 output/brightness readback evidence and implementation"
+      ]
+    },
+    {
+      "product_name": "DXP6800",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP6800 Plus",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP6800 Pro",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP6800 Ultra",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP8800",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP8800 Plus",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP8800 Pro",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DXP8800 Ultra",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "iDX6011 Pro",
+      "scope": "target",
+      "architecture": "x86_64",
+      "firmware_input": "official-md5-and-sha256-verified",
+      "led": "implemented-experimental",
+      "sata_physical_slots": "implemented-conditional",
+      "nvme_physical_slots": "implemented-conditional",
+      "physical_validation": "not-performed-by-this-project",
+      "remaining": []
+    },
+    {
+      "product_name": "DH2100",
+      "scope": "excluded-by-user",
+      "led": "unknown",
+      "sata_physical_slots": "unknown",
+      "nvme_physical_slots": "unknown",
+      "physical_validation": "not-performed-by-this-project"
+    },
+    {
+      "product_name": "DH2100+",
+      "scope": "excluded-by-user",
+      "led": "unknown",
+      "sata_physical_slots": "unknown",
+      "nvme_physical_slots": "unknown",
+      "physical_validation": "not-performed-by-this-project"
+    }
+  ],
+  "new_power_coordination": {
+    "application_adapter_fix": true,
+    "standalone_coordinator": true,
+    "scope": "Only existing startup backends; no new register/model mappings",
+    "bios_changed_behavior": "Standalone stored identity mismatch refuses automatic replay; explicit re-set required after compatibility review",
+    "application_schema_compatibility": "Existing exact-product|on/off/last record retained"
+  },
+  "next_work": [
+    "Confirm8 block_name-only physical M.2 layouts from original board/firmware evidence",
+    "Recover reliable bare N76 output/PWM/timing readback forDH2600/DXP480T Plus",
+    "ConfirmGT2800 exact BIOS-to-physical-SATA pairing",
+    "Obtain hardware/deployment validation without promoting static inference to real-machine proof"
+  ]
+}

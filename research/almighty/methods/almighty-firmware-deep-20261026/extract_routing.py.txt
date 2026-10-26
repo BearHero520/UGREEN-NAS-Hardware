@@ -1,0 +1,75 @@
+"""Select immutable official routing/module inputs using stdout extraction."""
+from pathlib import Path
+import concurrent.futures
+import hashlib
+import json
+import re
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+SOURCE = ROOT/'firmware-inbox/work/dxp6800plus'
+SEVEN = ROOT/'firmware-inbox/work/tools/7zip/full/7z.exe'
+
+
+def save(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        assert path.read_bytes() == data
+    else:
+        with path.open('xb') as stream:
+            stream.write(data)
+
+
+entries = []
+for image in ('fw.squashfs', 'kernel.squashfs', 'oem.squashfs'):
+    listing = (OUT/(image+'-listing.txt')).read_text(encoding='utf-8', errors='replace')
+    for block in re.split(r'\r?\n\r?\n', listing):
+        item = dict(line.split(' = ', 1) for line in block.splitlines() if ' = ' in line)
+        if item.get('Folder') != '-' or 'Symbolic Link' in item:
+            continue
+        name = item['Path'].replace('\\', '/')
+        parts = Path(name).parts
+        assert not Path(name).is_absolute() and '..' not in parts
+        size = int(item.get('Size', 0))
+        module = name.endswith(('/nvme.ko', '/nvme-core.ko'))
+        config = image == 'fw.squashfs' and size <= 262144 and (
+            name.startswith('etc/') or name.startswith('usr/ugreen/lib/') or
+            name.startswith('usr/lib/systemd/') or name.endswith('.sh'))
+        oem = image == 'oem.squashfs'
+        if module or config or oem:
+            entries.append((image, name, size))
+
+
+def extract(entry):
+    image, name, expected = entry
+    run = subprocess.run([str(SEVEN), 'x', '-so', str(SOURCE/image), name],
+                         capture_output=True, check=True)
+    data = run.stdout
+    assert len(data) == expected, (name, len(data), expected)
+    target = OUT/'routing'/image/name
+    save(target, data)
+    return {'image': image, 'member': name, 'bytes': len(data),
+            'sha256': hashlib.sha256(data).hexdigest(),
+            'saved': target.relative_to(ROOT).as_posix()}
+
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+    records = list(pool.map(extract, entries))
+
+cpio_rows = json.loads((OUT/'initrd-members.json').read_text())
+with (SOURCE/'initrd-unpack/initrd').open('rb') as source:
+    for item in cpio_rows:
+        name = item['name']
+        if not name.endswith(('/nvme.ko', '/nvme-core.ko')):
+            continue
+        source.seek(item['data_offset'])
+        data = source.read(item['bytes'])
+        target = OUT/'routing/initrd'/name
+        save(target, data)
+        records.append({'image': 'initrd', 'member': name, 'bytes': len(data),
+                        'sha256': hashlib.sha256(data).hexdigest(),
+                        'saved': target.relative_to(ROOT).as_posix()})
+save(OUT/'routing-extraction.json', (json.dumps(records, indent=2)+'\n').encode())
+print(json.dumps({'extracted': len(records), 'nvme_modules': [x for x in records
+                  if x['member'].endswith(('/nvme.ko', '/nvme-core.ko'))]}))

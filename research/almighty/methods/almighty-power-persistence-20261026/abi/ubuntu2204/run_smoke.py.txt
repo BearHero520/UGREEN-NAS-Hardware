@@ -1,0 +1,348 @@
+"""Ubuntu22.04 libc6 ABI smoke in disposable QEMU; never executes on the host.
+
+Reproduce after fetch_official.py: python <this file> [x86_64|aarch64|all]
+Uses shared runner helpers as read-only cpio/tar codecs, never runner.run().
+No Debian libc overlay, host mounts, drives, network or hardware passthrough.
+"""
+import argparse
+import datetime
+import gzip
+import hashlib
+import io
+import json
+import os
+from pathlib import Path
+import re
+import runpy
+import shlex
+import stat
+import subprocess
+import sys
+import tarfile
+
+WORK = Path(__file__).resolve().parent
+ROOT = WORK.parents[4]
+TOOLS = ROOT / "firmware-inbox/work/almighty-tools"
+sys.path.insert(0, str(ROOT / "firmware-inbox/work/tools/python-elf-analysis"))
+from elftools.elf.elffile import ELFFile
+
+HELPERS = runpy.run_path(str(TOOLS / "run_linux.py"))
+ENTRY, ARCHIVE = HELPERS["entry"], HELPERS["archive_files"]
+SEVENZIP = ROOT / "firmware-inbox/work/tools/7zip/full/7z.exe"
+PROGRAMS = ("ugreenctl", "ugreen_leds_cli", "ugreenctl-fand", "ugreenctl-ledd")
+CONFIG = {
+    "x86_64": {"deb_arch": "amd64", "triplet": "x86_64-linux-gnu", "loader": "/lib64/ld-linux-x86-64.so.2",
+               "loader_name": "ld-linux-x86-64.so.2", "build": "almighty-portable-build-x86_64", "runtime": TOOLS,
+               "emulator": "qemu-system-x86_64.exe", "machine": "q35", "console": "ttyS0", "kernel": "vmlinuz-virt"},
+    "aarch64": {"deb_arch": "arm64", "triplet": "aarch64-linux-gnu", "loader": "/lib/ld-linux-aarch64.so.1",
+                "loader_name": "ld-linux-aarch64.so.1", "build": "almighty-portable-build-aarch64", "runtime": TOOLS / "arm64",
+                "emulator": "qemu-system-aarch64.exe", "machine": "virt", "console": "ttyAMA0", "kernel": "arm64/vmlinuz-virt"}}
+
+
+def loader_diagnostics(output, allow_optional=False, plugin_root="/work/models"):
+    """Only exact optional ABI probes on two v3 plugins are non-failures."""
+    allowed = re.compile(r'^\s*\d+:\s+' + re.escape(plugin_root) + r'/(dxp2800|dxp8800plus)\.so: '
+                         r'error: symbol lookup error: undefined symbol: '
+                         r'ugreenctl_plugin_v([45]) \(fatal\)\s*$')
+    problem = re.compile(r"undefined symbol|symbol lookup error|\(fatal\)|error while loading shared libraries|warning: skipping|version [`']GLIBC_[^\n]+ not found|cannot open shared object file", re.I)
+    permitted, unexpected = [], []
+    for line in output.splitlines():
+        if problem.search(line):
+            (permitted if allow_optional and allowed.fullmatch(line) else unexpected).append(line)
+    return {"permitted_optional_probes": permitted, "unexpected_loader_errors": unexpected}
+
+
+def check_loader_whitelist():
+    good = '  123: /work/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)'
+    assert loader_diagnostics(good, True)["permitted_optional_probes"] == [good]
+    variants = (good.replace('ugreenctl_plugin_v5', 'required_abi'),
+                good.replace('dxp2800.so', 'dxp4800.so'), good.replace('v5', 'v3'),
+                good+' extra', good.replace('/work/models', '/other/models'))
+    assert all(loader_diagnostics(changed, True)["unexpected_loader_errors"] for changed in variants)
+    assert loader_diagnostics(good, False)["unexpected_loader_errors"] == [good]
+    return {"exact_allowed_line_accepted": True, "five_unexpected_variants_rejected": True,
+            "optional_probe_rejected_outside_models_case": True}
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def relative(path):
+    return str(path.relative_to(ROOT)).replace("\\", "/")
+
+
+def ar_members(raw):
+    if raw[:8] != b"!<arch>\n":
+        raise ValueError("Not a Debian ar archive")
+    result, offset = {}, 8
+    while offset < len(raw):
+        header = raw[offset:offset+60]
+        if len(header) != 60 or header[58:] != b"`\n":
+            raise ValueError("Invalid ar header")
+        name = header[:16].decode("ascii").strip().rstrip("/")
+        size = int(header[48:58])
+        if name in result or "/" in name or name in ("", ".", ".."):
+            raise ValueError("Unsafe ar member")
+        offset += 60
+        result[name] = raw[offset:offset+size]
+        if len(result[name]) != size:
+            raise ValueError("Truncated ar member")
+        offset += size + size % 2
+    return result
+
+
+def elf_versions(raw):
+    if not raw.startswith(b"\x7fELF"):
+        return []
+    elf = ELFFile(io.BytesIO(raw))
+    section = elf.get_section_by_name(".gnu.version_d")
+    return sorted({aux.name for _, entries in section.iter_versions() for aux in entries
+                   if aux.name.startswith("GLIBC_")}) if section else []
+
+
+def package_files(info, directory):
+    package = ROOT / info["path"]
+    raw = package.read_bytes()
+    if sha(raw) != info["sha256"] or len(raw) != info["bytes"]:
+        raise ValueError("Original package differs from verified official input")
+    members = ar_members(raw)
+    if members.get("debian-binary") != b"2.0\n" or "data.tar.zst" not in members:
+        raise ValueError("Unexpected Jammy package format")
+    compressed = directory / "data.tar.zst"
+    compressed.write_bytes(members["data.tar.zst"])
+    tar_path = directory / "data.tar"
+    with tar_path.open("wb") as output:
+        result = subprocess.run([str(SEVENZIP), "x", "-so", str(compressed)], stdout=output,
+                                stderr=subprocess.PIPE, timeout=30)
+    if result.returncode:
+        raise RuntimeError(result.stderr.decode(errors="replace"))
+    files = ARCHIVE(tar_path)
+    for name in files:
+        if name.startswith("/") or ".." in name.split("/"):
+            raise ValueError("Unsafe package member")
+    (directory / "package-file-list.json").write_text(json.dumps(
+        {name: {"mode": oct(mode), "sha256": sha(data), "bytes": len(data)}
+         for name, (mode, data) in files.items()}, indent=2)+"\n", encoding="utf-8")
+    return files
+
+
+def real_file(files, path):
+    current = path.lstrip("/")
+    visited = set()
+    while True:
+        if current in visited:
+            raise ValueError("Cyclic runtime symlink")
+        visited.add(current)
+        mode, data = files[current]
+        if stat.S_ISREG(mode):
+            return current, data
+        if not stat.S_ISLNK(mode):
+            raise ValueError("Runtime path is not an ELF file")
+        target = data.decode("utf-8")
+        parts = []
+        joined = target if target.startswith("/") else str(Path(current).parent).replace("\\", "/")+"/"+target
+        for part in joined.split("/"):
+            if part == "..":
+                if not parts:
+                    raise ValueError("Runtime symlink escapes root")
+                parts.pop()
+            elif part not in ("", "."):
+                parts.append(part)
+        current = "/".join(parts)
+
+
+def run_arch(architecture, inputs, verification, snapshot):
+    cfg = CONFIG[architecture]
+    directory = snapshot / architecture
+    directory.mkdir(parents=True, exist_ok=True)
+    base_path = cfg["runtime"] / "rootfs.tar.gz"
+    files = ARCHIVE(base_path)
+    base_glibc = [name for name, (mode, raw) in files.items()
+                  if stat.S_ISREG(mode) and elf_versions(raw)]
+    if base_glibc:
+        raise ValueError("Base rootfs contains glibc providers; refusing any fallback: "+repr(base_glibc))
+    official = package_files(inputs[architecture], directory)
+    files.update(official)
+    # Remove even a cache from the base. There is no Debian libc-data.tar overlay.
+    files.pop("etc/ld.so.cache", None)
+    files["lib64"] = (stat.S_IFDIR | 0o755, b"") if architecture == "x86_64" else files.get("lib64", (stat.S_IFDIR | 0o755, b""))
+    for name in ("proc", "sys", "dev", "tmp", "run", "work", "work/bin", "work/models"):
+        files[name] = (stat.S_IFDIR | 0o755, b"")
+    providers = {}
+    paths = [cfg["loader"], *[f"/lib/{cfg['triplet']}/{name}" for name in ("libc.so.6", "libdl.so.2", "libpthread.so.0")]]
+    for path in paths:
+        resolved, raw = real_file(files, path)
+        if resolved not in official or not raw.startswith(b"\x7fELF"):
+            raise ValueError("Runtime provider did not originate in official Ubuntu package: "+path)
+        providers[path] = {"resolved_path": "/"+resolved, "sha256": sha(raw), "bytes": len(raw)}
+        extracted = directory / "runtime-files" / Path(resolved).name
+        extracted.parent.mkdir(exist_ok=True)
+        extracted.write_bytes(raw)
+    payloads = {}
+    build = ROOT / "firmware-inbox/work" / cfg["build"]
+    paths_to_copy = [build / name for name in PROGRAMS] + sorted((build / "models").glob("*.so"))
+    if len(paths_to_copy) != 13:
+        raise ValueError("Expected exactly four current programs and nine plugins")
+    for path in paths_to_copy:
+        raw = path.read_bytes()
+        repo_path = relative(path)
+        if verification["binary_sha256"].get(repo_path) != sha(raw):
+            raise ValueError("Product payload does not match current verification: "+repo_path)
+        destination = "work/models/"+path.name if path.suffix == ".so" else "work/bin/"+path.name
+        files[destination] = (stat.S_IFREG | 0o755, raw)
+        payloads["/"+destination] = {"source": repo_path, "sha256": sha(raw), "bytes": len(raw)}
+    # Mirror the same frozen plugins at the binary's embedded default location.
+    # Explicit loads keep /work/models and its original strict diagnostics.
+    for name in ('usr', 'usr/local', 'usr/local/lib', 'usr/local/lib/ugreenctl', 'usr/local/lib/ugreenctl/models'):
+        files[name] = (stat.S_IFDIR | 0o755, b'')
+    for path in paths_to_copy:
+        if path.suffix == '.so':
+            files['usr/local/lib/ugreenctl/models/'+path.name] = (stat.S_IFREG | 0o755, path.read_bytes())
+    providers_in_image = {}
+    for name, (mode, raw) in files.items():
+        if stat.S_ISREG(mode):
+            definitions = elf_versions(raw)
+            if definitions:
+                if name not in official or official[name] != (mode, raw):
+                    raise ValueError("Non-Ubuntu glibc provider in final image: "+name)
+                providers_in_image["/"+name] = {"sha256": sha(raw), "defined_versions": definitions,
+                                               "origin": "official Ubuntu libc6 package"}
+    library_path = f"/lib/{cfg['triplet']}"
+    commands = ["#!/bin/sh", "mount -t proc proc /proc", "mount -t sysfs sysfs /sys",
+                "mount -t devtmpfs devtmpfs /dev", "mkdir -p /run /tmp", "export PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+                "unset LD_PRELOAD LD_AUDIT", f"export LD_LIBRARY_PATH={library_path}",
+                "run_case() {", "  label=$1; shift", "  echo ABI_CASE_BEGIN=$label", '  "$@"',
+                "  result=$?", "  echo ABI_CASE_EXIT=$label:$result", "}",
+                "echo ABI_SMOKE_BEGIN", "run_case loader_version "+shlex.quote(cfg["loader"])+" --version",
+                "run_case libc_version "+library_path+"/libc.so.6",
+                "run_case runtime_hashes /bin/busybox sha256sum "+" ".join(map(shlex.quote, providers)),
+                "run_case loader_list "+shlex.quote(cfg["loader"])+" --inhibit-cache --library-path "+library_path+" --list /work/bin/ugreenctl"]
+    for name in PROGRAMS:
+        commands.append(f"run_case help_{name} /bin/busybox env LD_DEBUG=libs,versions,files /work/bin/{name} --help")
+    commands += ["run_case models /bin/busybox env LD_DEBUG=libs,versions,files /work/bin/ugreenctl --plugin-dir /work/models models",
+                 "run_case models_default /bin/busybox env LD_DEBUG=libs,versions,files /work/bin/ugreenctl models",
+                 # BusyBox is musl-linked. Temporarily hide only Ubuntu libc in
+                 # the disposable RAM root to prove a base glibc cannot rescue
+                 # the current product. Restore before the final hashes.
+                 "/bin/busybox mv "+library_path+"/libc.so.6 /run/libc.so.6.harness-held || poweroff -f",
+                 "run_case missing_libc_control /work/bin/ugreenctl --help",
+                 "/bin/busybox mv /run/libc.so.6.harness-held "+library_path+"/libc.so.6 || poweroff -f",
+                 "run_case runtime_hashes_after /bin/busybox sha256sum "+" ".join(map(shlex.quote, providers)),
+                 "echo ABI_SMOKE_END", "poweroff -f", ""]
+    init = "\n".join(commands).encode()
+    (directory / "init.sh").write_bytes(init)
+    files["init"] = (stat.S_IFREG | 0o755, init)
+    inventory = {name: {"mode": oct(mode), "sha256": sha(raw), "bytes": len(raw),
+                        "origin": "Ubuntu libc6" if name in official and official[name] == (mode, raw)
+                                  else "verified product" if "/"+name in payloads
+                                  else "harness" if name == "init" else "Alpine musl base or directory"}
+                 for name, (mode, raw) in files.items()}
+    (directory / "image-files.json").write_text(json.dumps(inventory, indent=2)+"\n", encoding="utf-8")
+    ordered = sorted(files.items(), key=lambda item: (item[0].count("/"), item[0]))
+    cpio = b"".join(ENTRY(name, *value, ino=i+1) for i, (name, value) in enumerate(ordered))+ENTRY("TRAILER!!!", 0)
+    initrd = directory / "ubuntu-libc-smoke.cpio.gz"
+    initrd.write_bytes(gzip.compress(cpio, compresslevel=1, mtime=0))
+    command = [str(TOOLS / "qemu" / cfg["emulator"]), "-machine", cfg["machine"], "-accel", "tcg",
+               "-m", "256", "-smp", "1", "-display", "none", "-serial", "stdio", "-monitor", "none",
+               "-nic", "none", "-no-reboot", "-L", "qemu/share", "-kernel", cfg["kernel"], "-initrd", os.path.relpath(initrd, TOOLS),
+               "-append", "console="+cfg["console"]+" rdinit=/init panic=-1 quiet"]
+    if architecture == "aarch64":
+        command += ["-cpu", "cortex-a72"]
+    (directory / "qemu-command.json").write_text(json.dumps({"cwd": relative(TOOLS), "argv": command}, indent=2)+"\n", encoding="utf-8")
+    timeout = False
+    try:
+        completed = subprocess.run(command, cwd=TOOLS, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=50)
+        output, qemu_returncode = completed.stdout, completed.returncode
+    except subprocess.TimeoutExpired as error:
+        output, qemu_returncode, timeout = error.stdout or b"", None, True
+    log = directory / "serial.log"
+    log.write_bytes(output)
+    text = output.decode("utf-8", errors="replace").replace("\r", "")
+    cases = {name: {"exit_code": int(code), "output": body}
+             for name, body, code in re.findall(r"ABI_CASE_BEGIN=([^\n]+)\n(.*?)ABI_CASE_EXIT=\1:(\d+)\n", text, re.S)}
+    expected_cases = ["loader_version", "libc_version", "runtime_hashes", "loader_list", *["help_"+name for name in PROGRAMS], "models", "models_default", "missing_libc_control", "runtime_hashes_after"]
+    expected_exit_codes = {name: 0 for name in expected_cases}
+    # Existing fan daemon treats --help as usage and exits1. Keep the product
+    # untouched; reaching its usage body is an ABI smoke, not a zero-exit claim.
+    expected_exit_codes["help_ugreenctl-fand"] = 1
+    expected_exit_codes["missing_libc_control"] = 127
+    expected_ids = sorted(path.stem for path in paths_to_copy if path.suffix == ".so")
+    models = cases.get("models", {}).get("output", "")
+    actual_ids = sorted(re.findall(r"^(dx[A-Za-z0-9_]+)\s", models, re.M))
+    default_models = cases.get("models_default", {}).get("output", "")
+    default_ids = sorted(re.findall(r"^(dx[A-Za-z0-9_]+)\s", default_models, re.M))
+    hash_text = cases.get("runtime_hashes", {}).get("output", "")
+    hashes = dict((path, value) for value, path in re.findall(r"^([a-f0-9]{64})\s+(/[^\n]+)$", hash_text, re.M))
+    after_hashes = dict((path, value) for value, path in re.findall(r"^([a-f0-9]{64})\s+(/[^\n]+)$", cases.get("runtime_hashes_after", {}).get("output", ""), re.M))
+    library_output = cases.get("loader_list", {}).get("output", "")
+    diagnostics = {name: loader_diagnostics(case["output"], name in ("models", "models_default"),
+                                                  "/usr/local/lib/ugreenctl/models" if name=="models_default" else "/work/models")
+                   for name, case in cases.items() if name != "missing_libc_control"}
+    missing_output = cases.get("missing_libc_control", {}).get("output", "")
+    checks = {
+        "qemu_completed": not timeout and qemu_returncode == 0 and "ABI_SMOKE_END" in text,
+        "twelve_cases_expected_exit": set(cases) == set(expected_cases) and all(case["exit_code"] == expected_exit_codes[name] for name, case in cases.items()),
+        "four_help_entrypoints_reached": all("Usage:" in cases.get("help_"+name, {}).get("output", "") for name in PROGRAMS),
+        "ubuntu_loader_version": "Ubuntu GLIBC 2.35-0ubuntu3.15" in cases.get("loader_version", {}).get("output", ""),
+        "ubuntu_libc_version": "Ubuntu GLIBC 2.35-0ubuntu3.15" in cases.get("libc_version", {}).get("output", ""),
+        "runtime_hashes_match_official_package": hashes == {path: info["sha256"] for path, info in providers.items()},
+        "runtime_hashes_after_negative_control_unchanged": after_hashes == hashes,
+        "missing_libc_control_refuses_without_fallback": missing_output.strip()=="/work/bin/ugreenctl: error while loading shared libraries: libc.so.6: cannot open shared object file: No such file or directory" and cases.get("missing_libc_control", {}).get("exit_code") == 127,
+        "loader_list_uses_target_libs": all(f"{name} => {library_path}/{name}" in library_output for name in ("libc.so.6", "libdl.so.2", "libpthread.so.0")),
+        "nine_plugins_listed": actual_ids == expected_ids,
+        "nine_default_plugins_listed": default_ids == expected_ids,
+        "nine_default_plugins_in_loader_debug": all("/usr/local/lib/ugreenctl/models/"+name+".so" in default_models for name in expected_ids),
+        "nine_plugins_in_loader_debug": all("/work/models/"+name+".so" in models for name in expected_ids),
+        "no_unexpected_loader_errors_in_positive_cases": not any(item["unexpected_loader_errors"] for item in diagnostics.values()),
+        "base_contains_no_glibc_version_providers": base_glibc == [],
+        "all_final_glibc_providers_from_ubuntu_package": bool(providers_in_image)}
+    report = {"architecture": architecture, "ok": all(checks.values()), "checks": checks,
+              "package": inputs[architecture], "runtime_providers": providers,
+              "final_image_glibc_providers": providers_in_image, "base_glibc_providers": base_glibc,
+              "base_rootfs": {"path": relative(base_path), "sha256": sha(base_path.read_bytes()), "role": "Alpine musl shell/init only; no glibc overlay"},
+              "product_payloads": payloads, "model_ids": actual_ids, "default_model_ids": default_ids, "cases": cases,
+              "strict_loader_diagnostics": diagnostics,
+              "expected_exit_codes": expected_exit_codes,
+              "existing_cli_behavior": "ugreenctl-fand --help prints its usage and exits1 in the unchanged product; all other help commands and models exit0",
+              "serial_log": {"path": relative(log), "sha256": sha(output)}, "qemu_returncode": qemu_returncode,
+              "timeout": timeout, "initrd": {"path": relative(initrd), "sha256": sha(initrd.read_bytes())},
+              "isolation": "No host mount, drive, network or hardware passthrough. Product commands: --help and models only.",
+              "limitation": "ABI/loader smoke only under existing isolated VM kernel; not Ubuntu whole-system validation, target NAS testing, LED control or disk mapping validation."}
+    (directory / "result.json").write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+    print(architecture, "PASS" if report["ok"] else "FAIL", json.dumps(checks), flush=True)
+    return report
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("architecture", nargs="?", default="all", choices=(*CONFIG, "all"))
+    parser.add_argument("--verification", type=Path, required=True,
+                        help="Explicit current frozen binary_sha256 JSON; never fall back to an older verification")
+    arguments = parser.parse_args()
+    architecture = arguments.architecture
+    inputs = json.loads((WORK / "official-packages.json").read_text(encoding="utf-8"))
+    if not inputs["ok"]:
+        raise SystemExit("Official download did not complete; refusing alternate runtime")
+    verification_path = arguments.verification.resolve()
+    verification = json.loads(verification_path.read_text(encoding="utf-8"))
+    report = {"started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "verification_path": relative(verification_path),
+              "verification_sha256": sha(verification_path.read_bytes()),
+              "shared_codec_script_sha256": sha((TOOLS / "run_linux.py").read_bytes()),
+              "harness_sha256": sha(Path(__file__).read_bytes()), "results": {},
+              "strict_loader_whitelist_selftest": check_loader_whitelist()}
+    snapshot = WORK / "runs" / ("snapshot-"+report["verification_sha256"][:12])
+    snapshot.mkdir(parents=True, exist_ok=False)
+    report["snapshot_directory"] = relative(snapshot)
+    (snapshot / "run_smoke.py").write_bytes(Path(__file__).read_bytes())
+    for name in CONFIG if architecture == "all" else (architecture,):
+        report["results"][name] = run_arch(name, inputs["packages"], verification, snapshot)
+    report["ok"] = all(result["ok"] for result in report["results"].values())
+    (snapshot / "results.json").write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+    (WORK / ("results.json" if architecture == "all" else f"results-{architecture}.json")).write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+    return 0 if report["ok"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

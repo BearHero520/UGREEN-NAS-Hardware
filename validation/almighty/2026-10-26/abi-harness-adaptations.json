@@ -1,0 +1,18 @@
+[
+  {
+    "distribution": "Debian12",
+    "source": "firmware-inbox\\work\\debian12-abi-smoke-20261016-1205",
+    "adapted": "firmware-inbox\\work\\almighty-power-persistence-20261026\\abi\\debian12",
+    "source_sha256": "9d7a1cc893a5964f117e2a0db06f16f4f1f6c72b5b37a58fff6d3c1a73f480ce",
+    "adapted_sha256": "bcbcf2aa1cd8ee0cf2983a197482e3bf05375b12f29ffa4ccd55d118dd23aa9b",
+    "changes": "ROOT depth, both fresh build names, root-relative existing metadata archive pointers only"
+  },
+  {
+    "distribution": "Ubuntu22.04",
+    "source": "firmware-inbox\\work\\almighty-bios-20261026\\ubuntu2204-abi",
+    "adapted": "firmware-inbox\\work\\almighty-power-persistence-20261026\\abi\\ubuntu2204",
+    "source_sha256": "1dccb65b1d037ea7db8f84159309c3f0bfb0aebb1a5d1a5dc26a1e89b07a5f3b",
+    "adapted_sha256": "57a11dc336210b38037c60252385acbfd9091ca55bad726b15d3d2594c76dbc8",
+    "changes": "ROOT depth, both fresh build names; same frozen plugin mirrors for default path + one extra case; loader diagnostics scoped to exact per-case plugin_root; all original negative-control checks preserved"
+  }
+]

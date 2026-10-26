@@ -176,9 +176,17 @@ install(FILES led/LICENSE.upstream-led DESTINATION ${CMAKE_INSTALL_DOCDIR}/led)
 install(FILES disk/NOTICE.md DESTINATION ${CMAKE_INSTALL_DOCDIR}/disk)
 install(FILES scripts/ugreenctl-ledd.service DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(FILES scripts/ugreenctl-ledd-gt.service DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(FILES scripts/ugreenctl-startup.service DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(PROGRAMS scripts/collect-disk-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(PROGRAMS scripts/collect-led-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(PROGRAMS scripts/ugreenctl-startup.py DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(FILES models/official-products.json DESTINATION ${CMAKE_INSTALL_DOCDIR}/models)
+install(FILES
+  integration/llled/ac-recovery/README.zh-CN.md
+  integration/llled/ac-recovery/llled-startup-persistence.patch
+  integration/llled/ac-recovery/source-hashes.json
+  DESTINATION ${CMAKE_INSTALL_DOCDIR}/integration/llled/ac-recovery
+)
 install(FILES
   docs/LED_CONTROL.zh-CN.md
   docs/LINUX_DEPLOYMENT.zh-CN.md
@@ -190,6 +198,9 @@ install(FILES
   docs/DH2100_FIRMWARE_SEARCH.zh-CN.md
   docs/DXP2800_GT_LED_REVERSE.zh-CN.md
   docs/LED_EVIDENCE_COLLECTION.zh-CN.md
+  docs/ALMIGHTY_STATUS.zh-CN.md
+  docs/BUILD_REPRODUCIBILITY.zh-CN.md
+  docs/AC_RECOVERY_PERSISTENCE.zh-CN.md
   docs/DX4600_REVERSE_ENGINEERING.zh-CN.md
   DESTINATION ${CMAKE_INSTALL_DOCDIR}/docs
 )
@@ -199,6 +210,8 @@ if(BUILD_TESTING)
   find_package(Python3 3.10 QUIET COMPONENTS Interpreter)
   if(Python3_Interpreter_FOUND)
     add_test(NAME package-runtime COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_runtime.py)
+    add_test(NAME package-policy COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_almighty.py)
+    add_test(NAME startup-state COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_startup_state.py)
   endif()
   add_test(NAME cli-help COMMAND ugreenctl --help)
   add_test(NAME led-cli-help COMMAND ugreenctl led --help)

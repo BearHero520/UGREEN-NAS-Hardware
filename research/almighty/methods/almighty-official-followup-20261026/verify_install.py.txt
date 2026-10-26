@@ -1,0 +1,46 @@
+"""Stage current docs/catalog and unchanged ELF; do not install on the host OS."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import subprocess
+
+ROOT=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+BIN=ROOT/'firmware-inbox/work/tools/cmake-python/cmake/data/bin'
+env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+reports={}
+for arch,suffix in (('x86_64',''),('aarch64','-arm64')):
+    build=ROOT/('firmware-inbox/work/almighty-build'+suffix)
+    stage=OUT/('stage-'+arch)
+    assert not stage.exists(),'Preserve earlier stage'
+    steps=[]
+    commands=[('configure',[str(BIN/'cmake.exe'),'-S',str(ROOT),'-B',str(build),'-DCMAKE_BUILD_TYPE=Release']),
+              ('build',[str(BIN/'cmake.exe'),'--build',str(build),'--parallel','2']),
+              ('install',[str(BIN/'cmake.exe'),'--install',str(build),'--prefix',stage.as_posix()]),
+              ('package-runtime',[str(BIN/'ctest.exe'),'--test-dir',str(build),'-R','^package-runtime$','--output-on-failure'])]
+    for name,cmd in commands:
+        path=OUT/f'post-doc-{name}-{arch}.log'
+        with path.open('xb') as f:
+            result=subprocess.run(cmd,cwd=ROOT,env=env,stdout=f,stderr=subprocess.STDOUT)
+        steps.append({'step':name,'returncode':result.returncode,'path':path.relative_to(ROOT).as_posix(),'sha256':sha(path)})
+        assert result.returncode==0,(arch,name,path)
+    checks={}
+    for p in list((stage/'bin').iterdir())+list((stage/'lib/ugreenctl/models').iterdir()):
+        origin=build/('models' if p.suffix=='.so' else '')/p.name
+        assert sha(p)==sha(origin)
+        checks[p.relative_to(stage).as_posix()]=sha(p)
+    assert len(checks)==13
+    for name in ('ALL_MODELS_LED_EVIDENCE.zh-CN.md','ALL_MODELS_DISK_EVIDENCE.zh-CN.md','FIRMWARE_RUNTIME_TRACE_20261026.zh-CN.md'):
+        dest=stage/'share/doc/ugreenctl/docs'/name
+        assert sha(dest)==sha(ROOT/'docs'/name)
+        checks[dest.relative_to(stage).as_posix()]=sha(dest)
+    dest=stage/'share/doc/ugreenctl/compatibility.json'
+    assert sha(dest)==sha(ROOT/'models/compatibility.json')
+    checks[dest.relative_to(stage).as_posix()]=sha(dest)
+    reports[arch]={'stage':stage.relative_to(ROOT).as_posix(),'steps':steps,'sha256':checks,
+                   'plugin_loading':'Prior9/9 default and explicit loading proof reused by exact unchanged ELF hashes; not re-executed'}
+path=OUT/'staged-install.json'
+path.write_text(json.dumps({'architectures':reports,'passed':True,'host_system_installation':False},indent=2)+'\n',encoding='utf-8')
+print('Both stages passed;13 ELF and4 current docs/catalog files checked each.',sha(path))

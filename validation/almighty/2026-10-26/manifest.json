@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-26",
+  "timezone": "Asia/Shanghai",
+  "complete": false,
+  "software_change": "AC-recovery application persistence plus optional standalone coordinator; author reproduction tools and audit data",
+  "source_base_commit": "a18af13594d1726aa4c2fc0b7c9f2c78740d4de0",
+  "validation": {
+    "full_ctest": {
+      "x86_64": "26/26 passed",
+      "aarch64": "26/26 passed"
+    },
+    "ctest_scope": "23 compiled Linux/QEMU checks plus3 host Python checks; startup host check has3 Linux-only skips",
+    "standalone_linux": "37/37 passed,0 skipped, including3 real root/Linux filesystem checks with mock hardware backend",
+    "application": "8 mock regression groups passed;10 underlying exact product names and3 existing adapter aliases, not new backend support",
+    "abi": "Fresh exact26 release ELF in Debian12/Ubuntu22.04 userspace, both architectures and9 default/explicit plugins; Ubuntu missing-libc negative control",
+    "post_full_suite_change": "Final package input metadata/attributes and exported app hash fields were refined; final3 host tests and staged install rerun against all168 frozen source hashes",
+    "physical_nas_validation": false,
+    "complete_distribution_validation": false,
+    "bios_nvram_write": false,
+    "services_installed_or_enabled": false
+  },
+  "excluded_payloads": [
+    "Original NAS firmware",
+    "Extracted vendor code or disassembly",
+    "Third-party runtime/tool binaries",
+    "Build output and caches",
+    "Personal automation settings or machine availability records"
+  ],
+  "files": [
+    {
+      "file": "ctest-x86_64.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/ctest-x86_64.log",
+      "source_sha256": "bbe020c52ccf81aa1777905189c005c19250a5edf23614824a190c52b5ed0635",
+      "export_sha256": "102b5945e7d0b9469c3f6865ec4312104ed623122f4ff10caac8b8eeb19fe407",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "ctest-aarch64.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/ctest-aarch64.log",
+      "source_sha256": "f6ab9000dfd684002a5315cb5e4eed12bd96d4013a5d9a8bdeaa9d5d9ab19faa",
+      "export_sha256": "0841b407d8cb5698fe47b66328a8882a8c5d261f5aa63d3713194b953bd39949",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "startup-state-linux.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/helper-final-001/tests.log",
+      "source_sha256": "f603d1cedd5c4ae024d89d929404cca465e73df2d009f30e3bf37e77a7b71b81",
+      "export_sha256": "f603d1cedd5c4ae024d89d929404cca465e73df2d009f30e3bf37e77a7b71b81",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "startup-state-windows.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/standalone/windows-unit-r3.log",
+      "source_sha256": "cc0592782ca1ca5bd253be324b0d4753fe60a004b969df7b052b3e1eb1b52a41",
+      "export_sha256": "cc0592782ca1ca5bd253be324b0d4753fe60a004b969df7b052b3e1eb1b52a41",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "app-startup-persistence.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/adapter/logs/startup-persistence-final.log",
+      "source_sha256": "37147abf29023d36d6befe274d3464dd75c71edad106f5ace04559220beb82ff",
+      "export_sha256": "37147abf29023d36d6befe274d3464dd75c71edad106f5ace04559220beb82ff",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "app-bios-api.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/adapter/logs/bios-api.log",
+      "source_sha256": "82b9a0bdc453e7e6798bdff343e5fb8adb2eeee59e4a9dade91dbb607124b6cf",
+      "export_sha256": "82b9a0bdc453e7e6798bdff343e5fb8adb2eeee59e4a9dade91dbb607124b6cf",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "app-service-lifecycle.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/adapter/logs/service-mapping-regressions.log",
+      "source_sha256": "e0247f3730e4a3fc8b2926eb2bc78860c4c05e5782cd21feef4ddca23e00e557",
+      "export_sha256": "e0247f3730e4a3fc8b2926eb2bc78860c4c05e5782cd21feef4ddca23e00e557",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "source-and-binary-snapshot.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/binary-freeze.json",
+      "source_sha256": "01d034b03469ccc5dc0d2eaf344ec6baf0f2338d41d7e59b1fa39bd50b563c53",
+      "export_sha256": "2f8b5ac44bf06f1f532bc96ad4870b2df4a65edd319dfc2d35a533fa874bff5b",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "release-elf-snapshot.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/release-binary-freeze.json",
+      "source_sha256": "5da7de3b00268ce872235a7441be8d37da00dbae2fa64563cfe104f1b2fd50d5",
+      "export_sha256": "3dc7bb6d99fc16997967a48f44191d811d203aaca955476ac808b451b999d02b",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "staged-install.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/staged-install.json",
+      "source_sha256": "b569d6acd06676256516989267db647c0aa505164927848690bc9561cd7d23dc",
+      "export_sha256": "b1d006b46b88296da7a013adfd5e4d8d2ffce71aac922997f6393f9d72b55377",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "startup-coordinator.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/standalone/result.json",
+      "source_sha256": "32d8499487bf670db91450e7be1b8618c4819fb06e08b16090a24752a839faca",
+      "export_sha256": "22347ed562c3fcd5c83a14f407e35a861efeb0331c40dc59aa725c7b8219d5fe",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "application-adapter.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/adapter/report.json",
+      "source_sha256": "90697e4531cc62e9d01925ee09883fa4b615675f0decb2ed3e2913382b48ff1c",
+      "export_sha256": "4d6977d230a61bf6a65f08efc9c822fbe2f2d7c8e99ff8c1851688bf4aee0a74",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "application-applied.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/adapter/parent-application.json",
+      "source_sha256": "1203063ac63b9e93a39a1d6adf2c1d076650fe473c451387fa0fa3e86dd922d6",
+      "export_sha256": "6d36ceaeb55a3e78f31ad36cffe7d7c5d3144dd6eb846d1e71b988416a0b9786",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "linux-python-verification.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/report.json",
+      "source_sha256": "29a146f6f5b441d4c614d8bff0819da142bd85276fa4f8e11acece8f8e223ca9",
+      "export_sha256": "29685a697cb9dc70ebe9848ce145fe2af78f97d40c1cbba1b437f43b6410a29d",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "linux-python-runtime-inputs.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/runtime-manifest.json",
+      "source_sha256": "b7157b3ed45d8f856204dd0203d774dbd6196e2cd7dc7d4f1ab2227cc989f044",
+      "export_sha256": "ebb76cb1a98dd307da0c499508d3885613b1c04de9d7532fb0288113b9069522",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "abi-summary.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/abi/summary.json",
+      "source_sha256": "121de7312ba401bb5f058ffdd6a7233b74a723e098bf05bfd27643c25d454c90",
+      "export_sha256": "d8bee755228a48a6fc0a3a07fe72de51fed3d93c25408750a43e7e357843cece",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "abi-runtime-metadata.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/abi/runtime-metadata.json",
+      "source_sha256": "25a44522eeeba8fb2e2a8f858f3c4c1e860d0df7f72b0f9a9ab744cd059c80d4",
+      "export_sha256": "a8b7df5987910aabdeeaec6f26d265282797e1c1079344a22c51b106368d1ef6",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "abi-harness-adaptations.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/abi/adaptations.json",
+      "source_sha256": "81184588fbed4ce483f24b170afd40bf066511d199177faab128fbaf91da619e",
+      "export_sha256": "3beac8dd9a96a4d9654d4ccf6fef4c0c02b51ebf4765c5dac9973d14a7963b78",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "debian12-abi.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/fresh-portable/result.json",
+      "source_sha256": "5a1d56b79e3e0e2b5bff42772bb379b00b3b73b1bb5e4dcd8f62c99cfa6a2ca4",
+      "export_sha256": "4ca872b2c6c09d1573cde6e8ef10585210c20dde10c96febbc044653f7680b2e",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "ubuntu2204-abi.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/results.json",
+      "source_sha256": "cd03b5424747fbe4722e423982887bba11849758518a788a3e13b500bbc6c056",
+      "export_sha256": "a47aebfe3bd2af8f71bb897b4097ef769b48c10e265c741ee56d8f45b7c683ed",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "release-checks-x86_64.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/release-checks-x86_64.json",
+      "source_sha256": "fc0875d3d3bc4ded09af33765ff8cd44bac7b8fc8d547c38201aad6ec0af388a",
+      "export_sha256": "47629190e8e0648a91666eaabe48199945ae1b2ab5c22e425c2ca451bde2fa8c",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "final-host-policy-x86_64.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/final-host-policy-x86_64.log",
+      "source_sha256": "107f3816af3873a8361de6ccfef82d459eecb10d7540c18994c0281af7a24dad",
+      "export_sha256": "ceca70f72676aea33e8a5d1f3fb55d474712d636a4145ca0e66c8efd09ffe99d",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "release-checks-aarch64.json",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/release-checks-aarch64.json",
+      "source_sha256": "709b2b91467d86bcafd86ce0640baf3bd2b0620ba906d389900e6373449e9c73",
+      "export_sha256": "b9e48c72b4d45afa4491605db7fbfb1bed7e307f89f6d5127131e797534c8392",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    },
+    {
+      "file": "final-host-policy-aarch64.log",
+      "source_record": "firmware-inbox/work/almighty-power-persistence-20261026/final-host-policy-aarch64.log",
+      "source_sha256": "59e1966583f615401bd02ca73e8418c7562e9fb35b7431daa84d0836cff95f29",
+      "export_sha256": "2d5d8b390a066852d36e7bee70c279eb15c608b89a7008308b31e422a32202ae",
+      "redaction": "Host workspace prefixes replaced; JSON formatting may be normalized; logical evidence unchanged"
+    }
+  ]
+}

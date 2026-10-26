@@ -1,0 +1,50 @@
+from pathlib import Path
+import sys,json,io,hashlib,bisect,re,struct
+ROOT=Path(__file__).resolve().parents[4];OUT=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from elftools.elf.relocation import RelocationSection
+from capstone import Cs,CS_ARCH_X86,CS_MODE_64
+from capstone.x86 import X86_OP_IMM,X86_OP_MEM,X86_REG_RIP
+path=ROOT/'firmware-inbox/work/almighty-firmware-deep-20261026/nested-apps/19_amd64_com.ugreen.ugos_serv.upk/lib/libugos_serv-shared.so'
+raw=path.read_bytes();elf=ELFFile(io.BytesIO(raw));symbols={};starts=[];funcs=[];relocations=[];targets={}
+for sec in elf.iter_sections():
+    if sec['sh_type']=='SHT_SYMTAB':
+        for s in sec.iter_symbols():
+            if s['st_value']:
+                symbols.setdefault(s['st_value'],[]).append(s.name)
+                if s['st_info']['type']=='STT_FUNC': funcs.append((s['st_value'],s['st_value']+s['st_size'],s.name))
+    if isinstance(sec,RelocationSection):
+        st=elf.get_section(sec['sh_link'])
+        for i,r in enumerate(sec.iter_relocations()):
+            s=st.get_symbol(r['r_info_sym']) if r['r_info_sym'] else None
+            row={'offset':hex(r['r_offset']),'type':r['r_info_type'],'symbol':s.name if s else None,'value':hex(s['st_value']) if s else None,'addend':hex(r['r_addend'])}
+            if 0x1c9c08<=r['r_offset']<0x1c9c70:relocations.append(row)
+            if s and re.search('get_model|get_hw_version|read_dmi_info',s.name):
+                targets[r['r_offset']]=s.name
+                if s['st_value']:targets[s['st_value']]=s.name
+                if sec.name=='.rela.plt':
+                    ps=elf.get_section_by_name('.plt.sec') or elf.get_section_by_name('.plt')
+                    targets[ps['sh_addr']+(i+(0 if ps.name=='.plt.sec' else 1))*16]=s.name
+funcs=sorted(funcs);starts=[f[0] for f in funcs]
+md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+xrefs=[];text=elf.get_section_by_name('.text');decoded_bytes=0;last_end=text['sh_addr']
+for i in md.disasm(text.data(),text['sh_addr']):
+    decoded_bytes+=i.size;last_end=i.address+i.size
+    if i.mnemonic not in ('call','jmp'):continue
+    for op in i.operands:
+        t=op.imm if op.type==X86_OP_IMM else i.address+i.size+op.mem.disp if op.type==X86_OP_MEM and op.mem.base==X86_REG_RIP else None
+        if t in targets:
+            k=bisect.bisect_right(starts,i.address)-1;f=funcs[k] if k>=0 else None
+            xrefs.append({'address':hex(i.address),'instruction':i.mnemonic+' '+i.op_str,'target':hex(t),'target_symbol':targets[t],'enclosing_function':f[2] if f and f[1]>i.address else None,'enclosing_start':hex(f[0]) if f and f[1]>i.address else None})
+strings=[]
+for sec in elf.iter_sections():
+    if sec['sh_flags']&2 and not sec['sh_flags']&4 and sec['sh_type']!='SHT_NOBITS':
+        for m in re.finditer(rb'[\x20-\x7e]{4,}',sec.data()):
+            if re.search(rb'(?:[Bb][Ii][Oo][Ss]|LL_|EM_|[Nn][Vv][Mm][Ee]|[Pp]hysical_slot|[Ss][Aa][Tt][Aa]|[Pp][Cc][Ii][Ee]|DXP2800)',m.group()):
+                strings.append({'section':sec.name,'address':hex(sec['sh_addr']+m.start()),'bytes':len(m.group()),'value':m.group().decode()})
+coverage={'section_start':hex(text['sh_addr']),'section_bytes':text['sh_size'],'decoded_bytes':decoded_bytes,'last_decoded_end':hex(last_end),'complete':decoded_bytes==text['sh_size']}
+assert coverage['complete'],coverage
+result={'input':str(path.relative_to(ROOT)),'sha256':hashlib.sha256(raw).hexdigest(),'InfoServiceImpl_vtable_range':['0x1c9c08','0x1c9c70'],'vtable_relocations':relocations,'getter_call_xrefs':xrefs,'text_decode_coverage':coverage,'bounded_relevant_allocated_strings':strings}
+(OUT/'native-xrefs.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+print(json.dumps({'saved':str(OUT/'native-xrefs.json'),'getter_call_xrefs':len(xrefs),'vtable_relocations':len(relocations),'coverage':coverage},indent=2))

@@ -1,0 +1,1595 @@
+{
+  "release_payload_count": 26,
+  "inspected_frozen_elf_count": 38,
+  "all_frozen_sha256_match": true,
+  "allocated_sections_equal_count": 38,
+  "runtime_abi_equal_count": 38,
+  "records": [
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl",
+      "sha256": "2bb3a6673270dac2d5031982e0e36f8339a58ef17d5dd1cd19d2fa0d6712b6d3",
+      "size": 710992,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libdl.so.2",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.10",
+            "GLIBC_2.14",
+            "GLIBC_2.17",
+            "GLIBC_2.2.5",
+            "GLIBC_2.27",
+            "GLIBC_2.3",
+            "GLIBC_2.7"
+          ],
+          "libdl.so.2": [
+            "GLIBC_2.2.5"
+          ]
+        },
+        "glibc_symbol_floor": "2.27",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/ugreenctl",
+      "old_sha256": "a8b62e489a24db660c6c27e0f0791dd755e8889b3b0834f53317dd47a33db0fc",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/ugreen_leds_cli",
+      "sha256": "52549b94d04312f52afff3b57dc194c16a69013477a1692719e2f5600221c755",
+      "size": 594760,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.10",
+            "GLIBC_2.14",
+            "GLIBC_2.17",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/ugreen_leds_cli",
+      "old_sha256": "1950d022d6533e2771bcdffd9a1a0f12784d4d33734b5c2d04b93214bec2be03",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-ledd",
+      "sha256": "dbeb8d83ab670a10369bd1753b00457fa3cf22ab04c34626856916842d7d452f",
+      "size": 353088,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.10",
+            "GLIBC_2.14",
+            "GLIBC_2.17",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/ugreenctl-ledd",
+      "old_sha256": "460e3a90889adf5fe479a7a23225a8b375701d7dda4555c7a25d2ed059b0eb70",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-fand",
+      "sha256": "ee17d17b1c80a29b442d369ec72e08ec43e2edcd64f882359f9362a54ed01102",
+      "size": 90416,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.27",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.27",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/ugreenctl-fand",
+      "old_sha256": "7e9428f1d851ddd5a37cf8e4096baad99dd8eaa487c0250807a3ec145e32c599",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-led",
+      "sha256": "67a180ff65e2f02a1213924c2fc797bdecf8a3fe95690aecec2e3c1f3e60cc83",
+      "size": 493840,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.10",
+            "GLIBC_2.14",
+            "GLIBC_2.17",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.3.3",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-led",
+      "old_sha256": "b3cbbbc61d537e3ef530ffb6006fa8ce4f897c05ec25111c70669698896869e3",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-led-service",
+      "sha256": "4d08e1d3aa383bc04a72d6aa5906ab4815d80d745b5f946df2a5e38377da3061",
+      "size": 383664,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.10",
+            "GLIBC_2.14",
+            "GLIBC_2.17",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-led-service",
+      "old_sha256": "a9649f4295aefe6f571639c7fe8ce5375858fbfef40d007480ab2481c4c86d28",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-led-cs201x",
+      "sha256": "7657b58605ef1d83d13e7a9ca8c1e270cf5d7edab5c77f913b52676c558184cc",
+      "size": 173136,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-led-cs201x",
+      "old_sha256": "f5268a462e9c8c97d56d8130811fc0bcbb0c34949f5933cb014d6590ee6441a9",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-disk-mapping",
+      "sha256": "bff9d5ba90441cb371b8d1959347f2d4f10af5034e0f22a65354df9ea08ab551",
+      "size": 321944,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.3.3",
+            "GLIBC_2.7"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-disk-mapping",
+      "old_sha256": "7518d7aebd23cbd797395f2bc410715fec43ebbd6a8a7837a4875df1f4abafcf",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-identity",
+      "sha256": "6ba8ab54a2278bb24867594097bfa3fbeb72216a140034bc82ddab9bada2e4fe",
+      "size": 49296,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-identity",
+      "old_sha256": "0b4d1132dea6b45e3b5f8509a1c0db6a8ca0186b051abc112b88a429426bf863",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/test-hardware-cli",
+      "sha256": "d31c4c71c04c484836fd5585c9c29cec5c871dd136e87997ff96f7d53fcbcae8",
+      "size": 228336,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib64/ld-linux-x86-64.so.2",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/test-hardware-cli",
+      "old_sha256": "feb326a56f3782eb2c37d80f676b07badb9470eebb50b84bfe73ab7068ada23a",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "E:/工作台/4800plus/reference-hardware",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dx4600.so",
+      "sha256": "34ff5fc705cf3d9156918bb4a775ae99b764b9404de90534ff958257e02535d3",
+      "size": 102216,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dx4600.so",
+      "old_sha256": "80491b5937ffbccb64f625533653b1e472793ebec570c60f498c9a5642beea42",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp2800.so",
+      "sha256": "3bddd1fb642e9d3a73db6b563b750ff8e954f9a40f0ec8eb1ff751a034296836",
+      "size": 6664,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [],
+        "required_symbol_versions": {},
+        "glibc_symbol_floor": null,
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp2800.so",
+      "old_sha256": "a1f24f0e6693dfc821b27ffcb65b0d18c9a365000c0b3d30eb65ad1669514430",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800.so",
+      "sha256": "4d261145b97ab91ab745526f99fe8015e5a3736ca075de62990a37c242a8873c",
+      "size": 102104,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp4800.so",
+      "old_sha256": "24588eeebd0e92fc0dd39227e2fe64081f448f58b1ecf56da382f39c60461d71",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800plus.so",
+      "sha256": "f72801adcb10fa1af4ec68916b11016b0b3f2e8ffec9368f6dc8d2a46163b306",
+      "size": 101384,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp4800plus.so",
+      "old_sha256": "9fc8bf8c45ad7ded9e5fa0810fba63791b50753bfe465bbc00f05eb452498814",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800s.so",
+      "sha256": "8e29e13d796a77369db8a7af172ca86a91cc83264e1384605ad80a80ab2b3a6f",
+      "size": 102120,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp4800s.so",
+      "old_sha256": "87ecf2366a45f95cb239ec8b72843bcd4edb8a78b2974e6853fbdb8b49ca9436",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp480tplus.so",
+      "sha256": "3c9807b7669428ad55d07771ab26f029ae2595ef42b36f0308d096581125c45b",
+      "size": 101904,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp480tplus.so",
+      "old_sha256": "61134e7b9d49094ca596f2164d8858652f2db868a298bd565aa0312124802c2c",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800plus.so",
+      "sha256": "d86635aff5b1a38ca79c63f64de0a2607609bdfc181945cf46c451a174e0cf62",
+      "size": 75648,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.3",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp6800plus.so",
+      "old_sha256": "7eba35c073dbf633e2a4db1843f1977c80797f19890d59709bfcc5315ef0307b",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800pro.so",
+      "sha256": "87c6bfb7c426905e8a3e71264e5504ae429ff602a0a02a631f096c38d33ca933",
+      "size": 103264,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.2.5"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.14",
+            "GLIBC_2.2.5",
+            "GLIBC_2.3"
+          ]
+        },
+        "glibc_symbol_floor": "2.14",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp6800pro.so",
+      "old_sha256": "3f5afb19fa1496fb6f149d79e4cb889efda9befaab89d7b9fdf093aeca973399",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp8800plus.so",
+      "sha256": "cd230c6da5a103881b30cc2bf4669176a78b39f858a868c25cfdbf641b0bf6e5",
+      "size": 6672,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [],
+        "required_symbol_versions": {},
+        "glibc_symbol_floor": null,
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build/models/dxp8800plus.so",
+      "old_sha256": "7538b80251199c7db5a9bf8e4db4f7fc9f8d2fd4a674e89117f7eacf4857353d",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl",
+      "sha256": "145e89d9377927d4a128c645847be3a0c5b72469066df3b6c21257b0ad310a04",
+      "size": 683752,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libdl.so.2",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17",
+            "GLIBC_2.27"
+          ],
+          "libdl.so.2": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.27",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/ugreenctl",
+      "old_sha256": "ea888429a0ea0e0fa92741663bb86050fa84c689b0201ba2eac43d6458725d34",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/ugreen_leds_cli",
+      "sha256": "87dd16ac7789f55e459382e3e1b06032786a00021e6b7aa07f202df8147bb5be",
+      "size": 568632,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/ugreen_leds_cli",
+      "old_sha256": "dd433fadfa33f9d122646dd6bf490fa3723884c5e90bf1fb009d577912fad50c",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-ledd",
+      "sha256": "a5ba307ed4ae94991bb6427ffb751b3735c16eb6a41178c799591d090b88a582",
+      "size": 344048,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/ugreenctl-ledd",
+      "old_sha256": "06c9e0df66c35f28b6020256ef9fcea2ece476485032802e065fd3e72847038a",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-fand",
+      "sha256": "a3978e33f89364d4086cc9aa02ceb429507a6880787194bea7e7845dd6ca1134",
+      "size": 91280,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17",
+            "GLIBC_2.27"
+          ]
+        },
+        "glibc_symbol_floor": "2.27",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/ugreenctl-fand",
+      "old_sha256": "2f953cc1b7c5159aef42454de60885b97fec6538bfc480037a58287572852f9f",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-led",
+      "sha256": "7d65d4e1b57ffa102bcade507c75f6fa8baf7a9acd2c9080f2361d25c39bedf5",
+      "size": 521928,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-led",
+      "old_sha256": "6c5b31b5ebc435b5d7ebf839f61081f68c2211a972d9d81f1bdfb0ffbd0ff65c",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-led-service",
+      "sha256": "8bdaa9d6e64089e96dc46906a25f909a92c043903cfd14c60865fe5e4caa1252",
+      "size": 376336,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-led-service",
+      "old_sha256": "22e007b4ec6e4fca4e79d6f31afa54b4393ed5c70de9ec44fc33e60efbdf9852",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-led-cs201x",
+      "sha256": "bfeb1f68bc5fc5535711b981d24d13d159491346e699a8ea40fc303beb79fd13",
+      "size": 216728,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6"
+        ],
+        "required_symbol_versions": {
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-led-cs201x",
+      "old_sha256": "0c0ee629545ab8cc813b03ca491a096fef51661d46632ea996b00ad546d5c80f",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-disk-mapping",
+      "sha256": "3b6a8168c289cef30f459b36e95edb90fc5065977334a6f18c03c1037eda9d1e",
+      "size": 325904,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-disk-mapping",
+      "old_sha256": "a5a465f853049396b95b3ffa2e4e26f5eb243a615ec7eec984999cf75978e45a",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-identity",
+      "sha256": "ecdb9c9fd1e460b3d91d1993d4b4ea248e3c6700b57cb56cb342a4fce9684e39",
+      "size": 51824,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-identity",
+      "old_sha256": "4ff0e20a5640fcf3e12b1ef700edd77c7dfe059e95589d0c438e624d7ee274e2",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/test-hardware-cli",
+      "sha256": "0208e061929f365354fabadbc987498dfd9fa79e4d6b905507565045fb6cb432",
+      "size": 232488,
+      "release_payload": false,
+      "runtime_abi": {
+        "interpreter": "/lib/ld-linux-aarch64.so.1",
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/test-hardware-cli",
+      "old_sha256": "b67e5b485147e3c13f0c07777ae4a8008c507891c88868ac128061a6b48a88bc",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64/CMakeFiles/4.4.0/CompilerIdC",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dx4600.so",
+      "sha256": "8f8651715d0ee7cc7ae66ddb2f94f9d7697466f69d715dfce567218071b36417",
+      "size": 96392,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dx4600.so",
+      "old_sha256": "e1c3fd58308d90e8a0f5caf972693ad25c1661650e284074df8fb0255e6bdfb6",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp2800.so",
+      "sha256": "b6f9a473dd851cb9278dedce7d49274ca2b9e95fe13f9da752d23dcbed7e5d38",
+      "size": 6840,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [],
+        "required_symbol_versions": {},
+        "glibc_symbol_floor": null,
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp2800.so",
+      "old_sha256": "1a7bc23067b8767d2283b02d5181ad90b63bbb8fcc3489e1ed6a4b5321664557",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800.so",
+      "sha256": "7b77c019e773fab550d50bd9539d21ef39bde80efc5eb68c9a741e74f83d75ce",
+      "size": 96376,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp4800.so",
+      "old_sha256": "867888000cf9fa81271eae72fcc992d0321a853b9b7ffaf0536ebbcb3450817d",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800plus.so",
+      "sha256": "22c1453a00a7913d32361cc59a41ebb2bd447930989c8b40a2fbd338b109a3f6",
+      "size": 95544,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp4800plus.so",
+      "old_sha256": "69e1ee3bd6cf0a7d2201d65fc01ad5fd4478d2673e8d6f94f9dfe4b4663bbcf2",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800s.so",
+      "sha256": "11d821040317dc9c50008076afb6c3c4a233cc271dee2f044089b18083552989",
+      "size": 96408,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp4800s.so",
+      "old_sha256": "5a56f8f3229b61e161b30135949c806c3ee53be150728c4b73ba83530de9ecd5",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp480tplus.so",
+      "sha256": "bcaef5e99d6c4edadfc9ca2804ce62c2976933b92a43e831c4e366afad76d271",
+      "size": 96024,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp480tplus.so",
+      "old_sha256": "0d07be5be89e93fe630448c973bf2ae66e0d05bbbd2bba600ca72754a24e208e",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800plus.so",
+      "sha256": "bb486c98ba390c654a6cba2d39440dc16d0ae557c63d9f3e7b3c668b21ae021a",
+      "size": 68144,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp6800plus.so",
+      "old_sha256": "a11c95315127a4fa6a8b6f7ca1a9a776ac0a6fcb034d8ff4fa4ef41e2c744d03",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800pro.so",
+      "sha256": "96b01b1ed584bf9be83dcad7b7f82770fad07615d910bd06064b48372976a0f8",
+      "size": 97480,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [
+          "libc.so.6",
+          "libpthread.so.0"
+        ],
+        "required_symbol_versions": {
+          "libpthread.so.0": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.17"
+          ]
+        },
+        "glibc_symbol_floor": "2.17",
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp6800pro.so",
+      "old_sha256": "ec51a0284782cc77a149f19f9229903de59451b139834c24c209c5b8a7e0f647",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    },
+    {
+      "path": "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp8800plus.so",
+      "sha256": "8e13513c30cb6dc858d7d2be16553a0861051dbf05a49715ac27b01e7bb69d66",
+      "size": 6856,
+      "release_payload": true,
+      "runtime_abi": {
+        "interpreter": null,
+        "needed_libraries": [],
+        "required_symbol_versions": {},
+        "glibc_symbol_floor": null,
+        "glibc_extra_requirements": [],
+        "rpath": null,
+        "runpath": null
+      },
+      "old_path": "firmware-inbox/work/almighty-build-arm64/models/dxp8800plus.so",
+      "old_sha256": "52ee594d04ba614d1dcae7ae3b3a59d8dcd6835705cb42934667d4b6ff57bf57",
+      "allocated_sections_equal": true,
+      "runtime_abi_equal": true,
+      "changed_sections": [
+        ".debug_info",
+        ".debug_str",
+        ".symtab"
+      ],
+      "old_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-build-arm64"
+      ],
+      "new_compilation_directories": [
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-aarch64"
+      ]
+    }
+  ],
+  "release_aggregate": {
+    "x86_64": {
+      "payload_count": 13,
+      "glibc_numeric_symbol_floor": "2.27",
+      "needed_libraries": [
+        "libc.so.6",
+        "libdl.so.2",
+        "libpthread.so.0"
+      ],
+      "rpath_runpath_all_absent": true,
+      "interpreters": [
+        "/lib64/ld-linux-x86-64.so.2"
+      ]
+    },
+    "aarch64": {
+      "payload_count": 13,
+      "glibc_numeric_symbol_floor": "2.27",
+      "needed_libraries": [
+        "libc.so.6",
+        "libdl.so.2",
+        "libpthread.so.0"
+      ],
+      "rpath_runpath_all_absent": true,
+      "interpreters": [
+        "/lib/ld-linux-aarch64.so.1"
+      ]
+    }
+  }
+}

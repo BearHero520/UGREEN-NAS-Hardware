@@ -1,0 +1,33 @@
+from pathlib import Path
+import hashlib, json, struct, sys, io
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[3]
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/vmlinux-to-elf'))
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+import zstandard
+from elftools.elf.elffile import ELFFile
+b=(OUT/'vmlinuz').read_bytes()
+setup=(b[0x1f1]+1)*512
+off=setup+struct.unpack_from('<I',b,0x248)[0]
+size=struct.unpack_from('<I',b,0x24c)[0]
+assert b[off:off+4]==b'\x28\xb5\x2f\xfd'
+compressed=b[off:off+size]
+params=zstandard.get_frame_parameters(compressed)
+obj=zstandard.ZstdDecompressor().decompressobj()
+chunks=[]
+total=0
+for pos in range(0,len(compressed),65536):
+    chunk=obj.decompress(compressed[pos:pos+65536])
+    total+=len(chunk)
+    assert total<=256<<20
+    chunks.append(chunk)
+    if obj.eof: break
+raw=b''.join(chunks)
+assert obj.eof and len(raw)<=256<<20
+assert raw.startswith(b'\x7fELF')
+(OUT/'vmlinux.raw.elf').write_bytes(raw)
+e=ELFFile(io.BytesIO(raw))
+r={'offset':hex(off),'header_payload_length':size,'compression':'zstd','zstd_content_size':params.content_size,'trailing_unused_bytes':obj.unused_data.hex(),'decompressed_size':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'elf_machine':e['e_machine'],'elf_entry':hex(e['e_entry']),'sections':[{'name':s.name,'addr':hex(s['sh_addr']),'offset':hex(s['sh_offset']),'size':s['sh_size'],'type':s['sh_type']} for s in e.iter_sections()]}
+(OUT/'decompression.json').write_text(json.dumps(r,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(r,indent=2))

@@ -1,0 +1,159 @@
+{
+  "status": "complete",
+  "completed_utc": "2026-10-26T09:15:49.226993+00:00",
+  "artifact_directory": "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-power-persistence-20261026\\adapter",
+  "input": {
+    "kind": "current working-tree source files",
+    "source_repository": "<LLLED_FPK_WORKTREE>",
+    "firmware_package": null,
+    "files": [
+      {
+        "path": "App.Native.UGreenLED/app/server/lib/bios_control.sh",
+        "baseline_sha256": "3c2638fd9f5c0bf5e05d1dba9d96f241413d3be4d63b4d8099cd3368ab23ef7c",
+        "current_source_sha256": "3c2638fd9f5c0bf5e05d1dba9d96f241413d3be4d63b4d8099cd3368ab23ef7c",
+        "modified_sha256": "42aa72a94276a25c248d7add082daa149868bbfa4b0b548560268b4c549b78fd",
+        "source_unchanged_from_baseline": true,
+        "baseline_crlf_count": 0,
+        "modified_crlf_count": 0
+      },
+      {
+        "path": "tests/test_startup_persistence.sh",
+        "baseline_sha256": "5221389111a515167bc323b431472cfa10e9b59797850ba0cca9e805744549ea",
+        "current_source_sha256": "5221389111a515167bc323b431472cfa10e9b59797850ba0cca9e805744549ea",
+        "modified_sha256": "b21b573083d661e265e47bad72387c019cbbc27dc5204dad0a88c6bea96d18c2",
+        "source_unchanged_from_baseline": true,
+        "baseline_crlf_count": 0,
+        "modified_crlf_count": 0
+      },
+      {
+        "path": "tests/test_bios_api.sh",
+        "baseline_sha256": "de7816d28532e7d1a65c5870c6d6463876e3348b1313fe062166a63270276986",
+        "current_source_sha256": "de7816d28532e7d1a65c5870c6d6463876e3348b1313fe062166a63270276986",
+        "modified_sha256": "b21668e38045b624d92405f2a4bf30ecb7781d3f170cdfd4c20635b8cc85a1ae",
+        "source_unchanged_from_baseline": true,
+        "baseline_crlf_count": 0,
+        "modified_crlf_count": 0
+      }
+    ]
+  },
+  "patch": {
+    "path": "llled-startup-persistence.patch",
+    "sha256": "90b57e46d6376b8334c1811c5bf69315b20609e04e4cc17b3c29c173337cf0a6",
+    "files_changed": 3,
+    "preserves_uncommitted_source_delta": true
+  },
+  "change": {
+    "cause": "bios_set_startup_saved and bios_startup_restore persisted/replayed only dx4600",
+    "supported_exact_dmi": [
+      "DX4600",
+      "DX4600+",
+      "DX4600 Pro",
+      "DXP4800",
+      "DXP4800 Plus",
+      "UGREEN DXP4800 Plus",
+      "DXP4800 Pro",
+      "UGREEN DXP4800 Pro",
+      "DXP4800S",
+      "DXP480T Plus",
+      "UGREEN DXP480T Plus",
+      "DXP6800 Plus",
+      "DXP6800 Pro"
+    ],
+    "behavior": [
+      "save only after successful guarded hardware write",
+      "restore saved on/off/last for every existing supported startup model",
+      "bind selection to the complete exact detected product name",
+      "no choice and different model cause no hardware write",
+      "config read failures, DMI failures/empty identity and corrupt policy cause no write",
+      "hardware failure leaves the prior saved choice unchanged",
+      "persistence failure is an explicit error after hardware success"
+    ],
+    "service_hooks": {
+      "source": "App.Native.UGreenLED/cmd/main",
+      "start_line": 71,
+      "stop_line": 167,
+      "source_changed": false,
+      "validation": "real entry point, mocked non-BIOS service effects"
+    },
+    "hardware_backend": "unchanged bios_set_startup -> bundled ugreenctl; no register or binary changes"
+  },
+  "validation": {
+    "platform": "Windows / Git Bash GNU Bash 5.2.37 x86_64-pc-msys",
+    "hardware_access": "all ugreenctl calls mocked; no hardware I/O",
+    "matrix": "13 exact DMI x on/off/last, clean-shell restart, every cross-DMI pair, failures, service start/stop, API",
+    "checks": [
+      {
+        "name": "startup_persistence",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/startup-persistence-final.log"
+      },
+      {
+        "name": "bios_api",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/bios-api.log"
+      },
+      {
+        "name": "bios_control_and_shell_syntax",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/bios-control-final.log"
+      },
+      {
+        "name": "hardware_mapping",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/service-mapping-regressions.log"
+      },
+      {
+        "name": "main_start",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/service-mapping-regressions.log"
+      },
+      {
+        "name": "main_bootstrap_logging",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/service-mapping-regressions.log"
+      },
+      {
+        "name": "unified_patch_apply_and_exact_hashes",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/patch-apply.log"
+      },
+      {
+        "name": "baseline_defect_reproduction",
+        "status": "passed",
+        "exit_code": 0,
+        "log": "logs/regression-reproduction.log"
+      }
+    ],
+    "source_hash_audit": {
+      "log": "logs/source-audit-final.log",
+      "verified_before_parent_application": true,
+      "meaning": "All three LLLED working files matched baseline at subtask audit time; parent authorized application happens afterward"
+    },
+    "initial_fixture_issue": "hardware mapping first run lacked copied app.js; copied the unchanged current source fixture and final mapping/service run passed",
+    "patch_check_line_endings": "temporary git repo core.autocrlf=false; output bytes exactly match LF modified files",
+    "cmake_build_ctest": "not run by adapter subtask: no hardware repository C/CMake changes; parent validates hardware work separately"
+  },
+  "evidence_and_limits": {
+    "firmware_evidence_added": false,
+    "new_hardware_support_added": false,
+    "real_hardware_verified": false,
+    "persistence_type": "software restore via existing service hooks, not BIOS NVRAM persistence",
+    "unknown": "per-model real cold-boot and power-loss behavior beyond existing evidence remains unverified by these mocks"
+  },
+  "boundaries": {
+    "subtask_wrote_only_adapter_directory": true,
+    "subtask_modified_actual_llled_source_or_index": false,
+    "parent_application": "Parent reported it will apply this verified three-file patch to the real LLLED working tree under the user's limited authorization, and independently verify target hashes; that result is recorded by parent",
+    "committed": false,
+    "pushed": false,
+    "built_fpk": false,
+    "changed_registers_or_factory_binaries": false
+  }
+}

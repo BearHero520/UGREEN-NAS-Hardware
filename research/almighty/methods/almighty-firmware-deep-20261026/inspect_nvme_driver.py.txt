@@ -1,0 +1,67 @@
+"""Record official NVMe naming/probe code with relocations; no driver loading."""
+from pathlib import Path
+import hashlib
+import io
+import json
+import sys
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(ROOT / 'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+
+reports = []
+for path in sorted((OUT/'routing/kernel.squashfs').rglob('*.ko')):
+    blob = path.read_bytes()
+    elf = ELFFile(io.BytesIO(blob))
+    symtab = elf.get_section_by_name('.symtab')
+    symbols = list(symtab.iter_symbols())
+    relocs = {}
+    for sec in elf.iter_sections():
+        if sec['sh_type'] != 'SHT_RELA':
+            continue
+        table = elf.get_section(sec['sh_link'])
+        target = sec['sh_info']
+        for r in sec.iter_relocations():
+            sym = table.get_symbol(r['r_info_sym'])
+            label = sym.name
+            idx = sym['st_shndx']
+            if isinstance(idx, int):
+                target_sec = elf.get_section(idx)
+                if not label:
+                    label = target_sec.name
+                if 'str' in target_sec.name:
+                    # PC-relative relocation points to disp32 and uses -4.
+                    add = r['r_addend'] + (4 if r['r_info_type'] in (2, 4) else 0)
+                    start = sym['st_value'] + add
+                    raw = target_sec.data()[start:].split(b'\0', 1)[0]
+                    label += ' ' + repr(raw)
+            relocs.setdefault(target, []).append((r['r_offset'], label, r['r_addend']))
+    wanted = {'nvme_probe', 'nvme_init_ctrl', '__assign_disk_name',
+              'nvme_alloc_ns', 'nvme_mpath_alloc_disk'}
+    lines = ['INPUT '+str(path.relative_to(ROOT)),
+             'SHA256 '+hashlib.sha256(blob).hexdigest()]
+    selected = []
+    md = Cs(CS_ARCH_X86, CS_MODE_64)
+    for sym in symbols:
+        if sym.name not in wanted or sym['st_info']['type'] != 'STT_FUNC':
+            continue
+        idx, start, size = sym['st_shndx'], sym['st_value'], sym['st_size']
+        sec = elf.get_section(idx)
+        selected.append({'name': sym.name, 'section': sec.name,
+                         'start': hex(start), 'bytes': size})
+        lines.append(f'\nFUNCTION {sym.name} {sec.name}+{start:#x} bytes={size}')
+        for ins in md.disasm(sec.data()[start:start+size], start):
+            annotations = [f'{label} addend={add:#x}' for off, label, add in relocs.get(idx, [])
+                           if ins.address <= off < ins.address+ins.size]
+            lines.append(f'{ins.address:08x}: {ins.mnemonic:8} {ins.op_str}'+
+                         (' ; '+' | '.join(annotations) if annotations else ''))
+    dest = OUT/(path.stem+'-naming-disassembly.txt')
+    dest.write_text('\n'.join(lines)+'\n', encoding='utf-8')
+    reports.append({'input': str(path.relative_to(ROOT)),
+                    'sha256': hashlib.sha256(blob).hexdigest(),
+                    'functions': selected, 'disassembly': str(dest.relative_to(ROOT))})
+(OUT/'nvme-driver-analysis.json').write_text(json.dumps(reports, indent=2)+'\n', encoding='utf-8')
+print(json.dumps(reports, indent=2))

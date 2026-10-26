@@ -1,0 +1,38 @@
+"""Run the existing isolated Linux validation environment, preserving logs."""
+from pathlib import Path
+import datetime
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import time
+
+ROOT=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+arch=sys.argv[1]
+assert arch in ('x86_64','aarch64')
+build=ROOT/('firmware-inbox/work/almighty-build'+('-arm64' if arch=='aarch64' else ''))
+bin=ROOT/'firmware-inbox/work/tools/cmake-python/cmake/data/bin'
+env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1')
+steps=[]
+for name,command in [
+    ('configure',[str(bin/'cmake.exe'),'-S',str(ROOT),'-B',str(build),'-DCMAKE_BUILD_TYPE=Release']),
+    ('build',[str(bin/'cmake.exe'),'--build',str(build),'--parallel','2']),
+    ('ctest',[str(bin/'ctest.exe'),'--test-dir',str(build),'--output-on-failure'])]:
+    log=OUT/f'{name}-{arch}.log'
+    assert not log.exists(), f'Preserve prior log: {log}'
+    start=time.monotonic()
+    with log.open('xb') as stream:
+        run=subprocess.run(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+    step={'step':name,'command':command,'returncode':run.returncode,
+          'seconds':round(time.monotonic()-start,2),'path':log.relative_to(ROOT).as_posix(),
+          'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
+    steps.append(step)
+    print(json.dumps(step),flush=True)
+    if run.returncode:break
+result={'arch':arch,'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'steps':steps,'passed':len(steps)==3 and all(s['returncode']==0 for s in steps),
+        'hardware_validation':False}
+(OUT/f'release-checks-{arch}.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+sys.exit(0 if result['passed'] else 1)

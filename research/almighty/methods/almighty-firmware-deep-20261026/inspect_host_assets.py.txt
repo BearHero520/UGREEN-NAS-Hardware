@@ -1,0 +1,108 @@
+"""Extract named system/upgrade hosts and inspect embedded data without execution."""
+from pathlib import Path, PurePosixPath
+from concurrent.futures import ThreadPoolExecutor
+import gzip
+import hashlib
+import io
+import json
+import re
+import struct
+import subprocess
+import sys
+import zlib
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+SEVEN = ROOT/'firmware-inbox/work/tools/7zip/full/7z.exe'
+IMAGE = ROOT/'firmware-inbox/work/dxp6800plus/fw.squashfs'
+names = ['UGN_Remote_Firmware_Tool', 'ug-core', 'uginstall', 'ugpostinst',
+         'ugdevice', 'ugpwproctl', 'hwmonitor', 'hwmonitor-480t', 'hwmonitor-amd',
+         'hwmonitor-idx', 'uginit']
+
+def extract(name):
+    member = 'usr/sbin/'+name
+    path = OUT/'hosts'/member
+    if not path.exists():
+        data = subprocess.run([str(SEVEN), 'x', '-so', str(IMAGE), member],
+                              capture_output=True, check=True).stdout
+        assert 0 < len(data) < 40_000_000
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('xb') as f:
+            f.write(data)
+    return path
+
+if sys.argv[1:] == ['nested']:
+    hosts=[ROOT/h['path'] for r in json.loads((OUT/'nested-app-analysis.json').read_text())
+           for h in r['host_extractions']]
+    output_name='nested-host-asset-analysis.json'
+else:
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        hosts = list(pool.map(extract, names))
+    hosts += [ROOT/'firmware-inbox/work/dxp6800plus/ugupdate',
+              ROOT/'firmware-inbox/work/dxp6800plus/ctlmgr-fields/sbin/ctl_serv']
+    output_name='host-asset-analysis.json'
+
+reports=[]
+for path in hosts:
+    blob=path.read_bytes()
+    row={'path':path.relative_to(ROOT).as_posix(),'bytes':len(blob),
+         'sha256':hashlib.sha256(blob).hexdigest()}
+    row['target_literal_hits']=[{'offset':m.start(), 'text':m.group()[:250].decode('ascii')}
+        for m in re.finditer(rb'[ -~]{6,}', blob)
+        if re.search(rb'(?i)n76e003|nuvoton|/dev/i2c|i2c-dev|smbus|mcu.{0,24}(firmware|upgrade)|(?:firmware|upgrade).{0,24}mcu|/sys/class/leds|nvme[01]n1',m.group())]
+    if blob.startswith(b'\x7fELF'):
+        elf=ELFFile(io.BytesIO(blob))
+        row['elf_machine']=elf['e_machine']
+        sec=elf.get_section_by_name('.gopclntab')
+        if sec:
+            d=sec.data()
+            nfunc,nfiles,text,namesoff,cu,files,pct,pcln=struct.unpack_from('<8Q',d,8)
+            hits=[]
+            for i in range(nfunc):
+                ent,fun=struct.unpack_from('<II',d,pcln+i*8)
+                noff=struct.unpack_from('<i',d,pcln+fun+4)[0]
+                name=d[namesoff+noff:d.find(b'\0',namesoff+noff)].decode()
+                if re.search(r'(?:^|[/.(_])(?:mcu|led|nvme|smbus|i2c)|firmware|upgrade|flash|(?:^|/)hardware[./]|embed\.',name,re.I):
+                    end=struct.unpack_from('<I',d,pcln+(i+1)*8)[0]
+                    hits.append({'address':hex(text+ent),'bytes':end-ent,'function':name})
+            row['go_function_count']=nfunc
+            row['hardware_upgrade_functions']=hits
+        else:
+            row['native_function_candidates']=[]
+            for sec in elf.iter_sections():
+                if sec['sh_type'] in ('SHT_SYMTAB','SHT_DYNSYM'):
+                    row['native_function_candidates'] += [s.name for s in sec.iter_symbols()
+                        if re.search(r'mcu|firmware|upgrade|flash|smbus|i2c|nvme|led_',s.name,re.I)]
+        # Verify gzip rather than identifying random magic as embedded firmware.
+        # Decompression is capped at 4 MiB and no extracted code is executed.
+        embedded=[]
+        for match in list(re.finditer(b'\x1f\x8b\x08',blob))[:256]:
+            dec=zlib.decompressobj(16+zlib.MAX_WBITS)
+            try:
+                data=dec.decompress(blob[match.start():],4*1024*1024)
+            except zlib.error:
+                continue
+            if not dec.eof:
+                embedded.append({'offset':match.start(),'status':'valid-prefix-or-cap; not classified'})
+                continue
+            hits=[m.group()[:180].decode('ascii') for m in re.finditer(rb'[ -~]{6,}',data)
+                  if re.search(rb'(?i)n76e003|nuvoton|mcu|i2c|UGREEN|nvme',m.group())]
+            item={'offset':match.start(),'decompressed_bytes':len(data),
+                  'sha256':hashlib.sha256(data).hexdigest(),'target_strings':hits[:30]}
+            if hits:
+                dest=OUT/'embedded'/(path.name+'-'+str(match.start())+'.raw')
+                dest.parent.mkdir(exist_ok=True)
+                if dest.exists():assert dest.read_bytes()==data
+                else:dest.write_bytes(data)
+                item['saved']=dest.relative_to(ROOT).as_posix()
+            embedded.append(item)
+        row['verified_gzip_regions']=embedded
+    reports.append(row)
+(OUT/output_name).write_text(json.dumps(reports,indent=2)+'\n',encoding='utf-8')
+print(json.dumps([{'host':Path(r['path']).name,'bytes':r['bytes'],
+    'literal_hits':len(r['target_literal_hits']),
+    'candidate_functions':len(r.get('hardware_upgrade_functions',r.get('native_function_candidates',[]))),
+    'gzip_regions':len(r.get('verified_gzip_regions',[]))} for r in reports],indent=2))

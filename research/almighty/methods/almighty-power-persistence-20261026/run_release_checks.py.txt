@@ -1,0 +1,24 @@
+"""Fresh two-architecture Release proof using the checked-in portable tools."""
+from pathlib import Path
+import hashlib,json,os,subprocess,sys,time
+ROOT=Path(__file__).resolve().parents[3];OUT=Path(__file__).resolve().parent
+arch=sys.argv[1];assert arch in ('x86_64','aarch64')
+build=ROOT/f'firmware-inbox/work/almighty-portable-build-{arch}'
+bin=ROOT/'firmware-inbox/work/tools/cmake-python/cmake/data/bin'
+ninja=ROOT/'firmware-inbox/work/tools/cmake-python/bin/ninja.exe'
+env=dict(os.environ,PYTHONIOENCODING='utf-8',PYTHONUTF8='1',PYTHONDONTWRITEBYTECODE='1',UGREENCTL_ZIG=str(ROOT/'firmware-inbox/work/tools/zig-0.15.2/zig.exe'))
+emulator=';'.join((sys.executable,(ROOT/'tools/testing/run_linux.py').as_posix(),'--runtime-root',(ROOT/'firmware-inbox/work/almighty-tools').as_posix()))
+commands=[('configure',[str(bin/'cmake.exe'),'-S',str(ROOT),'-B',str(build),'-G','Ninja','-DCMAKE_MAKE_PROGRAM='+ninja.as_posix(),
+    '-DCMAKE_TOOLCHAIN_FILE='+(ROOT/'tools/toolchains/zig-linux.cmake').as_posix(),'-DUGREENCTL_TARGET_ARCH='+arch,'-DCMAKE_BUILD_TYPE=Release','-DCMAKE_INSTALL_PREFIX=/usr/local','-DCMAKE_INSTALL_LIBDIR=lib','-DUGREENCTL_INSTALL_LED_COMPAT=ON','-DCMAKE_CROSSCOMPILING_EMULATOR='+emulator]),
+    ('build',[str(bin/'cmake.exe'),'--build',str(build),'--parallel','2']),
+    ('ctest',[str(bin/'ctest.exe'),'--test-dir',str(build),'--output-on-failure'])]
+steps=[]
+for name,cmd in commands:
+    path=OUT/f'{name}-{arch}.log';start=time.monotonic()
+    with path.open('xb') as stream:r=subprocess.run(cmd,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+    step={'step':name,'command':cmd,'returncode':r.returncode,'seconds':round(time.monotonic()-start,2),'path':path.relative_to(ROOT).as_posix(),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()};steps.append(step)
+    print(json.dumps(step),flush=True)
+    if r.returncode:break
+result={'arch':arch,'build_dir':build.relative_to(ROOT).as_posix(),'steps':steps,'passed':len(steps)==3 and all(s['returncode']==0 for s in steps),'physical_validation':False}
+(OUT/f'release-checks-{arch}.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+sys.exit(0 if result['passed'] else 1)

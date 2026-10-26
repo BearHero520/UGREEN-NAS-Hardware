@@ -1,0 +1,10 @@
+from pathlib import Path
+import sys, logging
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[3]
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/vmlinux-to-elf'))
+logging.basicConfig(filename=OUT/'symbol-recovery.log',level=logging.INFO,format='%(message)s',encoding='utf-8')
+from vmlinux_to_elf.core.elf_symbolizer import ElfSymbolizer
+ElfSymbolizer((OUT/'vmlinux.raw.elf').read_bytes(), str(OUT/'vmlinux.symbolized.elf'), None, 62, 64, None,16,None,False)
+print('Symbolized ELF complete')

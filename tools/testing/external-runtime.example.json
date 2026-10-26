@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "scope": "Observed external inputs for Windows Zig cross-build / disposable QEMU CTest. Metadata only; no downloads or binary files are included.",
+  "hash_meaning": "Local observed SHA-256 identities; not a replacement for publisher authenticity verification. URLs may expire or change. Reconstructed URLs are explicitly identified.",
+  "qemu_version": "QEMU emulator version 11.1.0 (v11.1.0-12130-ge470268ff4)",
+  "assets": [
+    {
+      "destination": "external-tools/zig-x86_64-windows-0.15.2.zip",
+      "url": "https://ziglang.org/download/0.15.2/zig-x86_64-windows-0.15.2.zip",
+      "bytes": 92614574,
+      "sha256": "3a0ed1e8799a2f8ce2a6e6290a9ff22e6906f8227865911fb7ddedc3cc14cb0c",
+      "role": "Cross compiler distribution; extract separately and set UGREENCTL_ZIG"
+    },
+    {
+      "destination": "qemu-w64-setup-20260811.exe",
+      "url": "https://qemu.weilnetz.de/w64/",
+      "bytes": 206615928,
+      "sha256": "f98a8aeb5f7faea9765b6dee28316c266cd179d80354a2fed8e50176f9a2e59f",
+      "role": "QEMU distribution, extract complete qemu/ tree including DLLs and share/",
+      "provenance": "Original archive filename and SHA-512 are retained in local qemu.sha512; exact acquisition URL was not retained. URL is publisher directory only.",
+      "sha512": "5bcf9eed634e8575a37b74f445af41a2fe4106da512d0c30c368301d4c105037fdfab40a5287367a28a957624cddebbc8c07e16c88ab6634f554cdf3d16bf543",
+      "archive_filename": "qemu-w64-setup-20260811.exe",
+      "download_url": null
+    },
+    {
+      "destination": "qemu/qemu-system-x86_64.exe",
+      "url": null,
+      "bytes": 25457048,
+      "sha256": "47d57a6072e0bb3bd98f87926eb129eb1736dfe818c67b3b81ef7ce4edd0b3cd",
+      "derived_from": "qemu-w64-setup-20260811.exe"
+    },
+    {
+      "destination": "qemu/qemu-system-aarch64.exe",
+      "url": null,
+      "bytes": 30987160,
+      "sha256": "952f897511177803722efed6fefe79bc3e7e5a51a026112dfc40f9a37fb0dad2",
+      "derived_from": "qemu-w64-setup-20260811.exe"
+    },
+    {
+      "destination": "rootfs.tar.gz",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.2-x86_64.tar.gz",
+      "bytes": 3657952,
+      "sha256": "412454ed98025ad9cd910d13f3d448b184e81502baa83180e89f98d0f13674be",
+      "provenance": "Existing archive /etc/os-release reports Alpine 3.22.2; filename URL reconstructed, not re-downloaded"
+    },
+    {
+      "destination": "vmlinuz-virt",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/netboot/vmlinuz-virt",
+      "bytes": 11813888,
+      "sha256": "6b58e5d779e44e57c9efa20232da18650415eceb9d4f544e5c165c1f392c5d51",
+      "provenance": "Mutable upstream netboot URL; preserve exact observed file, newer downloads need a new record"
+    },
+    {
+      "destination": "libc6_2.41-12+deb13u4_amd64.deb",
+      "url": "https://deb.debian.org/debian/pool/main/g/glibc/libc6_2.41-12+deb13u4_amd64.deb",
+      "bytes": 2846580,
+      "sha256": "967aa62605721081c3eb2a17650611a792aa802d76a6511d1840242623d204c9"
+    },
+    {
+      "destination": "libc-deb/data.tar",
+      "url": null,
+      "bytes": 13260800,
+      "sha256": "9160e73692aee4c259abc1dfbab430a869e6a292066e31cfcd85e26783742b09",
+      "derived_from": "libc6_2.41-12+deb13u4_amd64.deb",
+      "archive_member": "data.tar.xz",
+      "decode": "xz"
+    },
+    {
+      "destination": "arm64/rootfs.tar.gz",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-minirootfs-3.22.2-aarch64.tar.gz",
+      "bytes": 3981043,
+      "sha256": "6bf491907b705caa5fc65773fbbc1d0954530b6c455d4446f670a4c1fdcea489"
+    },
+    {
+      "destination": "arm64/vmlinuz-virt",
+      "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/netboot/vmlinuz-virt",
+      "bytes": 9630208,
+      "sha256": "dd37c4460f933ec909ff022c34944ff7e1a5300aff99750e3bdc02cd4074c332",
+      "provenance": "Mutable upstream netboot URL; hash retained from local arm64/manifest.json"
+    },
+    {
+      "destination": "arm64/libc6.deb",
+      "url": "https://deb.debian.org/debian/pool/main/g/glibc/libc6_2.41-12+deb13u4_arm64.deb",
+      "bytes": 2483572,
+      "sha256": "8784eda966b189c777a384dac5ce009e8fc9b52d006926c5a013e7fa8aa688cc"
+    },
+    {
+      "destination": "arm64/libc-data.tar",
+      "url": null,
+      "bytes": 24074240,
+      "sha256": "b5801dff9b12d78a2575ff46c6c787aa59403db9d0c2fbf763f5073fa6718bcf",
+      "derived_from": "arm64/libc6.deb",
+      "archive_member": "data.tar.xz",
+      "decode": "xz"
+    }
+  ]
+}

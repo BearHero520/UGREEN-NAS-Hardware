@@ -1,0 +1,224 @@
+{
+  "count": 31,
+  "files": [
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/extract_routing.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/extract_routing.py",
+      "bytes": 3075,
+      "sha256": "8ab3d7a3f94edb8fd732991f5a5d51ce8576dbf524d184ed24790598f782091e",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/inspect_boot_assets.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/inspect_boot_assets.py",
+      "bytes": 4277,
+      "sha256": "c8583fa6c43a68f7b48b4e5c7bcbd770df7bfc38ae0031ee3412c83c40c27aba",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/inspect_host_assets.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/inspect_host_assets.py",
+      "bytes": 5318,
+      "sha256": "ebf883a3c9c313df46a3b0b9387fd295437352ddeb1e6c5aa17a08ce261f45f4",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/inspect_nested_apps.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/inspect_nested_apps.py",
+      "bytes": 5169,
+      "sha256": "92674de7c29c637acfc2b2e5ef9efc896a4eb2d246fc0529e6de344791992e30",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/inspect_nvme_driver.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/inspect_nvme_driver.py",
+      "bytes": 3224,
+      "sha256": "167b8451822e9fef7aef75bd45b3030af55737eaa9bceebe4335c5c7c8d09cd6",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/inspect_storage.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/inspect_storage.py",
+      "bytes": 4436,
+      "sha256": "9f908291ce60660c11fb3c0c90cdeea625e2c3200c7c1261c0e816c943286985",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-firmware-deep-20261026/trace_control_hosts.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-firmware-deep-20261026/trace_control_hosts.py",
+      "bytes": 4241,
+      "sha256": "a2fd82385a328e7ee31b0d83634706832131dbbffd360ae0707a6dd9ab5b5aaf",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/run_release_checks.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/run_release_checks.py",
+      "bytes": 1791,
+      "sha256": "f04b7a26c2b27bf994547fcb32904169027908e078b2fa328d8a1cd49d75557e",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/verify_install.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/verify_install.py",
+      "bytes": 2745,
+      "sha256": "399f6296f3b4f697cb7b5f9934170139f25f66b772d2bc925f861d7dcd15c0ec",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/verify_evidence.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/verify_evidence.py",
+      "bytes": 4495,
+      "sha256": "3438dede5c6a195e4717805385554961f925e8a2f27ed56f424386f597670489",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/extract_kernel.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/extract_kernel.py",
+      "bytes": 1465,
+      "sha256": "eb8c0beb9fddd3e1d0356731f83101b412754dd8bb796bdd4c52d9ff262d9d97",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/decompress_kernel.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/decompress_kernel.py",
+      "bytes": 1582,
+      "sha256": "96e274614819c6f97d86d6434fc5d78d88249be5280b4f19a21553d9bc981443",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/recover_symbols.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/recover_symbols.py",
+      "bytes": 530,
+      "sha256": "290f4a7440946f750cd5623c34fe683e98ff0d136c89137a33de972302b551dc",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/inspect_kernel.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/inspect_kernel.py",
+      "bytes": 5985,
+      "sha256": "ad9d3d17af7c7d39ebccdfca9c39d87dd488786325315d5f451190d6c5d818c3",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/board_trace.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/board_trace.py",
+      "bytes": 4836,
+      "sha256": "b6b7b8003e9f7cd0fd9831cb8d837040fe1dbc913b490f6452a1803a691b3bdb",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/fixup_trace.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/fixup_trace.py",
+      "bytes": 2175,
+      "sha256": "f10a12663b5f2989cafb5d34bc4e77e2351156820910699b1b956e793a76aaec",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/kernel/ugreen_branch_trace.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/kernel/ugreen_branch_trace.py",
+      "bytes": 1505,
+      "sha256": "8c0b64dc8ae32a09d821803c0f579d85c768665c7ae3c5a01a3eb9e7d1d9c0cc",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/native/inspect_native.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/native/inspect_native.py",
+      "bytes": 2447,
+      "sha256": "31d93e01f2380edbde32d061ff105e59361643121b6c767011c88b6461d2c53f",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/native/trace_native.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/native/trace_native.py",
+      "bytes": 4836,
+      "sha256": "a617cba25f7bf7df3a05e4401e6f9c24d61848c11ba06b118ab4b2c2fdb88b19",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/native/native_xrefs.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/native/native_xrefs.py",
+      "bytes": 3937,
+      "sha256": "4e0b2e9e58c4c21ca5e1013c430b3694a30b8a0baa3c60bb682075e4164b30b1",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/native/finalize_report.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/native/finalize_report.py",
+      "bytes": 14045,
+      "sha256": "a01dec30355c2b30c05c752abd01e2a74c173b13a210a4e1bd3fed703cfa3b94",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/n76/inspect_ugpt.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/n76/inspect_ugpt.py",
+      "bytes": 5868,
+      "sha256": "6fe584dbe9ee100c0554214b60567b97bcf69250a69fde628770cb635a1e6e9a",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-official-followup-20261026/n76/trace_upgrade.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-official-followup-20261026/n76/trace_upgrade.py",
+      "bytes": 4639,
+      "sha256": "508d33fda3e35d49b4725e47fb94784fa9d22e914fbe8581903bf37738aa4d80",
+      "format": "UTF-8 Python source archived as text; historical method, not a portable runnable tool"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/run_release_checks.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/run_release_checks.py",
+      "bytes": 2175,
+      "sha256": "fb5c18394b3897e1d5a9f206e678d077fb7e91ca073a02fd5efef05ff2bb5326",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/verify_install.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/verify_install.py",
+      "bytes": 3331,
+      "sha256": "a48b5fe066bfea69c355c161363d45ae8d51887181df7b4300740caa56d50732",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/linux-python/finalize_report.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/finalize_report.py",
+      "bytes": 3399,
+      "sha256": "c044cac63c087b287b7cf56c20761456734854ba1309751d8cd4c6cb2568f392",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/linux-python/guest_security_probe.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/guest_security_probe.py",
+      "bytes": 3601,
+      "sha256": "2217732c0f87f5da947c01fde86e2b5e332b3b59304f7125b9d42dd4d6647cc4",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/linux-python/prepare_runtime.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/prepare_runtime.py",
+      "bytes": 4758,
+      "sha256": "8b11c7c7f8725b50b5440181462707f2a76f08f4a85924615629dc72ccdef2ee",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/linux-python/run_qemu_python.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/linux-python/run_qemu_python.py",
+      "bytes": 8764,
+      "sha256": "7b6be2de2ab3cef73b5ae1656decc7437f50632bbb7fabcb26c6e928a4dd5efc",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/abi/debian12/run_smoke.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/run_smoke.py",
+      "bytes": 14531,
+      "sha256": "bcbcf2aa1cd8ee0cf2983a197482e3bf05375b12f29ffa4ccd55d118dd23aa9b",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    },
+    {
+      "archived_path": "research/almighty/methods/almighty-power-persistence-20261026/abi/ubuntu2204/run_smoke.py.txt",
+      "original_method_path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/run_smoke.py",
+      "bytes": 21860,
+      "sha256": "57a11dc336210b38037c60252385acbfd9091ca55bad726b15d3d2594c76dbc8",
+      "format": "UTF-8 author Python source archived as text; current validation method, review paths/dependencies before reproducing"
+    }
+  ],
+  "historical_source_base_commit": "a18af13594d1726aa4c2fc0b7c9f2c78740d4de0",
+  "current_validation_phase": "almighty-power-persistence-20261026"
+}

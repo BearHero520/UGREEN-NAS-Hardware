@@ -1,0 +1,43 @@
+REAL_LINUX_SECURITY_PROBE={"O_DIRECTORY": true, "O_NOFOLLOW": true, "atomic_replace": true, "dir_fd": true, "directory_fsync": true, "file_fsync": true, "flock_competing_process": true, "kernel": "6.12.110-0-virt", "mode_0700_directory_0600_file": true, "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]", "sysfs_mounted": false, "uid": 0}
+test_backend_set_error_after_possible_write_keeps_old_desire_and_reports_unknown (__main__.BackendContractTests.test_backend_set_error_after_possible_write_keeps_old_desire_and_reports_unknown) ... ok
+test_cli_accepts_options_after_command_and_rejects_overrides (__main__.BackendContractTests.test_cli_accepts_options_after_command_and_rejects_overrides) ... ok
+test_exact_binary_argv_flags_no_shell_no_model_or_inherited_environment (__main__.BackendContractTests.test_exact_binary_argv_flags_no_shell_no_model_or_inherited_environment) ... ok
+test_exit_timeout_and_os_errors_are_not_accepted_as_readback (__main__.BackendContractTests.test_exit_timeout_and_os_errors_are_not_accepted_as_readback) ... ok
+test_get_requires_exact_token_not_json_extra_lines_last_or_garbled_data (__main__.BackendContractTests.test_get_requires_exact_token_not_json_extra_lines_last_or_garbled_data) ... ok
+test_identity_reads_fixed_nonserial_paths_only (__main__.BackendContractTests.test_identity_reads_fixed_nonserial_paths_only) ... ok
+test_production_runtime_rejects_windows_or_nonroot (__main__.BackendContractTests.test_production_runtime_rejects_windows_or_nonroot) ... ok
+test_relative_binary_or_plugins_rejected (__main__.BackendContractTests.test_relative_binary_or_plugins_rejected) ... ok
+test_set_timeout_or_failure_is_an_attempt_not_confirmed_hardware_write (__main__.BackendContractTests.test_set_timeout_or_failure_is_an_attempt_not_confirmed_hardware_write) ... ok
+test_real_atomic_save_restart_apply_and_permissions (__main__.RealLinuxFilesystemTests.test_real_atomic_save_restart_apply_and_permissions) ... ok
+test_real_flock_rejects_competing_process_lock (__main__.RealLinuxFilesystemTests.test_real_flock_rejects_competing_process_lock) ... ok
+test_real_symlink_fifo_hardlink_and_bad_ancestor_refuse (__main__.RealLinuxFilesystemTests.test_real_symlink_fifo_hardlink_and_bad_ancestor_refuse) ... ok
+test_atomic_save_sync_order_and_safe_mode (__main__.StartupStateTests.test_atomic_save_sync_order_and_safe_mode) ... ok
+test_both_flags_required_and_show_never_executes (__main__.StartupStateTests.test_both_flags_required_and_show_never_executes) ... ok
+test_creation_is_private_and_only_explicit_write_creates_directory (__main__.StartupStateTests.test_creation_is_private_and_only_explicit_write_creates_directory) ... ok
+test_current_ten_product_three_policy_coordination (__main__.StartupStateTests.test_current_ten_product_three_policy_coordination) ... ok
+test_dry_run_never_invokes_backend_or_creates_files_or_lock (__main__.StartupStateTests.test_dry_run_never_invokes_backend_or_creates_files_or_lock) ... ok
+test_every_identity_field_change_blocks_apply_but_show_explains (__main__.StartupStateTests.test_every_identity_field_change_blocks_apply_but_show_explains) ... ok
+test_explicit_set_rebinds_identity_only_after_successful_readback (__main__.StartupStateTests.test_explicit_set_rebinds_identity_only_after_successful_readback) ... ok
+test_failed_set_does_not_replace_old_record_or_run_postread (__main__.StartupStateTests.test_failed_set_does_not_replace_old_record_or_run_postread) ... ok
+test_fifo_symlink_socket_permissions_owner_and_hardlink_reject_before_read (__main__.StartupStateTests.test_fifo_symlink_socket_permissions_owner_and_hardlink_reject_before_read) ... ok
+test_identity_change_after_write_does_not_save (__main__.StartupStateTests.test_identity_change_after_write_does_not_save) ... ok
+test_identity_change_during_preread_blocks_write (__main__.StartupStateTests.test_identity_change_during_preread_blocks_write) ... ok
+test_initial_unknown_does_not_prevent_explicit_set (__main__.StartupStateTests.test_initial_unknown_does_not_prevent_explicit_set) ... ok
+test_last_is_saved_as_restore (__main__.StartupStateTests.test_last_is_saved_as_restore) ... ok
+test_lock_is_exclusive_and_released_and_uses_nofollow_dirfd (__main__.StartupStateTests.test_lock_is_exclusive_and_released_and_uses_nofollow_dirfd) ... ok
+test_missing_binary_explicit_write_rejects_before_creating_any_files (__main__.StartupStateTests.test_missing_binary_explicit_write_rejects_before_creating_any_files) ... ok
+test_no_saved_record_or_directory_no_backend_or_file_mutation (__main__.StartupStateTests.test_no_saved_record_or_directory_no_backend_or_file_mutation) ... ok
+test_nonroot_before_any_path_or_backend_access (__main__.StartupStateTests.test_nonroot_before_any_path_or_backend_access) ... ok
+test_path_components_are_not_normalized_past_symlinks (__main__.StartupStateTests.test_path_components_are_not_normalized_past_symlinks) ... ok
+test_post_replace_directory_sync_failure_reports_uncertainty (__main__.StartupStateTests.test_post_replace_directory_sync_failure_reports_uncertainty) ... ok
+test_postread_failure_unknown_mismatch_preserve_old_record (__main__.StartupStateTests.test_postread_failure_unknown_mismatch_preserve_old_record) ... ok
+test_reboot_start_stop_and_repeated_apply_reassert_saved_desire (__main__.StartupStateTests.test_reboot_start_stop_and_repeated_apply_reassert_saved_desire) ... ok
+test_save_failures_keep_old_record_before_replace_and_report_written_hardware (__main__.StartupStateTests.test_save_failures_keep_old_record_before_replace_and_report_written_hardware) ... ok
+test_strict_json_rejects_oversize_duplicates_schemas_and_values (__main__.StartupStateTests.test_strict_json_rejects_oversize_duplicates_schemas_and_values) ... ok
+test_unsafe_path_ancestors_final_directory_and_lock (__main__.StartupStateTests.test_unsafe_path_ancestors_final_directory_and_lock) ... ok
+test_unsupported_backend_or_preread_error_never_sets (__main__.StartupStateTests.test_unsupported_backend_or_preread_error_never_sets) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.245s
+
+OK

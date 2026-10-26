@@ -1,0 +1,59 @@
+{
+  "arch": "x86_64",
+  "build_dir": "firmware-inbox/work/almighty-portable-build-x86_64",
+  "steps": [
+    {
+      "step": "configure",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "-S",
+        "<SOURCE_ROOT>",
+        "-B",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "-G",
+        "Ninja",
+        "-DCMAKE_MAKE_PROGRAM=<SOURCE_ROOT>/firmware-inbox/work/tools/cmake-python/bin/ninja.exe",
+        "-DCMAKE_TOOLCHAIN_FILE=<SOURCE_ROOT>/tools/toolchains/zig-linux.cmake",
+        "-DUGREENCTL_TARGET_ARCH=x86_64",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/usr/local",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DUGREENCTL_INSTALL_LED_COMPAT=ON",
+        "-DCMAKE_CROSSCOMPILING_EMULATOR=C:\\Program Files\\Python311\\python.exe;<SOURCE_ROOT>/tools/testing/run_linux.py;--runtime-root;<SOURCE_ROOT>/firmware-inbox/work/almighty-tools"
+      ],
+      "returncode": 0,
+      "seconds": 1.48,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/configure-x86_64.log",
+      "sha256": "f88b197ebda2593a168309fee59edd57f4d1d0534c50d44766f9e2ce8397043a"
+    },
+    {
+      "step": "build",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--build",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "--parallel",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 24.3,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/build-x86_64.log",
+      "sha256": "31cc8db2f219063b204d7cb476116faa47e401ce943e0fc343a9644ff05ceafd"
+    },
+    {
+      "step": "ctest",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\ctest.exe",
+        "--test-dir",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "seconds": 101.03,
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/ctest-x86_64.log",
+      "sha256": "bbe020c52ccf81aa1777905189c005c19250a5edf23614824a190c52b5ed0635"
+    }
+  ],
+  "passed": true,
+  "physical_validation": false
+}

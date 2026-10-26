@@ -1,0 +1,178 @@
+"""Isolated Linux/root Python tests in a disposable RAM-only QEMU guest.
+
+No network adapter, block drive, host filesystem share, USB/PCI passthrough,
+NAS binary or sysfs mount is supplied. Nothing is installed on the host.
+"""
+from datetime import datetime, timezone
+from pathlib import Path
+import argparse
+import gzip
+import hashlib
+import io
+import json
+import os
+import re
+import stat
+import subprocess
+import sys
+import tarfile
+
+ROOT = Path(__file__).resolve().parent
+REPO = ROOT.parents[3]
+CACHED = REPO / "firmware-inbox/work/almighty-tools"
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+def entry(name, mode, data=b"", ino=1):
+    name = name.encode() + b"\0"
+    fields = [ino, mode, 0, 0, 1, 0, len(data), 0, 0, 0, 0, len(name), 0]
+    result = b"070701" + b"".join(f"{v:08x}".encode() for v in fields) + name
+    result += b"\0" * (-len(result) % 4)
+    result += data
+    return result + b"\0" * (-len(data) % 4)
+
+def archive_files(source):
+    files = {}
+    with tarfile.open(fileobj=io.BytesIO(source)) as archive:
+        for item in archive:
+            name = item.name.removeprefix("./").rstrip("/")
+            if not name or name.startswith("/") or ".." in name.split("/"):
+                continue
+            if item.isfile():
+                files[name] = (stat.S_IFREG | item.mode, archive.extractfile(item).read())
+            elif item.issym():
+                files[name] = (stat.S_IFLNK | item.mode, item.linkname.encode())
+            elif item.isdir():
+                files[name] = (stat.S_IFDIR | item.mode, b"")
+            elif item.islnk():
+                original = files.get(item.linkname.removeprefix("./"))
+                if original:
+                    files[name] = original
+    return files
+
+def deb_files(data):
+    if data[:8] != b"!<arch>\n":
+        raise ValueError("not a Debian ar archive")
+    pos = 8
+    while pos < len(data):
+        header = data[pos:pos + 60]
+        if len(header) != 60 or header[58:60] != b"`\n":
+            raise ValueError("invalid Debian ar member")
+        name = header[:16].decode().strip().rstrip("/")
+        size = int(header[48:58].decode().strip())
+        body = data[pos + 60:pos + 60 + size]
+        if name.startswith("data.tar"):
+            return archive_files(body)
+        pos += 60 + size + size % 2
+    raise ValueError("Debian archive has no data.tar payload")
+
+def main():
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--label", default="python-tests")
+    parser.add_argument("--smoke-only", action="store_true")
+    parser.add_argument("--expected-sources")
+    args = parser.parse_args()
+    if not re.fullmatch(r"[a-zA-Z0-9_-]+", args.label):
+        raise SystemExit("invalid run label")
+    run_dir = ROOT / args.label
+    run_dir.mkdir(exist_ok=False)
+    manifest = json.loads((ROOT / "runtime-manifest.json").read_text(encoding="utf-8"))
+    inputs = []
+    files = {}
+    for path in (CACHED / "rootfs.tar.gz", CACHED / "libc-deb/data.tar"):
+        data = path.read_bytes()
+        inputs.append({"file": str(path), "size": len(data), "sha256": sha(data), "origin": "existing cached runtime"})
+        files.update(archive_files(data))
+    for package in manifest["packages"]:
+        data = Path(package["file"]).read_bytes()
+        if sha(data) != package["sha256"]:
+            raise RuntimeError("runtime package changed: " + package["package"])
+        files.update(deb_files(data))
+    triplet = "x86_64-linux-gnu"
+    for name, value in list(files.items()):
+        if name.startswith("usr/lib/" + triplet + "/"):
+            files[name.removeprefix("usr/")] = value
+    files["lib/" + triplet] = (stat.S_IFDIR | 0o755, b"")
+    files["lib64"] = (stat.S_IFDIR | 0o755, b"")
+    files["lib64/ld-linux-x86-64.so.2"] = (stat.S_IFLNK | 0o777, b"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2")
+    files["usr/bin/python3"] = (stat.S_IFLNK | 0o777, b"python3.13")
+    files["root"] = (stat.S_IFDIR | 0o700, b"")
+    for name in ("work", "work/scripts", "work/tests", "tmp", "run", "proc", "sys", "dev"):
+        files[name] = (stat.S_IFDIR | (0o1777 if name == "tmp" else 0o755), b"")
+    snapshots = []
+    expected_sources = (json.loads(Path(args.expected_sources).read_text(encoding="utf-8"))
+                        if args.expected_sources else {})
+    if not args.smoke_only:
+        for name in ("scripts/ugreenctl-startup.py", "tests/test_startup_state.py"):
+            source = REPO / name
+            data = source.read_bytes()
+            if name in expected_sources and sha(data) != expected_sources[name]:
+                raise RuntimeError("source changed before snapshot: " + name)
+            target = run_dir / "snapshot" / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+            files["work/" + name] = (stat.S_IFREG | 0o644, data)
+            snapshots.append({"path": name, "sha256": sha(data), "size": len(data)})
+    probe = (ROOT / "guest_security_probe.py").read_bytes()
+    files["work/guest_security_probe.py"] = (stat.S_IFREG | 0o644, probe)
+    script = ("#!/bin/sh\n"
+              "mount -t proc proc /proc\nmount -t devtmpfs devtmpfs /dev\n"
+              "export PATH=/usr/bin:/bin:/usr/sbin:/sbin\numask 077\n"
+              "echo PYTHON_GUEST_BEGIN\n"
+              "/usr/bin/python3 -I -B /work/guest_security_probe.py\n"
+              "rc=$?\n")
+    if not args.smoke_only:
+        script += ("if [ \"$rc\" = 0 ]; then\n"
+                   "  /usr/bin/python3 -I -B /work/tests/test_startup_state.py\n"
+                   "  rc=$?\nfi\n")
+    script += "echo PYTHON_GUEST_EXIT=$rc\npoweroff -f\n"
+    files["init"] = (stat.S_IFREG | 0o755, script.encode())
+    if any("ugreenctl" in name and not name.endswith("ugreenctl-startup.py") for name in files):
+        raise RuntimeError("unexpected NAS executable in guest")
+    ordered = sorted(files.items(), key=lambda item: (item[0].count("/"), item[0]))
+    payload = b"".join(entry(name, *value, ino=i + 1) for i, (name, value) in enumerate(ordered))
+    payload += entry("TRAILER!!!", 0)
+    initrd = run_dir / "python-test.cpio.gz"
+    initrd.write_bytes(gzip.compress(payload, compresslevel=1, mtime=0))
+    command = [str(CACHED / "qemu/qemu-system-x86_64.exe"), "-machine", "q35", "-accel", "tcg",
+               "-m", "512", "-smp", "1", "-display", "none", "-serial", "stdio", "-monitor", "none",
+               "-nic", "none", "-no-reboot", "-L", "qemu/share",
+               "-kernel", "vmlinuz-virt", "-initrd", os.path.relpath(initrd, CACHED),
+               "-append", "console=ttyS0 rdinit=/init panic=-1 quiet"]
+    started = datetime.now(timezone.utc).isoformat()
+    try:
+        completed = subprocess.run(command, cwd=CACHED, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, timeout=60)
+        raw = completed.stdout
+    except subprocess.TimeoutExpired as error:
+        raw = error.stdout or b""
+    (run_dir / "console.log").write_bytes(raw)
+    output = raw.decode(errors="replace")
+    match = re.search(r"PYTHON_GUEST_BEGIN\r?\n(.*?)PYTHON_GUEST_EXIT=(\d+)", output, re.S)
+    code = int(match[2]) if match else 125
+    test_output = match[1] if match else output
+    (run_dir / "tests.log").write_text(test_output, encoding="utf-8")
+    tools = []
+    for path in (CACHED / "qemu/qemu-system-x86_64.exe", CACHED / "vmlinuz-virt", CACHED / "qemu/share/bios-256k.bin"):
+        data = path.read_bytes()
+        tools.append({"file": str(path), "sha256": sha(data), "size": len(data)})
+    report = {"started_utc": started, "finished_utc": datetime.now(timezone.utc).isoformat(),
+              "exit_code": code, "status": "passed" if code == 0 else "failed",
+              "command": command, "cached_runtime_inputs": inputs, "snapshot": snapshots,
+              "runtime_manifest_sha256": sha((ROOT / "runtime-manifest.json").read_bytes()),
+              "cached_qemu_kernel_bios": tools,
+              "runner_sha256": sha(Path(__file__).read_bytes()),
+              "security_probe_sha256": sha(probe),
+              "initramfs_sha256": sha(initrd.read_bytes()), "initramfs_bytes": initrd.stat().st_size,
+              "isolation": {"network_adapter": False, "host_mounts": False, "block_drives": False,
+                            "passthrough_devices": False, "nas_binaries": False, "sysfs_mounted": False,
+                            "backend": "Python FakeBackend/FakeRuntime only", "guest_root": True}}
+    (run_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(test_output)
+    print("GUEST_EXIT", code)
+    raise SystemExit(code)
+
+if __name__ == "__main__":
+    main()

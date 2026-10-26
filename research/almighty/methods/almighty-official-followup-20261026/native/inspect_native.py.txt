@@ -1,0 +1,34 @@
+from pathlib import Path
+import sys, json, hashlib, re
+ROOT=Path(__file__).resolve().parents[4]
+OUT=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from elftools.elf.relocation import RelocationSection
+TARGET=ROOT/'firmware-inbox/work/almighty-firmware-deep-20261026/nested-apps/19_amd64_com.ugreen.ugos_serv.upk'
+reports=[]
+for path in [TARGET/'sbin/ugos_serv',TARGET/'lib/libugos_serv-shared.so']:
+    with path.open('rb') as f:
+        elf=ELFFile(f)
+        dynamic=elf.get_section_by_name('.dynamic')
+        syms=[]
+        for sec in elf.iter_sections():
+            if sec['sh_type'] in ('SHT_SYMTAB','SHT_DYNSYM'):
+                for sym in sec.iter_symbols():
+                    syms.append({'table':sec.name,'name':sym.name,'value':hex(sym['st_value']),'size':sym['st_size'],'defined':sym['st_shndx']!='SHN_UNDEF','type':sym['st_info']['type']})
+        rels=[]
+        for sec in elf.iter_sections():
+            if isinstance(sec,RelocationSection):
+                table=elf.get_section(sec['sh_link'])
+                for r in sec.iter_relocations():
+                    sym=table.get_symbol(r['r_info_sym']) if r['r_info_sym'] else None
+                    if sym and re.search('Hardware|hardware|Model|model|Bios|BIOS|[Ss]lot|[Pp]hysical|[Nn]vme|[Cc]ontroller|[Ss]ata|[Dd]evice|[Dd]mi',sym.name):
+                        rels.append({'section':sec.name,'offset':hex(r['r_offset']),'type':r['r_info_type'],'symbol':sym.name,'defined':sym['st_shndx']!='SHN_UNDEF','value':hex(sym['st_value'])})
+        reports.append({'path':path.relative_to(ROOT).as_posix(),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'bytes':path.stat().st_size,'needed':[t.needed for t in dynamic.iter_tags() if t.entry.d_tag=='DT_NEEDED'],'paths':[str(t) for t in dynamic.iter_tags() if t.entry.d_tag in ('DT_RPATH','DT_RUNPATH')],'symbols':syms,'target_relocations':rels})
+(OUT/'native-elf-inventory.json').write_text(json.dumps(reports,indent=2),encoding='utf-8')
+for r in reports:
+    print(r['path'],r['sha256'],'NEEDED',r['needed'],'PATHS',r['paths'])
+    print('TARGET SYMBOLS')
+    for s in r['symbols']:
+        if s['table']=='.dynsym' and re.search('Hardware|hardware|Model|Bios|BIOS|[Ss]lot|[Pp]hysical|[Nn]vme|[Cc]ontroller|[Ss]ata|[Dd]mi',s['name']): print(s)
+    print('TARGET RELOCS',json.dumps(r['target_relocations'],indent=2))

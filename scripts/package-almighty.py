@@ -37,6 +37,12 @@ DOCUMENTS = (
     "docs/COMPATIBILITY.zh-CN.md", "docs/FAN_CURVE.md",
     "docs/LED_CONTROL.zh-CN.md", "docs/LED_EVIDENCE_COLLECTION.zh-CN.md",
     "docs/LINUX_DEPLOYMENT.zh-CN.md",
+    "docs/ALMIGHTY_STATUS.zh-CN.md",
+    "docs/BUILD_REPRODUCIBILITY.zh-CN.md",
+    "docs/AC_RECOVERY_PERSISTENCE.zh-CN.md",
+    "integration/llled/ac-recovery/README.zh-CN.md",
+    "integration/llled/ac-recovery/llled-startup-persistence.patch",
+    "integration/llled/ac-recovery/source-hashes.json",
     "docs/DISK_MAPPING_FIRMWARE.zh-CN.md",
     "docs/ALL_MODELS_FIRMWARE_INTAKE.zh-CN.md",
     "docs/ALL_MODELS_LED_EVIDENCE.zh-CN.md",
@@ -57,6 +63,8 @@ DOCUMENTS = (
 EXAMPLES = (
     "scripts/ugreenctl-ledd.service", "scripts/ugreenctl-ledd-gt.service",
     "scripts/collect-disk-evidence.sh", "scripts/collect-led-evidence.sh",
+    "scripts/ugreenctl-startup.py",
+    "scripts/ugreenctl-startup.service",
 )
 
 
@@ -146,8 +154,17 @@ def verified_hashes(root: Path, entries: object, label: str, source: bool) -> di
 
 
 def source_inputs(root: Path) -> set[str]:
-    inputs = {"CMakeLists.txt", "scripts/package-almighty.py", "tests/test_package_runtime.py", *DOCUMENTS, *EXAMPLES,
-              "models/compatibility.json", "models/official-products.json"}
+    inputs = {".gitignore", ".gitattributes", "CMakeLists.txt", "scripts/package-almighty.py", "tests/test_package_runtime.py",
+              "tests/test_package_almighty.py", *DOCUMENTS, *EXAMPLES,
+              "models/compatibility.json", "models/official-products.json",
+              "tests/test_startup_state.py"}
+    # Author-maintained reproduction source and external-input metadata, never
+    # the actual downloaded runtimes or firmware.
+    for directory in ("tools/testing", "tools/toolchains"):
+        if (root / directory).is_dir():
+            for path in (root / directory).rglob("*"):
+                if path.is_file() and path.suffix in (".py", ".cmake", ".cmd", ".json"):
+                    inputs.add(path.relative_to(root).as_posix())
     for directory in SOURCE_DIRS:
         require((root / directory).is_dir(), f"Missing source directory: {directory}")
         for path in (root / directory).rglob("*"):

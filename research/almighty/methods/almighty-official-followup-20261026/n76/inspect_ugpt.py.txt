@@ -1,0 +1,95 @@
+"""Read-only classify the original ugpt candidate using ELF calls/relocations."""
+from pathlib import Path
+import gzip, hashlib, io, json, re, sys, tarfile
+ROOT=Path(__file__).resolve().parents[4]
+OUT=Path(__file__).resolve().parent
+sys.dont_write_bytecode=True
+sys.path.insert(0,str(ROOT/'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+from capstone.x86 import X86_OP_IMM, X86_OP_MEM, X86_REG_RIP
+src=Path('E:/工作台/固件/6800plus.img')
+with src.open('rb') as f: srcsha=hashlib.file_digest(f,'sha256').hexdigest()
+assert srcsha=='73862c9c619f3e8b2279252326654f4915234dc8f437a71eb9a0067a724062c5'
+with tarfile.open(src) as t:
+    member=next(m for m in t.getmembers() if m.name.lstrip('./')=='ugpt')
+    assert member.isfile() and member.size==50204
+    data=t.extractfile(member).read()
+p=OUT/'ugpt'; assert not p.exists() or p.read_bytes()==data
+p.write_bytes(data)
+if data.startswith(b'#!/bin/sh\n'):
+    skip=int(re.search(rb'^skip="(\d+)"$',data,re.M)[1]); offset=0
+    for _ in range(skip): offset=data.index(b'\n',offset)+1
+    header=data[:offset]; payload=data[offset:]
+    expected_size=int(re.search(rb'^filesizes="(\d+)"$',header,re.M)[1])
+    expected_md5=re.search(rb'^MD5="([a-f0-9]+)"$',header,re.M)[1].decode()
+    assert len(payload)==expected_size and hashlib.md5(payload).hexdigest()==expected_md5
+    assert payload.startswith(b'\x1f\x8b')
+    nested=gzip.decompress(payload); (OUT/'ugpt-payload.tar').write_bytes(nested)
+    members=[]
+    with tarfile.open(fileobj=io.BytesIO(nested)) as archive:
+        for m in archive.getmembers():
+            row={'name':m.name,'size':m.size,'type':m.type.decode()}
+            if m.isfile():
+                raw=archive.extractfile(m).read(); row['sha256']=hashlib.sha256(raw).hexdigest()
+                name=Path(m.name)
+                assert not name.is_absolute() and '..' not in name.parts
+                dest=OUT/'payload'/name; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_bytes(raw)
+                row['path']=dest.relative_to(ROOT).as_posix()
+            members.append(row)
+    report={'original':str(src),'original_sha256':srcsha,'member':member.name,'member_size':member.size,
+            'member_sha256':hashlib.sha256(data).hexdigest(),'format':'Makeself 2.4.5 shell + gzip tar',
+            'shell_lines':skip,'payload_offset':offset,'payload_size':len(payload),'payload_md5_verified':expected_md5,
+            'payload_sha256':hashlib.sha256(payload).hexdigest(),'tar_sha256':hashlib.sha256(nested).hexdigest(),
+            'members':members,'not_executed':True}
+    (OUT/'ugpt-analysis.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps(report,indent=2)); sys.exit(0)
+e=ELFFile(io.BytesIO(data)); sections=[(s['sh_addr'],s.data()) for s in e.iter_sections() if s['sh_type']!='SHT_NOBITS' and s['sh_size']]
+def read(addr,size=128):
+    for start,blob in sections:
+        if start<=addr<start+len(blob): return blob[addr-start:addr-start+size]
+    return b''
+syms={}; undefined=[]
+for sec in e.iter_sections():
+    if sec['sh_type'] not in ('SHT_SYMTAB','SHT_DYNSYM'): continue
+    for s in sec.iter_symbols():
+        if s['st_shndx']=='SHN_UNDEF':
+            if s.name: undefined.append(s.name)
+        elif s['st_value'] and s.name: syms[s['st_value']]=s.name
+reloc={}; plt={}
+for sec in e.iter_sections():
+    if sec['sh_type'] not in ('SHT_RELA','SHT_REL'): continue
+    symtab=e.get_section(sec['sh_link'])
+    for ix,r in enumerate(sec.iter_relocations()):
+        s=symtab.get_symbol(r['r_info_sym']); reloc[r['r_offset']]=s.name
+        if '.plt' in sec.name and e.get_section_by_name('.plt'):
+            pl=e.get_section_by_name('.plt'); plt[pl['sh_addr']+pl['sh_entsize']*(ix+1)]=s.name
+    
+md=Cs(CS_ARCH_X86,CS_MODE_64);md.detail=True
+lines=['ugpt SHA256 '+hashlib.sha256(data).hexdigest()]; calls=[];refs=[]
+for sec in e.iter_sections():
+    if not sec['sh_flags']&4: continue
+    for i in md.disasm(sec.data(),sec['sh_addr']):
+        ann=[]
+        if i.address in syms: lines.append('\nSYMBOL '+syms[i.address])
+        for op in i.operands:
+            if i.mnemonic in ('call','jmp') and op.type==X86_OP_IMM:
+                name=plt.get(op.imm,syms.get(op.imm,''))
+                if name: ann.append(name)
+                if i.mnemonic=='call': calls.append({'at':hex(i.address),'target':hex(op.imm),'name':name})
+            if op.type==X86_OP_MEM and op.mem.base==X86_REG_RIP:
+                a=i.address+i.size+op.mem.disp
+                if a in reloc: ann.append(reloc[a])
+                raw=read(a).split(b'\0',1)[0]
+                if len(raw)>=3 and all(32<=c<127 for c in raw):
+                    ann.append(repr(raw));refs.append({'at':hex(i.address),'address':hex(a),'text':raw.decode()})
+        lines.append(f'{i.address:x}: {i.mnemonic:9} {i.op_str}'+(' ; '+' | '.join(ann) if ann else ''))
+(OUT/'ugpt-disassembly.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+strings=[{'offset':hex(m.start()),'text':m.group().decode()} for m in re.finditer(rb'[\x20-\x7e]{5,}',data)]
+report={'original':str(src),'original_sha256':srcsha,'member':member.name,'member_size':member.size,'member_sha256':hashlib.sha256(data).hexdigest(),
+        'elf':{'class':e.elfclass,'machine':e['e_machine'],'entry':hex(e['e_entry'])},'undefined_symbols':sorted(set(undefined)),'symbols':{hex(a):n for a,n in syms.items()},'calls':calls,'string_references':refs,'strings':strings,'not_executed':True}
+(OUT/'ugpt-analysis.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+print('ugpt',report['member_sha256'], report['elf'])
+print('imports',report['undefined_symbols'])
+print('functions',[n for n in syms.values() if re.search('main|gpt|part|open|read|write|ioctl',n,re.I)])
+for r in refs: print(r)

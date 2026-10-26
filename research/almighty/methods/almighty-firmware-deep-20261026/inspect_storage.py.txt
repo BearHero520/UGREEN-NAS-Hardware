@@ -1,0 +1,98 @@
+"""Trace official storage code statically. Never execute the firmware ELF."""
+from pathlib import Path
+import bisect
+import hashlib
+import io
+import json
+import re
+import struct
+import sys
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(ROOT / 'firmware-inbox/work/tools/python-elf-analysis'))
+from elftools.elf.elffile import ELFFile
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
+from capstone.x86 import X86_OP_IMM, X86_OP_MEM, X86_REG_RIP
+
+INPUT = ROOT / 'firmware-inbox/work/dxp6800plus/disk-mapping-1.20/sbin/storage_serv'
+blob = INPUT.read_bytes()
+elf = ELFFile(io.BytesIO(blob))
+sections = [(s['sh_addr'], s.data()) for s in elf.iter_sections()
+            if s['sh_type'] != 'SHT_NOBITS' and s['sh_size']]
+
+
+def read(addr, size):
+    for start, data in sections:
+        if start <= addr and addr + size <= start + len(data):
+            return data[addr-start:addr-start+size]
+    return b''
+
+
+d = elf.get_section_by_name('.gopclntab').data()
+nfunc, nfiles, text, names, cu, files, pct, pcln = struct.unpack_from('<8Q', d, 8)
+functions = {}
+for i in range(nfunc):
+    ent, fun = struct.unpack_from('<II', d, pcln + i*8)
+    noff = struct.unpack_from('<i', d, pcln + fun + 4)[0]
+    name = d[names+noff:d.find(b'\0', names+noff)].decode()
+    end = struct.unpack_from('<I', d, pcln + (i+1)*8)[0]
+    functions[text+ent] = {'name': name, 'size': end-ent}
+addresses = sorted(functions)
+md = Cs(CS_ARCH_X86, CS_MODE_64)
+md.detail = True
+
+
+def owner(addr):
+    idx = bisect.bisect_right(addresses, addr)-1
+    if idx < 0:
+        return None
+    start = addresses[idx]
+    f = functions[start]
+    return f['name'] if addr < start+f['size'] else None
+
+
+selected = {addr: f for addr, f in functions.items() if
+            f['name'].endswith(('diskdevice.getNvmeSlot',
+                               'diskdevice.InterfaceTypeAndName',
+                               'diskdevice.GetBlockDeviceInfo',
+                               'diskdevice.GetDiskInfo',
+                               'diskdevice.(*service).matchDisk'))}
+lines = ['INPUT '+str(INPUT), 'SHA256 '+hashlib.sha256(blob).hexdigest()]
+calls = []
+for addr, fn in selected.items():
+    lines.append(f"\nFUNCTION {fn['name']} @{addr:#x} size={fn['size']:#x}")
+    for ins in md.disasm(read(addr, fn['size']), addr):
+        annotations = []
+        for op in ins.operands:
+            if op.type == X86_OP_MEM and op.mem.base == X86_REG_RIP:
+                target = ins.address+ins.size+op.mem.disp
+                data = read(target, 128)
+                string = data.split(b'\0', 1)[0]
+                if string and all(32 <= x < 127 for x in string[:40]):
+                    annotations.append(f'{target:#x} {string[:100]!r}')
+                else:
+                    annotations.append(f'{target:#x} {data[:16].hex()}')
+            if ins.mnemonic in ('call', 'jmp') and op.type == X86_OP_IMM:
+                dest = owner(op.imm)
+                if dest:
+                    annotations.append(dest)
+                    calls.append({'caller': fn['name'], 'at': hex(ins.address),
+                                  'callee': dest, 'target': hex(op.imm)})
+            # Constants such as string comparisons are often immediate byte words.
+            if op.type == X86_OP_IMM and ins.mnemonic in ('mov', 'movabs', 'cmp'):
+                val = op.imm & 0xffffffffffffffff
+                raw = val.to_bytes(8, 'little').rstrip(b'\0')
+                if len(raw) >= 3 and all(32 <= x < 127 for x in raw):
+                    annotations.append(repr(raw))
+        lines.append(f'{ins.address:x}: {ins.mnemonic:8} {ins.op_str}' +
+                     (' ; ' + ' | '.join(annotations) if annotations else ''))
+(OUT/'storage-runtime-disassembly.txt').write_text('\n'.join(lines)+'\n', encoding='utf-8')
+near = [{'address': hex(addr), **f} for addr, f in functions.items()
+        if re.search(r'diskdevice\.|/nvme\.|nvme.*(Slot|Sort|Index|Device)|hardware\.Get', f['name'], re.I)]
+(OUT/'storage-functions.json').write_text(json.dumps(near, indent=2)+'\n', encoding='utf-8')
+(OUT/'storage-calls.json').write_text(json.dumps(calls, indent=2)+'\n', encoding='utf-8')
+print(json.dumps({'input_sha256': hashlib.sha256(blob).hexdigest(),
+                  'functions': nfunc, 'disassembled': len(selected),
+                  'call_records': len(calls), 'related_functions': len(near)}))

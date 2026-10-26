@@ -1,0 +1,254 @@
+{
+  "schema": 1,
+  "created_at": "2026-10-26T09:37:10.766367+00:00",
+  "passed": true,
+  "kind": "Fresh exact-payload Debian12/Ubuntu22.04 userspace ABI smoke; no old-binary-proof reuse",
+  "binary_freeze": {
+    "path": "firmware-inbox/work/almighty-power-persistence-20261026/binary-freeze.json",
+    "sha256": "01d034b03469ccc5dc0d2eaf344ec6baf0f2338d41d7e59b1fa39bd50b563c53",
+    "bytes": 22785
+  },
+  "release_binary_freeze": {
+    "path": "firmware-inbox/work/almighty-power-persistence-20261026/release-binary-freeze.json",
+    "sha256": "5da7de3b00268ce872235a7441be8d37da00dbae2fa64563cfe104f1b2fd50d5",
+    "bytes": 3821
+  },
+  "freeze_counts": {
+    "source": 168,
+    "all_native_elf": 38,
+    "exact_release_elf": 26
+  },
+  "final_integrity": {
+    "all_168_frozen_source_hashes_match": true,
+    "all_38_frozen_binary_hashes_match": true,
+    "debian_observed_exactly_matches_26_release_elf": true,
+    "ubuntu_observed_exactly_matches_26_release_elf": true
+  },
+  "results": {
+    "debian12": {
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/fresh-portable/result.json",
+      "sha256": "5a1d56b79e3e0e2b5bff42772bb379b00b3b73b1bb5e4dcd8f62c99cfa6a2ca4",
+      "bytes": 134539
+    },
+    "ubuntu2204": {
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/results.json",
+      "sha256": "cd03b5424747fbe4722e423982887bba11849758518a788a3e13b500bbc6c056",
+      "bytes": 143835
+    },
+    "runtime_metadata": {
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/runtime-metadata.json",
+      "sha256": "25a44522eeeba8fb2e2a8f858f3c4c1e860d0df7f72b0f9a9ab744cd059c80d4",
+      "bytes": 57050
+    },
+    "adaptations": {
+      "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/adaptations.json",
+      "sha256": "81184588fbed4ce483f24b170afd40bf066511d199177faab128fbaf91da619e",
+      "bytes": 1124
+    }
+  },
+  "runs": [
+    {
+      "distribution": "Debian12",
+      "architecture": "amd64",
+      "passed": true,
+      "case_count": 10,
+      "help_expected_exit_codes": {
+        "ugreenctl-help": 0,
+        "ugreen_leds_cli-help": 0,
+        "ugreenctl-fand-help": 1,
+        "ugreenctl-ledd-help": 0
+      },
+      "default_plugins": 9,
+      "explicit_plugins": 9,
+      "allowed_optional_probe_counts": {
+        "models-default": 4,
+        "models-explicit": 4
+      },
+      "package_sha256": "ba4f88f73dbc3ae9055f3c20f4523bfdbaf1ad13ff95e258924f77d20b4fbedf",
+      "log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/fresh-portable/amd64/serial.log",
+        "sha256": "0ae5d9bd642622c19e28fdd0acf18cf087c250d961caadb780774fedacd401f8",
+        "bytes": 61809
+      }
+    },
+    {
+      "distribution": "Debian12",
+      "architecture": "arm64",
+      "passed": true,
+      "case_count": 10,
+      "help_expected_exit_codes": {
+        "ugreenctl-help": 0,
+        "ugreen_leds_cli-help": 0,
+        "ugreenctl-fand-help": 1,
+        "ugreenctl-ledd-help": 0
+      },
+      "default_plugins": 9,
+      "explicit_plugins": 9,
+      "allowed_optional_probe_counts": {
+        "models-default": 4,
+        "models-explicit": 4
+      },
+      "package_sha256": "01f4330719fd4f65580e16ea5a0527f372fca750e8f588d26deaf09f2d3b1cf4",
+      "log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/fresh-portable/arm64/serial.log",
+        "sha256": "e9c288eab79518f40f74582c48deabd4dee2ab0af849d756fa866c441f076777",
+        "bytes": 42247
+      }
+    },
+    {
+      "distribution": "Ubuntu22.04",
+      "architecture": "x86_64",
+      "passed": true,
+      "case_count": 12,
+      "help_expected_exit_codes": {
+        "help_ugreenctl": 0,
+        "help_ugreen_leds_cli": 0,
+        "help_ugreenctl-fand": 1,
+        "help_ugreenctl-ledd": 0
+      },
+      "default_plugins": 9,
+      "explicit_plugins": 9,
+      "missing_libc_negative_control_exit_code": 127,
+      "all_16_checks_passed": true,
+      "strict_loader_diagnostics": {
+        "models": {
+          "allowed_optional_probe_count": 4,
+          "unexpected_error_count": 0
+        },
+        "models_default": {
+          "allowed_optional_probe_count": 4,
+          "unexpected_error_count": 0
+        }
+      },
+      "default_plugin_mirror_hashes_match_frozen": true,
+      "package_sha256": "79e35256227e16a607c154cdeb8d76ff12d20e31de286ea7fd9ad3b96fe0452d",
+      "log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/x86_64/serial.log",
+        "sha256": "36078c02a3d9c35aa9cbed6ef734495ea96dbcef76b6af939ec0ad59038e3ff8"
+      }
+    },
+    {
+      "distribution": "Ubuntu22.04",
+      "architecture": "aarch64",
+      "passed": true,
+      "case_count": 12,
+      "help_expected_exit_codes": {
+        "help_ugreenctl": 0,
+        "help_ugreen_leds_cli": 0,
+        "help_ugreenctl-fand": 1,
+        "help_ugreenctl-ledd": 0
+      },
+      "default_plugins": 9,
+      "explicit_plugins": 9,
+      "missing_libc_negative_control_exit_code": 127,
+      "all_16_checks_passed": true,
+      "strict_loader_diagnostics": {
+        "models": {
+          "allowed_optional_probe_count": 4,
+          "unexpected_error_count": 0
+        },
+        "models_default": {
+          "allowed_optional_probe_count": 4,
+          "unexpected_error_count": 0
+        }
+      },
+      "default_plugin_mirror_hashes_match_frozen": true,
+      "package_sha256": "dd88cc85dcfbac19c0c9b606676b7b1b87f851d75afa5c830fc5ba1293a30833",
+      "log": {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/runs/snapshot-01d034b03469/aarch64/serial.log",
+        "sha256": "2618b357edbbcb6bc23f392f99741ae42975a80ea8966bee24a0206a88ba4671"
+      }
+    }
+  ],
+  "commands": [
+    "python -B firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/run_smoke.py --binary-freeze firmware-inbox/work/almighty-power-persistence-20261026/release-binary-freeze.json --snapshot fresh-portable",
+    "python -B firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/run_smoke.py all --verification firmware-inbox/work/almighty-power-persistence-20261026/binary-freeze.json"
+  ],
+  "changed_binary_explanation": {
+    "all_38_sha_differ_from_old": true,
+    "all_38_allocated_sections_metadata_and_contents_equal": true,
+    "all_38_runtime_abi_equal": true,
+    "changed_section_names": [
+      ".debug_info",
+      ".debug_str",
+      ".symtab"
+    ],
+    "observed_cause": "Non-loadable DWARF compilation directory strings now point to fresh portable-build directories; ARM .symtab metadata also changes. Allocated sections and runtime ABI are identical, while full ELF hashes differ. This explains the observed hashes without substituting for the fresh smoke above.",
+    "release_runtime_abi": {
+      "x86_64": {
+        "payload_count": 13,
+        "glibc_numeric_symbol_floor": "2.27",
+        "needed_libraries": [
+          "libc.so.6",
+          "libdl.so.2",
+          "libpthread.so.0"
+        ],
+        "rpath_runpath_all_absent": true,
+        "interpreters": [
+          "/lib64/ld-linux-x86-64.so.2"
+        ]
+      },
+      "aarch64": {
+        "payload_count": 13,
+        "glibc_numeric_symbol_floor": "2.27",
+        "needed_libraries": [
+          "libc.so.6",
+          "libdl.so.2",
+          "libpthread.so.0"
+        ],
+        "rpath_runpath_all_absent": true,
+        "interpreters": [
+          "/lib/ld-linux-aarch64.so.1"
+        ]
+      }
+    }
+  },
+  "harness_adaptation": {
+    "debian": "Only ROOT depth, fresh build names and root-relative pointers to original package tar; exact26 freeze check and original loader assertions unchanged.",
+    "ubuntu": "ROOT/build changes plus the same frozen plugins mirrored at embedded default path and a twelfth default-load case. Optional probe rule still accepts only exact v4/v5 lookups on dxp2800/dxp8800plus, scoped separately to each case exact plugin directory; all original error rules and missing-libc negative control retained.",
+    "strict_whitelist_selftest": {
+      "exact_allowed_line_accepted": true,
+      "five_unexpected_variants_rejected": true,
+      "optional_probe_rejected_outside_models_case": true
+    },
+    "diffs": [
+      {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/adaptation.diff",
+        "sha256": "7ee0e12bb98701b427152245c742a08bd982d56254b7023e313094facb520133",
+        "bytes": 2444
+      },
+      {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/adaptation.diff",
+        "sha256": "257f45d3cc453b9ca583e4397af71ad809b4a5ccc2aeb836771b5ceedc20bd63",
+        "bytes": 8756
+      }
+    ],
+    "scripts": [
+      {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/debian12/run_smoke.py",
+        "sha256": "bcbcf2aa1cd8ee0cf2983a197482e3bf05375b12f29ffa4ccd55d118dd23aa9b",
+        "bytes": 14531
+      },
+      {
+        "path": "firmware-inbox/work/almighty-power-persistence-20261026/abi/ubuntu2204/run_smoke.py",
+        "sha256": "57a11dc336210b38037c60252385acbfd9091ca55bad726b15d3d2594c76dbc8",
+        "bytes": 21860
+      }
+    ]
+  },
+  "isolation": {
+    "network_used": false,
+    "host_mounts": false,
+    "host_drives": false,
+    "hardware_passthrough": false,
+    "nas_hardware_access": false,
+    "vendor_control_programs_executed": false,
+    "payload_commands": "Project four programs --help and models only; third-party loader/libc provenance and VM-only missing-libc control."
+  },
+  "limits": [
+    "This proves the exact current release ELF set initializes with the listed Debian12/Ubuntu22.04 userspace libraries under the existing isolated VM kernels.",
+    "It is not a full distribution installation, NAS hardware, LED write, disk physical-slot mapping or service lifecycle validation.",
+    "Four fand help invocations across the environments intentionally preserve existing exit1; other help/model cases exit0.",
+    "No network retrieval, tracked file change, staging, commit or push performed. LLLED_FPK and original input packages were not modified."
+  ]
+}

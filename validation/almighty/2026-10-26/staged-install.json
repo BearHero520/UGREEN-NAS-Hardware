@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "architectures": {
+    "x86_64": {
+      "stage": "firmware-inbox/work/almighty-power-persistence-20261026/stage-x86_64",
+      "steps": [
+        {
+          "step": "configure",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-configure-x86_64.log",
+          "sha256": "c7b9920f2cf7b59e79814f13251b0f6f719a06bb5c5aeb9e10d79b5869a5c6c4"
+        },
+        {
+          "step": "build",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-build-x86_64.log",
+          "sha256": "71aa391ec7d7e291b419a7f40fba91919e14ac2394ab4e8b66ed126e267d70f6"
+        },
+        {
+          "step": "install",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-install-x86_64.log",
+          "sha256": "1dec5b622d427e0a120b58b6ddd93d560dc2f76b85475c2c3e55d7d242c06363"
+        },
+        {
+          "step": "host-policy",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-host-policy-x86_64.log",
+          "sha256": "107f3816af3873a8361de6ccfef82d459eecb10d7540c18994c0281af7a24dad"
+        }
+      ],
+      "sha256": {
+        "bin/ugreenctl": "2bb3a6673270dac2d5031982e0e36f8339a58ef17d5dd1cd19d2fa0d6712b6d3",
+        "bin/ugreen_leds_cli": "52549b94d04312f52afff3b57dc194c16a69013477a1692719e2f5600221c755",
+        "bin/ugreenctl-fand": "ee17d17b1c80a29b442d369ec72e08ec43e2edcd64f882359f9362a54ed01102",
+        "bin/ugreenctl-ledd": "dbeb8d83ab670a10369bd1753b00457fa3cf22ab04c34626856916842d7d452f",
+        "lib/ugreenctl/models/dx4600.so": "34ff5fc705cf3d9156918bb4a775ae99b764b9404de90534ff958257e02535d3",
+        "lib/ugreenctl/models/dxp2800.so": "3bddd1fb642e9d3a73db6b563b750ff8e954f9a40f0ec8eb1ff751a034296836",
+        "lib/ugreenctl/models/dxp4800.so": "4d261145b97ab91ab745526f99fe8015e5a3736ca075de62990a37c242a8873c",
+        "lib/ugreenctl/models/dxp4800plus.so": "f72801adcb10fa1af4ec68916b11016b0b3f2e8ffec9368f6dc8d2a46163b306",
+        "lib/ugreenctl/models/dxp4800s.so": "8e29e13d796a77369db8a7af172ca86a91cc83264e1384605ad80a80ab2b3a6f",
+        "lib/ugreenctl/models/dxp480tplus.so": "3c9807b7669428ad55d07771ab26f029ae2595ef42b36f0308d096581125c45b",
+        "lib/ugreenctl/models/dxp6800pro.so": "87c6bfb7c426905e8a3e71264e5504ae429ff602a0a02a631f096c38d33ca933",
+        "lib/ugreenctl/models/dxp6800plus.so": "d86635aff5b1a38ca79c63f64de0a2607609bdfc181945cf46c451a174e0cf62",
+        "lib/ugreenctl/models/dxp8800plus.so": "cd230c6da5a103881b30cc2bf4669176a78b39f858a868c25cfdbf641b0bf6e5",
+        "share/doc/ugreenctl/examples/ugreenctl-ledd.service": "b4158aeaeea04c9bef36202f0cbeea5462527b8dd04f6e6a053b4c61d495ed24",
+        "share/doc/ugreenctl/examples/ugreenctl-ledd-gt.service": "2edd47c6581e70edad2fbb807cd17ed306074b59135f290c7c39cfa7f100dfe5",
+        "share/doc/ugreenctl/examples/collect-disk-evidence.sh": "c70d789a5ba534d7827e4a4799ac810e10c53f5da2e0a195b46062aeda21ef00",
+        "share/doc/ugreenctl/examples/collect-led-evidence.sh": "47e5dea28101c27110171c80b2e82b1fad249cbd23da40fee928d79893c9954c",
+        "share/doc/ugreenctl/examples/ugreenctl-startup.py": "0ea14449ad98c6ba2c7a50c727a24c75fdf0db2f219cde1026dd8fd2253ce7b4",
+        "share/doc/ugreenctl/examples/ugreenctl-startup.service": "64352f5ff4eb1182b29c99040e620a5e8c3cf239332a88620c94ebdbee1dc8c7",
+        "share/doc/ugreenctl/docs/ALMIGHTY_STATUS.zh-CN.md": "380af2c5f682f26898f95ca74978b610ea8bb6a1439014e52f9d775b46ca705e",
+        "share/doc/ugreenctl/docs/BUILD_REPRODUCIBILITY.zh-CN.md": "7f6a0dbcf1e1181b196a641b191419ef9c465b4f930137e5413940fdd5ead0bc",
+        "share/doc/ugreenctl/docs/AC_RECOVERY_PERSISTENCE.zh-CN.md": "17f3864ba0d99244a3fb67c5ee3bcbc052f1708a7d7a130b3943703579a16562",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/README.zh-CN.md": "7ec1fc5a35d3e58720da8ce110b1397651e9b9fddd83b508879daa0dd25e7752",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/source-hashes.json": "41c89000df20f535981d25a10bd01d8da3de9d55d9eeeb2b7eb22ae07e22b3e2",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/llled-startup-persistence.patch": "90b57e46d6376b8334c1811c5bf69315b20609e04e4cc17b3c29c173337cf0a6"
+      }
+    },
+    "aarch64": {
+      "stage": "firmware-inbox/work/almighty-power-persistence-20261026/stage-aarch64",
+      "steps": [
+        {
+          "step": "configure",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-configure-aarch64.log",
+          "sha256": "ae27f4a91bdf0a5f99281a5d2e0663f28b2ee13fd8a398b50fba257a551a3fb2"
+        },
+        {
+          "step": "build",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-build-aarch64.log",
+          "sha256": "71aa391ec7d7e291b419a7f40fba91919e14ac2394ab4e8b66ed126e267d70f6"
+        },
+        {
+          "step": "install",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-install-aarch64.log",
+          "sha256": "f1ddb8b9add6039153ab82c93f46750bb0280c69a9a4ce769cd11f566a12a9c5"
+        },
+        {
+          "step": "host-policy",
+          "returncode": 0,
+          "path": "firmware-inbox/work/almighty-power-persistence-20261026/final-host-policy-aarch64.log",
+          "sha256": "59e1966583f615401bd02ca73e8418c7562e9fb35b7431daa84d0836cff95f29"
+        }
+      ],
+      "sha256": {
+        "bin/ugreenctl": "145e89d9377927d4a128c645847be3a0c5b72469066df3b6c21257b0ad310a04",
+        "bin/ugreen_leds_cli": "87dd16ac7789f55e459382e3e1b06032786a00021e6b7aa07f202df8147bb5be",
+        "bin/ugreenctl-fand": "a3978e33f89364d4086cc9aa02ceb429507a6880787194bea7e7845dd6ca1134",
+        "bin/ugreenctl-ledd": "a5ba307ed4ae94991bb6427ffb751b3735c16eb6a41178c799591d090b88a582",
+        "lib/ugreenctl/models/dx4600.so": "8f8651715d0ee7cc7ae66ddb2f94f9d7697466f69d715dfce567218071b36417",
+        "lib/ugreenctl/models/dxp2800.so": "b6f9a473dd851cb9278dedce7d49274ca2b9e95fe13f9da752d23dcbed7e5d38",
+        "lib/ugreenctl/models/dxp4800.so": "7b77c019e773fab550d50bd9539d21ef39bde80efc5eb68c9a741e74f83d75ce",
+        "lib/ugreenctl/models/dxp4800plus.so": "22c1453a00a7913d32361cc59a41ebb2bd447930989c8b40a2fbd338b109a3f6",
+        "lib/ugreenctl/models/dxp4800s.so": "11d821040317dc9c50008076afb6c3c4a233cc271dee2f044089b18083552989",
+        "lib/ugreenctl/models/dxp480tplus.so": "bcaef5e99d6c4edadfc9ca2804ce62c2976933b92a43e831c4e366afad76d271",
+        "lib/ugreenctl/models/dxp6800pro.so": "96b01b1ed584bf9be83dcad7b7f82770fad07615d910bd06064b48372976a0f8",
+        "lib/ugreenctl/models/dxp6800plus.so": "bb486c98ba390c654a6cba2d39440dc16d0ae557c63d9f3e7b3c668b21ae021a",
+        "lib/ugreenctl/models/dxp8800plus.so": "8e13513c30cb6dc858d7d2be16553a0861051dbf05a49715ac27b01e7bb69d66",
+        "share/doc/ugreenctl/examples/ugreenctl-ledd.service": "b4158aeaeea04c9bef36202f0cbeea5462527b8dd04f6e6a053b4c61d495ed24",
+        "share/doc/ugreenctl/examples/ugreenctl-ledd-gt.service": "2edd47c6581e70edad2fbb807cd17ed306074b59135f290c7c39cfa7f100dfe5",
+        "share/doc/ugreenctl/examples/collect-disk-evidence.sh": "c70d789a5ba534d7827e4a4799ac810e10c53f5da2e0a195b46062aeda21ef00",
+        "share/doc/ugreenctl/examples/collect-led-evidence.sh": "47e5dea28101c27110171c80b2e82b1fad249cbd23da40fee928d79893c9954c",
+        "share/doc/ugreenctl/examples/ugreenctl-startup.py": "0ea14449ad98c6ba2c7a50c727a24c75fdf0db2f219cde1026dd8fd2253ce7b4",
+        "share/doc/ugreenctl/examples/ugreenctl-startup.service": "64352f5ff4eb1182b29c99040e620a5e8c3cf239332a88620c94ebdbee1dc8c7",
+        "share/doc/ugreenctl/docs/ALMIGHTY_STATUS.zh-CN.md": "380af2c5f682f26898f95ca74978b610ea8bb6a1439014e52f9d775b46ca705e",
+        "share/doc/ugreenctl/docs/BUILD_REPRODUCIBILITY.zh-CN.md": "7f6a0dbcf1e1181b196a641b191419ef9c465b4f930137e5413940fdd5ead0bc",
+        "share/doc/ugreenctl/docs/AC_RECOVERY_PERSISTENCE.zh-CN.md": "17f3864ba0d99244a3fb67c5ee3bcbc052f1708a7d7a130b3943703579a16562",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/README.zh-CN.md": "7ec1fc5a35d3e58720da8ce110b1397651e9b9fddd83b508879daa0dd25e7752",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/source-hashes.json": "41c89000df20f535981d25a10bd01d8da3de9d55d9eeeb2b7eb22ae07e22b3e2",
+        "share/doc/ugreenctl/integration/llled/ac-recovery/llled-startup-persistence.patch": "90b57e46d6376b8334c1811c5bf69315b20609e04e4cc17b3c29c173337cf0a6"
+      }
+    }
+  },
+  "host_system_installed": false,
+  "service_enabled": false
+}

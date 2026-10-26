@@ -1,0 +1,77 @@
+import inspect_kernel as k
+from pathlib import Path
+import struct,json,re,hashlib
+OUT=k.OUT
+
+# BTF types retain exact structure sizes/member offsets even when the ELF symtab is stripped.
+data=k.elf.get_section_by_name('.BTF').data()
+magic,version,flags,hlen,toff,tlen,soff,slen=struct.unpack_from('<HBBIIIII',data)
+assert magic==0xeb9f
+ss=data[hlen+soff:hlen+soff+slen]
+def btfstr(off):return ss[off:ss.find(b'\0',off)].decode('utf-8','replace')
+types={};tid=1;pos=hlen+toff;end=pos+tlen
+sizes={1:4,2:0,3:12,4:12,5:12,6:8,7:0,8:0,9:0,10:0,11:0,12:0,13:8,14:4,15:12,16:0,17:4,18:0,19:12}
+while pos<end:
+    name,info,size=struct.unpack_from('<III',data,pos);pos+=12
+    kind=(info>>24)&31;vlen=info&0xffff;kflag=info>>31
+    n=sizes[kind]*(vlen if kind in (4,5,6,13,15,19) else 1)
+    payload=data[pos:pos+n];pos+=n
+    entry={'name':btfstr(name),'kind':kind,'size_or_type':size,'vlen':vlen,'kind_flag':kflag}
+    if kind in(4,5):
+        entry['members']=[{'name':btfstr(a),'type':b,'bit_offset':c&0xffffff if kflag else c,'bitfield_size':c>>24 if kflag else 0} for a,b,c in struct.iter_unpack('<III',payload)]
+    elif kind==6:
+        entry['values']=[{'name':btfstr(a),'value':b} for a,b in struct.iter_unpack('<Ii',payload)]
+    types[tid]=entry;tid+=1
+selected={str(i):e for i,e in types.items() if e['name'] in ('dmi_system_id','dmi_strmatch','pci_fixup','pci_dev','pci_bus','pci_host_bridge','pci_driver','pci_sysdata','dmi_field')}
+(OUT/'btf-selected-types.json').write_text(json.dumps(selected,indent=2)+'\n',encoding='utf-8')
+dmisize=next(v['size_or_type'] for v in selected.values() if v['name']=='dmi_system_id')
+assert dmisize==344,dmisize
+slots=next((v['values'] for v in selected.values() if v['name']=='dmi_field'),[])
+slots={v['value']:v['name'] for v in slots}
+def dmitable(name):
+    start=k.byname[name]['address'];rows=[]
+    for i in range(128):
+        addr=start+i*dmisize;raw=k.read(addr,dmisize)
+        callback,ident=struct.unpack_from('<QQ',raw)
+        matches=[]
+        for m in range(4):
+            v=raw[16+m*80:16+(m+1)*80];slot=v[0]
+            if slot:matches.append({'slot':slots.get(slot&127,slot&127),'exact':bool(slot&128),'value':v[1:].split(b'\0',1)[0].decode('ascii','replace')})
+        if not callback and not ident and not matches:break
+        rows.append({'address':hex(addr),'callback':k.label(callback) if callback else None,'ident':k.string(ident),'matches':matches,'driver_data':hex(struct.unpack_from('<Q',raw,336)[0])})
+    return rows
+tables={name:dmitable(name) for name in ['pciprobe_dmi_table','can_skip_pciprobe_dmi_table','pciirq_dmi_table','acpi_pci_slot_dmi_table']}
+(OUT/'pci-dmi-tables.json').write_text(json.dumps(tables,indent=2)+'\n',encoding='utf-8')
+
+targets=['dmi_check_pciprobe','set_bf_sort','find_sort_method','read_dmi_type_b1','pci_sort_breadthfirst','pci_sort_bf_cmp','pci_setup','pcibios_setup','pcibios_scan_specific_bus','pcibios_fixup_bus','pci_do_fixups','pci_scan_bridge_extend','acpi_pci_slot_enumerate','register_slot','check_slot','cs201x_init','ug_cs201x_probe']
+lines=[]
+for n in targets:lines.extend(k.disassemble(n))
+for s in k.syms:
+    if s['name']=='functions_init':
+        alias='functions_init@'+hex(s['address']);k.byname[alias]=s
+        lines.extend(k.disassemble(alias))
+(OUT/'board-sort-disassembly.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+# Exact data-pointer references are positive candidates; not a code/xref absence proof.
+refstrings=[s for s in json.loads((OUT/'target-strings.json').read_text()) if s['value'] in ('UGREEN','DXP2800S','DXP4800 GT')]
+refs=[]
+for x in refstrings:
+    ptr=struct.pack('<Q',int(x['address'],16))
+    for sec in k.sections:
+        if sec['sh_type']!='SHT_PROGBITS' or not sec['sh_flags']&2:continue
+        blob=sec.data();pos=0
+        while True:
+            i=blob.find(ptr,pos)
+            if i<0:break
+            addr=sec['sh_addr']+i
+            refs.append({'value':x['value'],'string_address':x['address'],'reference':hex(addr),'symbol':k.label(addr),'section':sec.name})
+            pos=i+1
+(OUT/'ugreen-dmi-data-references.json').write_text(json.dumps(refs,indent=2)+'\n',encoding='utf-8')
+
+initcalls=[]
+for s in k.syms:
+    if s['name'].startswith('__initcall__kmod_') and any(n in s['name'] for n in ['pci_','pcibios','ug_idx','ug_4800','ug_201x']):
+        addr=s['address'];rel=struct.unpack('<i',k.read(addr,4))[0];target=addr+rel
+        initcalls.append({'initcall':s['name'],'address':hex(addr),'target':hex(target),'function':k.label(target)})
+(OUT/'pci-ugreen-initcalls.json').write_text(json.dumps(initcalls,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'btf_type_count':len(types),'selected_types':[v['name'] for v in selected.values()],'table_counts':{n:len(v) for n,v in tables.items()},'ugreen_data_references':refs,'initcalls':initcalls},indent=2))

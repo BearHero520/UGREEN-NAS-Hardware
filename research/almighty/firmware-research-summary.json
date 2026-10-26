@@ -1,0 +1,120 @@
+{
+  "source_phase": "almighty-official-followup-20261026",
+  "complete": false,
+  "capability_change": false,
+  "input": {
+    "basename": "6800plus.img",
+    "sha256": "73862c9c619f3e8b2279252326654f4915234dc8f437a71eb9a0067a724062c5",
+    "container_member_paths_are_logical_evidence_paths": true,
+    "input_not_included": true
+  },
+  "counts": {
+    "target": 25,
+    "sata_conditional": 23,
+    "sata_unknown_bios": 1,
+    "nvme_conditional": 15,
+    "nvme_unknown": 8,
+    "n76_vendor_driver_required": 2,
+    "distinct_gap_models": 10
+  },
+  "physical_validation": false,
+  "full_distribution_validation": false,
+  "kernel": {
+    "scope": "Original official vmlinuz static PCI/controller/board initialization continuation; no official code execution, no hardware access.",
+    "symbol_count": 173029,
+    "dmi_sort_records": 24,
+    "pci_fixup_entries": 990,
+    "distinct_fixup_hooks": 213,
+    "finding": "PCI enumeration/sorting and selected UGREEN/watchdog initialization do not establish the eight physical M.2 connector maps. ACPI register_slot consumes _ADR/_SUN; an independently identified board BIOS/AML payload and silkscreen correspondence remain required.",
+    "static_inference": [
+      "This kernel supports generic PCI enumeration and optional DMI/boot-option breadth-first sorting; those paths explain an ordering source but cannot turn dynamically allocated NVMe numbers into connector labels.",
+      "An ACPI _SUN path is a genuine positive next source, but a firmware-provided slot number is not by itself proven to equal a NAS M.2 silkscreen label. BIOS revision matters."
+    ],
+    "limits": [
+      "The current evidence covers the explicitly named PCI/ACPI initialization, all decoded .pci_fixup registrations, selected DMI hooks and confirmed UGREEN string-reference functions. It is not a proof that the entire firmware lacks another board rule.",
+      "Indirect helper calls inside every fixup were not recursively decompiled. No complete kernel CFG or all-callgraph coverage is claimed.",
+      "No runtime PCI topology, ACPI AML tables from a target BIOS, connector labels, device population changes or cold-boot ordering has been validated.",
+      "No prior nvme.ko dynamic-ID proof was repeated. No changes to kernel/driver source or compatibility mappings were made."
+    ],
+    "original_report_sha256": "fdadc1e3680a28cbedc2ee6c2b6306faa9f1d79af35823ce882513aca469049b"
+  },
+  "native": {
+    "finding": "Actual native InfoServiceImpl HardwareInfo vtable resolves to a generated default/UNIMPLEMENTED method. Native exact model/DMI helpers and 32-entry enum were traced; their revision labels do not establish GT BIOS-to-physical-SATA pairing. The closed default-service path should not be retraced as a hidden slot map.",
+    "unknown": {
+      "M2_physical_slots": [
+        "DX4600",
+        "DX4600+",
+        "DX4600 Pro",
+        "DX4700",
+        "DH2600",
+        "DXP2800",
+        "DXP4800",
+        "DXP4800S"
+      ],
+      "GT_BIOS_SATA": "No BIOS version/board identity paired to physical SATA order established by this native chain.",
+      "controller_or_physicalslot": "No positive native implementation establishing controller registration order to board silk-screen slot order recovered. Generated request/response fields do not establish such mapping.",
+      "hardware_validation": "No NAS programs executed; no physical device reads/writes or live validation."
+    },
+    "static_inference": [
+      {
+        "claim": "Status code 0x0c with empty strings is consistent with the generated gRPC UNIMPLEMENTED default. The vtable and body therefore close this candidate as a slot-map entry point for this shipped native InfoServiceImpl.",
+        "basis": [
+          "native-xrefs.json",
+          "0xfdd380-disassembly.txt"
+        ]
+      },
+      {
+        "claim": "Native get_hw_version does not provide evidence for GT BIOS-to-SATA selection: this recovered helper reads product_version/CPU, its model map lacks GT, and no disk operation occurs in the body. Its rev labels must not be equated to the Go storage_serv hardware-revision map.",
+        "basis": [
+          "get_model-disassembly.txt",
+          "native-model-table.json"
+        ]
+      },
+      {
+        "claim": "No direct call or tail-jump to native get_hw_version was found when decoding the shared library .text. It is a real callable implementation, but its runtime reachability via indirect/dynamic calls was not established.",
+        "basis": [
+          "native-xrefs.json"
+        ]
+      }
+    ],
+    "next_positive_entrypoint": {
+      "native_chain": "This concrete native InfoService HardwareInfo chain is closed: default method, no implementation to extend. RegisterRoutes 0xfe0e0 only checks whether a service exists and returns a status; it does not register hidden hardware HTTP handlers.",
+      "outside_native_candidate": {
+        "caller": "storage_serv getNvmeSlot 0x12efc28",
+        "callee": "gitlab.ugnas.com/ugos-pro/ugnas/hardware/pci.GetPciInfoByDevice 0x12b58e0",
+        "positive_evidence_existing": "firmware-inbox/work/almighty-firmware-deep-20261026/storage-runtime-disassembly.txt line containing call at 0x12efc28",
+        "bounded_question": "Trace this already-proven callee implementation only if controller/physical-slot PCI provenance still needs resolving. It is the pcie_bridge_id branch and is bypassed by the eight block_name successes, so it cannot be advertised as closing those eight physical slots without new evidence."
+      }
+    },
+    "original_report_sha256": "6b76ae6f7bb590b44b9d65e2df07f6aa267aed409ee1c0bd9c9a6db54fd9bc2e"
+  },
+  "n76": {
+    "firmware_evidence": [
+      "Original ugpt is a Makeself shell archive, gzip tar validated against embedded MD5;10 members extracted without execution",
+      "Tool.main dispatches the only MCU-specific updater from explicit arch_spu=rk3588; AMD64 follows vmlinuz/initrd branch",
+      "That updater names UGREEN_CEC_Controler_APP_* and reads bus4/address0x15/register0x11, then conditionally stages image under/boot",
+      "No I2C flash transaction is implemented inside updata_mcu_fireware itself; staging does not prove later consumer behavior"
+    ],
+    "inference": [
+      "This concrete upgrader branch is a different interface from DH2600/DXP480T N76 at0x31/0x26; it cannot define their output/PWM/timing readback"
+    ],
+    "unknown": [
+      "Other untraced library or firmware payload paths are not excluded",
+      "N76 application firmware/output/PWM/timing readback still unconfirmed"
+    ],
+    "executed_vendor_code": false,
+    "performed_hardware_io": false,
+    "original_report_sha256": "892b6c1ecc753f180d0e0ed0bd4daec13313bc9db0658771c631a00840c67ccc"
+  },
+  "historical_runtime_phase": {
+    "source": "firmware-inbox/work/almighty-firmware-deep-20261026/result-accepted.json",
+    "sha256": "35eda5224a5c54f13639408775adb00819dceb9966912235bcb4189cd43a7773",
+    "finding": "Original block_name basename comparison and dynamic NVMe instance naming traced; 20 UPKs / 5209 members / 380 bounded text files indexed. Existing native and upgrader follow-up supersedes its open entrypoint list.",
+    "pre_BIOS_safety_snapshot": true
+  },
+  "bios_safety_phase": {
+    "source": "firmware-inbox/work/almighty-bios-20261026/result.json",
+    "sha256": "945a8af322971c98f41f0fe57d1e537d9f6426bb394eb3a1b98c42948bf8b820",
+    "finding": "Per-operation LED identity checks and optional BIOS diagnostics; GT SATA remains unknown for every BIOS until a positive physical pairing, and unknown SATA blocks shared U.2 LED positioning. Existing administrator calibration remains explicit."
+  }
+}

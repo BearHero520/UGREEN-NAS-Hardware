@@ -1,0 +1,79 @@
+"""Real Linux syscall preflight; no hardware or NAS executable is used."""
+import errno
+import fcntl
+import json
+import os
+from pathlib import Path
+import platform
+import shutil
+import stat
+import sys
+import tempfile
+import unittest.mock
+
+assert sys.platform == "linux" and os.geteuid() == 0
+assert os.open in os.supports_dir_fd and os.unlink in os.supports_dir_fd
+root = Path(tempfile.mkdtemp(prefix="python-security-probe-", dir="/root"))
+result = {"python": sys.version, "kernel": platform.release(), "uid": os.geteuid(),
+          "dir_fd": False, "O_NOFOLLOW": False, "O_DIRECTORY": False,
+          "flock_competing_process": False, "file_fsync": False,
+          "directory_fsync": False, "atomic_replace": False,
+          "mode_0700_directory_0600_file": False, "sysfs_mounted": False}
+try:
+    os.chmod(root, 0o700)
+    (root / "link").symlink_to("outside")
+    (root / "outside").write_text("preserve")
+    directory = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    try:
+        try:
+            os.open("link", os.O_RDONLY | os.O_NOFOLLOW, dir_fd=directory)
+        except OSError as error:
+            assert error.errno == errno.ELOOP
+            result["O_NOFOLLOW"] = True
+        else:
+            raise AssertionError("O_NOFOLLOW followed a symlink")
+        try:
+            os.open("outside", os.O_RDONLY | os.O_DIRECTORY, dir_fd=directory)
+        except OSError as error:
+            assert error.errno == errno.ENOTDIR
+            result["O_DIRECTORY"] = True
+        else:
+            raise AssertionError("O_DIRECTORY opened a regular file")
+        fd = os.open("staged", os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600, dir_fd=directory)
+        os.write(fd, b"new-state\n")
+        os.fsync(fd)
+        result["file_fsync"] = True
+        result["mode_0700_directory_0600_file"] = stat.S_IMODE(os.fstat(fd).st_mode) == 0o600 and stat.S_IMODE(root.stat().st_mode) == 0o700
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        child = os.fork()
+        if child == 0:
+            # A new open file description in another process must be blocked.
+            competing = os.open("staged", os.O_RDWR | os.O_NOFOLLOW, dir_fd=directory)
+            try:
+                try:
+                    fcntl.flock(competing, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    os._exit(0)
+                os._exit(1)
+            finally:
+                os.close(competing)
+        waited, status = os.waitpid(child, 0)
+        assert waited == child and os.waitstatus_to_exitcode(status) == 0
+        result["flock_competing_process"] = True
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
+        os.replace("staged", "state", src_dir_fd=directory, dst_dir_fd=directory)
+        os.fsync(directory)
+        result["directory_fsync"] = True
+        result["atomic_replace"] = (root / "state").read_bytes() == b"new-state\n"
+        os.unlink("state", dir_fd=directory)
+        result["dir_fd"] = not (root / "state").exists()
+    finally:
+        os.close(directory)
+    assert (root / "outside").read_text() == "preserve"
+    assert not Path("/sys/class/dmi/id").exists()
+    assert not any(" /sys " in line for line in Path("/proc/mounts").read_text().splitlines())
+    assert all(result[name] for name in ("dir_fd", "O_NOFOLLOW", "O_DIRECTORY", "flock_competing_process", "file_fsync", "directory_fsync", "atomic_replace", "mode_0700_directory_0600_file"))
+    print("REAL_LINUX_SECURITY_PROBE=" + json.dumps(result, sort_keys=True), flush=True)
+finally:
+    shutil.rmtree(root)
