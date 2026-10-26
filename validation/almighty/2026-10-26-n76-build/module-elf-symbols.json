@@ -1,0 +1,298 @@
+{
+  "scope": "Independent ELF64 x86_64 REL, name/license/vermagic and imported symbol availability (plus CRC when configured); no loading/hardware",
+  "config_modversions": false,
+  "sources": {
+    "work/dh2600/Kbuild": "78aed3e9f42ea8a58f0f5f218d558c3ca583241fe54a1546de8f023dc5e734dd",
+    "work/dh2600/leds-mcu-n76e003-dh2600.c": "f5749c899a36eaba4c337768b422611e120e591964258fd781535e08c1983ac5",
+    "work/dh2600/ledtrig-breath-n76e003.c": "2295d8050b3587ca415c8623411fea22cce98d2f25f9e666a8549fff20576a1d",
+    "work/dh2600/ledtrig-normal-n76e003.c": "2122c3a6dc6c254c8cc9dc697d188fb888bf686bfacd4309140a5eca023eb32e",
+    "work/dh2600/preparation.json": "aa317e4e8d2962303880d34b4f3eed6323a666440968ae6ab3b11506f0bdd623",
+    "work/dh2600/ugreenctl_n76_identity.h": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189",
+    "work/dxp480tplus/Kbuild": "79c600297b4dd044143392b42b2c509e579ad3fe2e09eeed53d9fd4f657fcc60",
+    "work/dxp480tplus/leds-mcu-n76e003.c": "f5046bec2df3ccfb2535ca12a5ec8fb94dafa156565dc721fafabde232b757c9",
+    "work/dxp480tplus/ledtrig-breath-n76e003.c": "e073afcc7aa58f2e0fdf4948e07127991ba248f7f96a119a1610f3b02e5d86a1",
+    "work/dxp480tplus/ledtrig-normal-n76e003.c": "1f2c79922a16426ccf6134bc95337b209a20264f3bcf289baed2f5aaa928ceff",
+    "work/dxp480tplus/preparation.json": "921faec40618a685506c1201ee086241275a62213284bb618d46b152fb946a0f",
+    "work/dxp480tplus/ugreenctl_n76_identity.h": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189"
+  },
+  "module_symvers_sha256": "cea653e47a8696400c07b219b465631e06011ff461665ee5d3ccf2eff9163846",
+  "serial_sha256": "8b21b597c6e845591e3d724b199f36072d83efe374694e82851bab90ad3905c9",
+  "artifacts": {
+    "dh2600/leds-mcu-n76e003-dh2600.ko": {
+      "sha256": "f8400e568499e5b904352a571afff09c8bcd76cf1b0c16b018b49ec9f7697263",
+      "bytes": 501504,
+      "modinfo": {
+        "alias": [
+          "platform:mcu_led",
+          "i2c:mcu_led"
+        ],
+        "license": [
+          "GPL v2"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "leds_mcu_n76e003_dh2600"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "devm_kmalloc",
+        "queue_work_on",
+        "led_classdev_unregister",
+        "__fentry__",
+        "__x86_indirect_thunk_rax",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "_dev_info",
+        "i2c_register_driver",
+        "_dev_err",
+        "system_percpu_wq",
+        "mutex_lock",
+        "strncmp",
+        "led_classdev_register_ext",
+        "__mutex_init",
+        "kstrtoull",
+        "__x86_return_thunk",
+        "strcmp",
+        "sprintf",
+        "mutex_unlock",
+        "__const_udelay",
+        "cancel_work_sync",
+        "i2c_smbus_write_byte_data",
+        "i2c_del_driver",
+        "i2c_smbus_read_byte_data"
+      ],
+      "versioned_imports": {}
+    },
+    "dh2600/ledtrig-breath-n76e003.ko": {
+      "sha256": "24377440a1f8cdd9bcfdeaee95ab6a5860ea8042e9f84cf4f10c6998c4d9b506",
+      "bytes": 342488,
+      "modinfo": {
+        "license": [
+          "GPL v2"
+        ],
+        "description": [
+          "breathing LED trigger"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "ledtrig_breath_n76e003"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "kfree",
+        "__fentry__",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "led_trigger_unregister",
+        "led_get_default_pattern",
+        "_dev_warn",
+        "__x86_return_thunk",
+        "strcmp",
+        "led_blink_set",
+        "led_trigger_register",
+        "led_set_brightness"
+      ],
+      "versioned_imports": {}
+    },
+    "dh2600/ledtrig-normal-n76e003.ko": {
+      "sha256": "2642279ed46f540d0a107382843a9b7959d328660ffb31f84248542c172696fa",
+      "bytes": 342488,
+      "modinfo": {
+        "license": [
+          "GPL v2"
+        ],
+        "description": [
+          "normaling LED trigger"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "ledtrig_normal_n76e003"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "kfree",
+        "__fentry__",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "led_trigger_unregister",
+        "led_get_default_pattern",
+        "_dev_warn",
+        "__x86_return_thunk",
+        "strcmp",
+        "led_blink_set",
+        "led_trigger_register",
+        "led_set_brightness"
+      ],
+      "versioned_imports": {}
+    },
+    "dxp480tplus/leds-mcu-n76e003.ko": {
+      "sha256": "0b447e838659c05c32c1d3901142129fcd1c523409346bc2b024e5e1c48c25c4",
+      "bytes": 506880,
+      "modinfo": {
+        "alias": [
+          "platform:mcu_led",
+          "i2c:mcu_led"
+        ],
+        "license": [
+          "GPL v2"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "leds_mcu_n76e003"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "devm_kmalloc",
+        "queue_work_on",
+        "led_classdev_unregister",
+        "__fentry__",
+        "__x86_indirect_thunk_rax",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "_dev_info",
+        "i2c_register_driver",
+        "_dev_err",
+        "system_percpu_wq",
+        "mutex_lock",
+        "strncmp",
+        "led_classdev_register_ext",
+        "__mutex_init",
+        "kstrtoull",
+        "__x86_return_thunk",
+        "strcmp",
+        "sprintf",
+        "mutex_unlock",
+        "__const_udelay",
+        "cancel_work_sync",
+        "i2c_smbus_write_byte_data",
+        "i2c_del_driver",
+        "i2c_smbus_read_byte_data"
+      ],
+      "versioned_imports": {}
+    },
+    "dxp480tplus/ledtrig-breath-n76e003.ko": {
+      "sha256": "eda03bf5fdd0dfc07f35f059282a20828a12e92f646dd1e01d973d97cef0a658",
+      "bytes": 342520,
+      "modinfo": {
+        "license": [
+          "GPL v2"
+        ],
+        "description": [
+          "breathing LED trigger"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "ledtrig_breath_n76e003"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "kfree",
+        "__fentry__",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "led_trigger_unregister",
+        "led_get_default_pattern",
+        "_dev_warn",
+        "__x86_return_thunk",
+        "strcmp",
+        "led_blink_set",
+        "led_trigger_register",
+        "led_set_brightness"
+      ],
+      "versioned_imports": {}
+    },
+    "dxp480tplus/ledtrig-normal-n76e003.ko": {
+      "sha256": "77ab159efbe1ee0609c127628a50b3d2d4c10aee2f63cf6153db26f49a360a6b",
+      "bytes": 342520,
+      "modinfo": {
+        "license": [
+          "GPL v2"
+        ],
+        "description": [
+          "normaling LED trigger"
+        ],
+        "depends": [
+          ""
+        ],
+        "name": [
+          "ledtrig_normal_n76e003"
+        ],
+        "retpoline": [
+          "Y"
+        ],
+        "vermagic": [
+          "6.18.15 SMP preempt mod_unload "
+        ]
+      },
+      "undefined_symbols": [
+        "dmi_get_system_info",
+        "kfree",
+        "__fentry__",
+        "__ref_stack_chk_guard",
+        "__stack_chk_fail",
+        "led_trigger_unregister",
+        "led_get_default_pattern",
+        "_dev_warn",
+        "__x86_return_thunk",
+        "strcmp",
+        "led_blink_set",
+        "led_trigger_register",
+        "led_set_brightness"
+      ],
+      "versioned_imports": {}
+    }
+  },
+  "build_exits": {
+    "dh2600": "0",
+    "dxp480tplus": "0"
+  },
+  "vm_exit": [
+    "0"
+  ],
+  "passed": true
+}

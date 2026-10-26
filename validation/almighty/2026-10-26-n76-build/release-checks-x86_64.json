@@ -1,0 +1,59 @@
+{
+  "arch": "x86_64",
+  "build_dir": "firmware-inbox/work/almighty-portable-build-x86_64",
+  "steps": [
+    {
+      "step": "configure",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "-S",
+        "<SOURCE_ROOT>",
+        "-B",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "-G",
+        "Ninja",
+        "-DCMAKE_MAKE_PROGRAM=<SOURCE_ROOT>/firmware-inbox/work/tools/cmake-python/bin/ninja.exe",
+        "-DCMAKE_TOOLCHAIN_FILE=<SOURCE_ROOT>/tools/toolchains/zig-linux.cmake",
+        "-DUGREENCTL_TARGET_ARCH=x86_64",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/usr/local",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DUGREENCTL_INSTALL_LED_COMPAT=ON",
+        "-DCMAKE_CROSSCOMPILING_EMULATOR=C:\\Program Files\\Python311\\python.exe;<SOURCE_ROOT>/tools/testing/run_linux.py;--runtime-root;<SOURCE_ROOT>/firmware-inbox/work/almighty-tools"
+      ],
+      "returncode": 0,
+      "seconds": 0.36,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-configure-x86_64.log",
+      "sha256": "c7b9920f2cf7b59e79814f13251b0f6f719a06bb5c5aeb9e10d79b5869a5c6c4"
+    },
+    {
+      "step": "build",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--build",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "--parallel",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 0.53,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-build-x86_64.log",
+      "sha256": "c0b39cff9b2f3466190a3430225270c487d10f5607e83b2088d475af77680fa7"
+    },
+    {
+      "step": "ctest",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\ctest.exe",
+        "--test-dir",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "seconds": 90.88,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-ctest-x86_64.log",
+      "sha256": "d0d15396762662b382a67be135681ee7949482fac01b9ac0456562191045df04"
+    }
+  ],
+  "passed": true,
+  "physical_validation": false
+}

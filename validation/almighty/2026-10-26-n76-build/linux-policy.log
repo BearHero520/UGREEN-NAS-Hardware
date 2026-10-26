@@ -1,0 +1,35 @@
+test_apply_with_missing_prerequisites_refused (__main__.BuildPolicyTests.test_apply_with_missing_prerequisites_refused) ... ok
+test_check_apply_refused (__main__.BuildPolicyTests.test_check_apply_refused) ... ok
+test_clang_kernel_selects_llvm_tools (__main__.BuildPolicyTests.test_clang_kernel_selects_llvm_tools) ... ok
+test_compile_result_failure_and_identity_change (__main__.BuildPolicyTests.test_compile_result_failure_and_identity_change) ... ok
+test_dry_run_no_download_compile_or_directory_creation (__main__.BuildPolicyTests.test_dry_run_no_download_compile_or_directory_creation) ... ok
+test_environment_does_not_inherit_kbuild_overrides (__main__.BuildPolicyTests.test_environment_does_not_inherit_kbuild_overrides) ... ok
+test_header_mismatch_refused (__main__.BuildPolicyTests.test_header_mismatch_refused) ... ok
+test_inconsistent_header_metadata_refused (__main__.BuildPolicyTests.test_inconsistent_header_metadata_refused) ... ok
+test_known_dmi_accepted (__main__.BuildPolicyTests.test_known_dmi_accepted) ... ok
+test_make_paths_refuse_injection_and_whitespace (__main__.BuildPolicyTests.test_make_paths_refuse_injection_and_whitespace) ... ok
+test_matching_prepared_headers (__main__.BuildPolicyTests.test_matching_prepared_headers) ... ok
+test_missing_symvers_reported (__main__.BuildPolicyTests.test_missing_symvers_reported) ... ok
+test_module_metadata_matches_target (__main__.BuildPolicyTests.test_module_metadata_matches_target) ... ok
+test_module_output_mutations_refused (__main__.BuildPolicyTests.test_module_output_mutations_refused) ... ok
+test_modules_disabled_refused (__main__.BuildPolicyTests.test_modules_disabled_refused) ... ok
+test_non_linux_refused (__main__.BuildPolicyTests.test_non_linux_refused) ... ok
+test_private_workspace_and_lock (__main__.BuildPolicyTests.test_private_workspace_and_lock) ... ok
+test_resources_present_and_models_exact (__main__.BuildPolicyTests.test_resources_present_and_models_exact) ... ok
+test_source_loader_does_not_create_bytecode (__main__.BuildPolicyTests.test_source_loader_does_not_create_bytecode) ... ok
+test_workspace_unsafe_permissions_symlink_and_header_overlap (__main__.BuildPolicyTests.test_workspace_unsafe_permissions_symlink_and_header_overlap) ... ok
+test_wrong_architecture_refused (__main__.BuildPolicyTests.test_wrong_architecture_refused) ... ok
+test_wrong_dmi_refused (__main__.BuildPolicyTests.test_wrong_dmi_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.724s
+
+OK
+N76_BUILD_POLICY_EXIT=0
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.058s
+
+OK
+N76_SOURCE_POLICY_EXIT=0
+N76_POLICY_VM_EXIT=0

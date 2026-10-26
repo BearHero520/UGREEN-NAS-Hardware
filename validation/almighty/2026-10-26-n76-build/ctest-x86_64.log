@@ -1,0 +1,63 @@
+Test project <SOURCE_ROOT>/firmware-inbox/work/almighty-portable-build-x86_64
+      Start  1: n76-identity
+ 1/29 Test  #1: n76-identity .....................   Passed    3.36 sec
+      Start  2: package-runtime
+ 2/29 Test  #2: package-runtime ..................   Passed    0.10 sec
+      Start  3: package-policy
+ 3/29 Test  #3: package-policy ...................   Passed    2.99 sec
+      Start  4: startup-state
+ 4/29 Test  #4: startup-state ....................   Passed    0.16 sec
+      Start  5: n76-build-policy
+ 5/29 Test  #5: n76-build-policy .................   Passed    0.26 sec
+      Start  6: n76-source-policy
+ 6/29 Test  #6: n76-source-policy ................   Passed    0.20 sec
+      Start  7: cli-help
+ 7/29 Test  #7: cli-help .........................   Passed    3.22 sec
+      Start  8: led-cli-help
+ 8/29 Test  #8: led-cli-help .....................   Passed    3.25 sec
+      Start  9: led-compat-help
+ 9/29 Test  #9: led-compat-help ..................   Passed    3.36 sec
+      Start 10: led-holder-help
+10/29 Test #10: led-holder-help ..................   Passed    3.32 sec
+      Start 11: led
+11/29 Test #11: led ..............................   Passed    3.57 sec
+      Start 12: led-holder
+12/29 Test #12: led-holder .......................   Passed    6.44 sec
+      Start 13: led-cs201x
+13/29 Test #13: led-cs201x .......................   Passed    3.28 sec
+      Start 14: disk-mapping
+14/29 Test #14: disk-mapping .....................   Passed    6.72 sec
+      Start 15: identity
+15/29 Test #15: identity .........................   Passed    3.50 sec
+      Start 16: hardware-cli
+16/29 Test #16: hardware-cli .....................   Passed    3.44 sec
+      Start 17: it8613-hwmon
+17/29 Test #17: it8613-hwmon .....................   Passed    3.41 sec
+      Start 18: it8613-direct
+18/29 Test #18: it8613-direct ....................   Passed    3.39 sec
+      Start 19: it8613-power
+19/29 Test #19: it8613-power .....................   Passed    3.32 sec
+      Start 20: it8613-dxp4800
+20/29 Test #20: it8613-dxp4800 ...................   Passed    3.41 sec
+      Start 21: it8613-dxp4800s
+21/29 Test #21: it8613-dxp4800s ..................   Passed    3.39 sec
+      Start 22: it8613-dx4600
+22/29 Test #22: it8613-dx4600 ....................   Passed    3.44 sec
+      Start 23: dx4600-plugin
+23/29 Test #23: dx4600-plugin ....................   Passed    3.36 sec
+      Start 24: wol-dxp4800
+24/29 Test #24: wol-dxp4800 ......................   Passed    3.41 sec
+      Start 25: rtc-wake
+25/29 Test #25: rtc-wake .........................   Passed    3.42 sec
+      Start 26: it8613-dxp480t
+26/29 Test #26: it8613-dxp480t ...................   Passed    3.27 sec
+      Start 27: it8613-dxp6800pro
+27/29 Test #27: it8613-dxp6800pro ................   Passed    3.19 sec
+      Start 28: it8613-dxp6800plus
+28/29 Test #28: it8613-dxp6800plus ...............   Passed    3.21 sec
+      Start 29: thermal-curve
+29/29 Test #29: thermal-curve ....................   Passed    3.34 sec
+
+100% tests passed out of 29
+
+Total Test time (real) =  90.79 sec

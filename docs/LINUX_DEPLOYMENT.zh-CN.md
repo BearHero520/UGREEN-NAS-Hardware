@@ -150,6 +150,11 @@ GPIO 的 `ugreenctl-ledd --force --apply` 需要持续持有线路 FD；DXP2800 
 `--takeover-flow --force --apply` 还管理全局 FLOW 与原始 LED 状态。N76 不能由 GPIO holder
 替代原厂驱动；其无驱动回读缺口仍未解决。
 
+N76 可通过 `ugreenctl-n76 check` 检查编译前提，再显式运行 `build --apply` 构建适合
+当前内核的配套模块，见 `N76_MANUAL_BUILD.zh-CN.md`。该入口不安装依赖或模块、不加载
+驱动；定制 NAS 内核必须提供匹配的头文件、配置和符号文件，TrueNAS 不会自动开启开发
+模式或运行 apt。构建完成不代表实机加载、签名和灯光回读已验证。
+
 升级前停止选定服务，或向已核对身份的前台 holder 发送 SIGTERM，等待退出并检查恢复错误，
 再切换整套版本目录。不要在旧进程运行时覆盖其程序或混入新版插件。SIGKILL、SSH 意外断开、
 断电后的状态不等同于正常退出恢复；GT 原自主动画相位也仍未知。系统更新或停用工具时，同样

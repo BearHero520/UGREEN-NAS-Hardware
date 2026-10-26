@@ -18,6 +18,17 @@
   },
   "builtin_capabilities": {
     "documentation": "docs/LED_CONTROL.zh-CN.md",
+    "n76_manual_build": {
+      "state": "implemented-build-only",
+      "models": ["DH2600", "DXP480T Plus"],
+      "command": "ugreenctl-n76 build --apply",
+      "compiled_target_kernel": "6.18.15",
+      "source_commit": "c75c5abd60dd45f45966720293ce1ee505fb8615",
+      "installs_or_loads_modules": false,
+      "hardware_validation": "not-performed",
+      "documentation": "docs/N76_MANUAL_BUILD.zh-CN.md",
+      "note": "Optional matching-kernel build path only. Existing bound-driver requirement and missing independent N76 output/PWM readback remain unchanged. No arbitrary-kernel compatibility claim."
+    },
     "all_model_integration": {
       "state": "in-progress",
       "branch": "Almighty",

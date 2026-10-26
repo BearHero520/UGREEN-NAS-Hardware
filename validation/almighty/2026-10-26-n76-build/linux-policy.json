@@ -1,0 +1,19 @@
+{
+  "scope": "Helper Python tests in real Linux; synthetic DMI/header fixture cases, real private workspace/flock",
+  "isolation": "RAM-only QEMU; no network, host mounts, drives, passthrough, sysfs mount, NAS executables or module load/install",
+  "runtime_manifest_sha256": "b7157b3ed45d8f856204dd0203d774dbd6196e2cd7dc7d4f1ab2227cc989f044",
+  "snapshots": {
+    "scripts/ugreenctl-n76.py": "61c6721c830ac30d732c8cb65038ac9f7393163b7da74c146d6f117140d5de4a",
+    "tests/test_n76_build.py": "50fbb76a7e7351a42b7bcae4aa14ec80d467f346e58db9401611f7c28cd6d2b5",
+    "tools/n76/prepare_sources.py": "a9afa01387b0ccbae3c0f4b4a6181a670acce5bdb34e62aadec010f6a41cee72",
+    "tools/n76/sources.json": "1edae0dbb29d0e90a853f6056ba9d7a97701b1605ce43435f54caeb9d95b5438",
+    "tools/n76/test_identity.c": "d9fd762b7b3ba9a568fe9831ad66cdbf2921a975d7ef092bd0841e70237410e7",
+    "tools/n76/test_prepare_sources.py": "6b6505d48204a157ace002c64319432f9acbf5eb390edc8230d994426bdc81ce",
+    "tools/n76/ugreenctl_n76_identity.h": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189"
+  },
+  "qemu_exit": 0,
+  "test_exit": [
+    "0"
+  ],
+  "passed": true
+}

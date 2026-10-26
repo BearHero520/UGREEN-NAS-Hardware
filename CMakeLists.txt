@@ -180,6 +180,9 @@ install(FILES scripts/ugreenctl-startup.service DESTINATION ${CMAKE_INSTALL_DOCD
 install(PROGRAMS scripts/collect-disk-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(PROGRAMS scripts/collect-led-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 install(PROGRAMS scripts/ugreenctl-startup.py DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(PROGRAMS scripts/ugreenctl-n76.py DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME ugreenctl-n76)
+install(FILES tools/n76/prepare_sources.py tools/n76/sources.json tools/n76/ugreenctl_n76_identity.h
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/ugreenctl/n76)
 install(FILES models/official-products.json DESTINATION ${CMAKE_INSTALL_DOCDIR}/models)
 install(FILES
   integration/llled/ac-recovery/README.zh-CN.md
@@ -201,17 +204,29 @@ install(FILES
   docs/ALMIGHTY_STATUS.zh-CN.md
   docs/BUILD_REPRODUCIBILITY.zh-CN.md
   docs/AC_RECOVERY_PERSISTENCE.zh-CN.md
+  docs/N76_MANUAL_BUILD.zh-CN.md
   docs/DX4600_REVERSE_ENGINEERING.zh-CN.md
   DESTINATION ${CMAKE_INSTALL_DOCDIR}/docs
 )
 
 if(BUILD_TESTING)
+  # The kernel-facing identity helper is tested against read-only mock APIs.
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/n76-test-stubs/linux)
+  foreach(header dmi errno i2c string)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/n76-test-stubs/linux/${header}.h "/* Test-only kernel API stub. */\n")
+  endforeach()
+  add_executable(test-n76-identity tools/n76/test_identity.c)
+  target_include_directories(test-n76-identity PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/n76-test-stubs ${CMAKE_CURRENT_SOURCE_DIR}/tools/n76)
+  target_compile_options(test-n76-identity PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+  add_test(NAME n76-identity COMMAND test-n76-identity)
   # Packaging runs on the build host and does not execute inspected ELF data.
   find_package(Python3 3.10 QUIET COMPONENTS Interpreter)
   if(Python3_Interpreter_FOUND)
     add_test(NAME package-runtime COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_runtime.py)
     add_test(NAME package-policy COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_almighty.py)
     add_test(NAME startup-state COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_startup_state.py)
+    add_test(NAME n76-build-policy COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_n76_build.py)
+    add_test(NAME n76-source-policy COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/n76/test_prepare_sources.py)
   endif()
   add_test(NAME cli-help COMMAND ugreenctl --help)
   add_test(NAME led-cli-help COMMAND ugreenctl led --help)

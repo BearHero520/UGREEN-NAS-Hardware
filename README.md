@@ -1,5 +1,9 @@
 # ugreenctl
 
+On the `Almighty` branch, the optional [N76 manual build helper](docs/N76_MANUAL_BUILD.zh-CN.md)
+prepares matching-kernel modules for DH2600 and DXP480T Plus. It defaults to a
+read-only plan and does not install or load modules.
+
 The `Almighty` branch adds native LED control, physical SATA/NVMe bay mapping and an
 optional `ugreen_leds_cli` argument-compatible executable. See
 [LED and disk commands](docs/LED_CONTROL.zh-CN.md) for commands, evidence and

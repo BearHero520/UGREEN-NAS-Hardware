@@ -1,0 +1,112 @@
+{
+  "existing_native_products_unchanged": {
+    "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/ugreen_leds_cli": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-ledd": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/ugreenctl-fand": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-led": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-led-service": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-led-cs201x": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-disk-mapping": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-identity": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/test-hardware-cli": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dx4600.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp2800.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800plus.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp4800s.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp480tplus.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800plus.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp6800pro.so": true,
+    "firmware-inbox/work/almighty-portable-build-x86_64/models/dxp8800plus.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/ugreen_leds_cli": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-ledd": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/ugreenctl-fand": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-led": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-led-service": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-led-cs201x": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-disk-mapping": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-identity": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/test-hardware-cli": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dx4600.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp2800.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800plus.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp4800s.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp480tplus.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800plus.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp6800pro.so": true,
+    "firmware-inbox/work/almighty-portable-build-aarch64/models/dxp8800plus.so": true
+  },
+  "staged": {
+    "x86_64": {
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--install",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-x86_64",
+        "--prefix",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-n76-manual-build-20261026/stage-x86_64"
+      ],
+      "returncode": 0,
+      "log_sha256": "dc3edf038868b541f8dd3bb21b6704e8a439c49648eb418f899e82bb970543fa",
+      "checked": {
+        "bin/ugreenctl-n76": {
+          "source": "scripts/ugreenctl-n76.py",
+          "sha256": "61c6721c830ac30d732c8cb65038ac9f7393163b7da74c146d6f117140d5de4a"
+        },
+        "share/doc/ugreenctl/docs/N76_MANUAL_BUILD.zh-CN.md": {
+          "source": "docs/N76_MANUAL_BUILD.zh-CN.md",
+          "sha256": "e6ffe18ea05d5820b1ca289260caf7a71bc927bc1bb32e3175506d038ac304af"
+        },
+        "share/ugreenctl/n76/prepare_sources.py": {
+          "source": "tools/n76/prepare_sources.py",
+          "sha256": "a9afa01387b0ccbae3c0f4b4a6181a670acce5bdb34e62aadec010f6a41cee72"
+        },
+        "share/ugreenctl/n76/sources.json": {
+          "source": "tools/n76/sources.json",
+          "sha256": "1edae0dbb29d0e90a853f6056ba9d7a97701b1605ce43435f54caeb9d95b5438"
+        },
+        "share/ugreenctl/n76/ugreenctl_n76_identity.h": {
+          "source": "tools/n76/ugreenctl_n76_identity.h",
+          "sha256": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189"
+        }
+      },
+      "no_kernel_modules_or_upstream_sources": true
+    },
+    "aarch64": {
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--install",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "--prefix",
+        "<SOURCE_ROOT>/firmware-inbox/work/almighty-n76-manual-build-20261026/stage-aarch64"
+      ],
+      "returncode": 0,
+      "log_sha256": "97b5bac69121e7fbc4d1223e3f845c5432a440ae6d9206d5a46df905e7765fa0",
+      "checked": {
+        "bin/ugreenctl-n76": {
+          "source": "scripts/ugreenctl-n76.py",
+          "sha256": "61c6721c830ac30d732c8cb65038ac9f7393163b7da74c146d6f117140d5de4a"
+        },
+        "share/doc/ugreenctl/docs/N76_MANUAL_BUILD.zh-CN.md": {
+          "source": "docs/N76_MANUAL_BUILD.zh-CN.md",
+          "sha256": "e6ffe18ea05d5820b1ca289260caf7a71bc927bc1bb32e3175506d038ac304af"
+        },
+        "share/ugreenctl/n76/prepare_sources.py": {
+          "source": "tools/n76/prepare_sources.py",
+          "sha256": "a9afa01387b0ccbae3c0f4b4a6181a670acce5bdb34e62aadec010f6a41cee72"
+        },
+        "share/ugreenctl/n76/sources.json": {
+          "source": "tools/n76/sources.json",
+          "sha256": "1edae0dbb29d0e90a853f6056ba9d7a97701b1605ce43435f54caeb9d95b5438"
+        },
+        "share/ugreenctl/n76/ugreenctl_n76_identity.h": {
+          "source": "tools/n76/ugreenctl_n76_identity.h",
+          "sha256": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189"
+        }
+      },
+      "no_kernel_modules_or_upstream_sources": true
+    }
+  }
+}

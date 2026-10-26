@@ -1,0 +1,59 @@
+{
+  "arch": "aarch64",
+  "build_dir": "firmware-inbox/work/almighty-portable-build-aarch64",
+  "steps": [
+    {
+      "step": "configure",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "-S",
+        "<SOURCE_ROOT>",
+        "-B",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "-G",
+        "Ninja",
+        "-DCMAKE_MAKE_PROGRAM=<SOURCE_ROOT>/firmware-inbox/work/tools/cmake-python/bin/ninja.exe",
+        "-DCMAKE_TOOLCHAIN_FILE=<SOURCE_ROOT>/tools/toolchains/zig-linux.cmake",
+        "-DUGREENCTL_TARGET_ARCH=aarch64",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/usr/local",
+        "-DCMAKE_INSTALL_LIBDIR=lib",
+        "-DUGREENCTL_INSTALL_LED_COMPAT=ON",
+        "-DCMAKE_CROSSCOMPILING_EMULATOR=C:\\Program Files\\Python311\\python.exe;<SOURCE_ROOT>/tools/testing/run_linux.py;--runtime-root;<SOURCE_ROOT>/firmware-inbox/work/almighty-tools"
+      ],
+      "returncode": 0,
+      "seconds": 0.38,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-configure-aarch64.log",
+      "sha256": "ae27f4a91bdf0a5f99281a5d2e0663f28b2ee13fd8a398b50fba257a551a3fb2"
+    },
+    {
+      "step": "build",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\cmake.exe",
+        "--build",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "--parallel",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 0.48,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-build-aarch64.log",
+      "sha256": "c0b39cff9b2f3466190a3430225270c487d10f5607e83b2088d475af77680fa7"
+    },
+    {
+      "step": "ctest",
+      "command": [
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\tools\\cmake-python\\cmake\\data\\bin\\ctest.exe",
+        "--test-dir",
+        "<SOURCE_ROOT>\\firmware-inbox\\work\\almighty-portable-build-aarch64",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "seconds": 71.17,
+      "path": "firmware-inbox/work/almighty-n76-manual-build-20261026/accepted-ctest-aarch64.log",
+      "sha256": "0fb04ab17fe619b9996558d01fa4d6d11fee9f309c1b7ed98a5d714192b6d411"
+    }
+  ],
+  "passed": true,
+  "physical_validation": false
+}

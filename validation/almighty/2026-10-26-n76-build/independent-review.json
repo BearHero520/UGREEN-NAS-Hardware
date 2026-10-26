@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-26",
+  "scope": "Independent read-only helper/source review plus isolated direct external-module compilation and Linux filesystem policy tests",
+  "inputs": {
+    "headers": {
+      "path": "firmware-inbox/work/almighty-led-n76-diff/public/linux-headers-6.18.15_6.18.15-gc05395988e2f+public3-1_amd64.deb",
+      "sha256": "8c975501c942b1d9b4aca779038bdee9ada1a5514ed9800b6cdd160b5a7608a7",
+      "source": "https://raw.githubusercontent.com/ugreen-opensource/linux-headers-6.18.15/93bb15298f306b2beb04f7e9ad5e43a1136a0b04/linux-headers-6.18.15_6.18.15-gc05395988e2f+public3-1_amd64.deb"
+    },
+    "compiler_packages_manifest": "builddeps-manifest.json",
+    "compiler_packages_bytes": 39059500,
+    "source_commit": "c75c5abd60dd45f45966720293ce1ee505fb8615"
+  },
+  "compile": {
+    "method": "env -i PATH=/usr/bin:/bin:/usr/sbin:/sbin LC_ALL=C make -C /usr/src/linux-headers-6.18.15 M=/work/<model> CC=gcc-12 V=1 -j2 modules",
+    "running_vm_kernel": "6.12.110-0-virt x86_64",
+    "target_kernel": "6.18.15",
+    "compiler": "gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0",
+    "binutils": "2.40",
+    "make": "4.3",
+    "models": [
+      "DH2600",
+      "DXP480T Plus"
+    ],
+    "module_count": 6,
+    "strict_modpost": true,
+    "build_exits": [
+      0,
+      0
+    ],
+    "vm_exit_marker": 0,
+    "config_modversions": false,
+    "independent_elf_report": "compile-first/independent-elf-analysis.json",
+    "serial": "compile-first/serial.log",
+    "warnings": [
+      "Kbuild compiler identity string differs only executable spelling gcc vs gcc-12; exact package version matches",
+      "Existing upstream unused ver/need/helper warnings",
+      "Optional BTF generation skipped because official headers package omits vmlinux"
+    ],
+    "harness_note": "Initial compile harness postprocessor expected license GPL and __versions unconditionally; corrected independent postprocessing verifies actual GPLv2 and handles official CONFIG_MODVERSIONS disabled. Compilation itself succeeded before postprocessing."
+  },
+  "linux_policy": {
+    "report": "policy-final-bytecode-ctime/summary.json",
+    "helper_tests": 22,
+    "source_tests": 12,
+    "skips": 0,
+    "exit": 0,
+    "scope": "Synthetic DMI/header fixtures plus actual Linux private directory ownership/modes, flock, symlink, hardlink, FIFO and cache race checks",
+    "serial": "policy-final-bytecode-ctime/serial.log",
+    "exact_dmi_padding_refusal": true,
+    "no_bytecode_dry_run": true,
+    "platform_file_time_identity_regression": true
+  },
+  "isolation": {
+    "qemu_ram_only": true,
+    "network": false,
+    "host_mounts": false,
+    "block_drives": false,
+    "hardware_passthrough": false,
+    "module_install": false,
+    "module_load": false,
+    "package_manager": false,
+    "maintainer_scripts": false,
+    "hardware_validation": false
+  },
+  "changed_production_files_by_reviewer": false,
+  "changed_LLLED_FPK": false,
+  "committed": false,
+  "pushed": false,
+  "reviewed_files_sha256": {
+    "scripts/ugreenctl-n76.py": "61c6721c830ac30d732c8cb65038ac9f7393163b7da74c146d6f117140d5de4a",
+    "tests/test_n76_build.py": "50fbb76a7e7351a42b7bcae4aa14ec80d467f346e58db9401611f7c28cd6d2b5",
+    "tools/n76/prepare_sources.py": "a9afa01387b0ccbae3c0f4b4a6181a670acce5bdb34e62aadec010f6a41cee72",
+    "tools/n76/sources.json": "1edae0dbb29d0e90a853f6056ba9d7a97701b1605ce43435f54caeb9d95b5438",
+    "tools/n76/ugreenctl_n76_identity.h": "103761eb1c5393e76fcd000d1025c3bad6c98022e92d9bd18effce0f083b1189",
+    "tools/n76/test_prepare_sources.py": "6b6505d48204a157ace002c64319432f9acbf5eb390edc8230d994426bdc81ce"
+  },
+  "official_docs": [
+    "https://docs.kernel.org/kbuild/modules.html",
+    "https://docs.kernel.org/kbuild/kbuild.html"
+  ],
+  "review_findings": [
+    "Resolved /lib/modules alias workspace guard addressed by parent",
+    "Executable fixdep/modpost and conditional objtool prerequisites addressed by parent",
+    "Empty vermagic metadata exception addressed by parent",
+    "Exact DMI gate now removes only sysfs terminal newline and rejects padded strings; Linux policy tests pass",
+    "Scoped no-bytecode source import and platform file-time identity adjustment reviewed; final Linux22+12tests passed"
+  ],
+  "final_review_status": "passed; no outstanding material findings in reviewed build-only scope",
+  "limits": [
+    "Production inspect_host is intentionally not end-to-end exercised in success mode because host is Windows and isolated VM running kernel differs from target 6.18.15",
+    "No module loading, controller or LED hardware validation",
+    "Kernel6.18.15 actual compile does not establish compatibility with every supported distribution/kernel version"
+  ]
+}

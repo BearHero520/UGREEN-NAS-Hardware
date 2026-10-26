@@ -1,0 +1,210 @@
+{
+  "metadata_url": "https://deb.debian.org/debian/dists/bookworm/main/binary-amd64/Packages.xz",
+  "metadata_sha256": "9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5",
+  "release_url": "https://deb.debian.org/debian/dists/bookworm/Release",
+  "release_sha256": "abcf5882746e0f68171f41adbb4ac01b74b49d62d203379befb9265804311a4f",
+  "release_checksum": "9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5  8790396 main/binary-amd64/Packages.xz",
+  "verification": "HTTPS publisher Release SHA256 -> Packages.xz -> package SHA256; no package manager or maintainer scripts executed",
+  "packages": [
+    {
+      "Package": "gcc-12",
+      "Version": "12.2.0-14+deb12u1",
+      "Filename": "pool/main/g/gcc-12/gcc-12_12.2.0-14+deb12u1_amd64.deb",
+      "Size": "19268852",
+      "SHA256": "b46f33cc2ec245e435e043807038cecf4b201ef004800e9dfc1455240360e49d",
+      "Depends": "cpp-12 (= 12.2.0-14+deb12u1), gcc-12-base (= 12.2.0-14+deb12u1), libcc1-0 (>= 12.2.0-14+deb12u1), binutils (>= 2.40), libgcc-12-dev (= 12.2.0-14+deb12u1), libc6 (>= 2.36), libgcc-s1 (>= 3.0), libgmp10 (>= 2:6.2.1+dfsg1), libisl23 (>= 0.15), libmpc3 (>= 1.1.0), libmpfr6 (>= 3.1.3), libstdc++6 (>= 5), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/gcc-12_12.2.0-14+deb12u1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/gcc-12_12.2.0-14+deb12u1_amd64.deb"
+    },
+    {
+      "Package": "cpp-12",
+      "Version": "12.2.0-14+deb12u1",
+      "Filename": "pool/main/g/gcc-12/cpp-12_12.2.0-14+deb12u1_amd64.deb",
+      "Size": "9767788",
+      "SHA256": "fedbb98e877adde83c983c6071537ea25ac52b277ac6e4637d85025949ca1454",
+      "Depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.36), libgmp10 (>= 2:6.2.1+dfsg1), libisl23 (>= 0.15), libmpc3 (>= 1.1.0), libmpfr6 (>= 3.1.3), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/cpp-12_12.2.0-14+deb12u1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/cpp-12_12.2.0-14+deb12u1_amd64.deb"
+    },
+    {
+      "Package": "libgcc-12-dev",
+      "Version": "12.2.0-14+deb12u1",
+      "Filename": "pool/main/g/gcc-12/libgcc-12-dev_12.2.0-14+deb12u1_amd64.deb",
+      "Size": "2437204",
+      "SHA256": "d720259380a84f2ffc6fe516eff5cbe9c8a005138e8d6a5748747ba4b3404a82",
+      "Depends": "gcc-12-base (= 12.2.0-14+deb12u1), libgcc-s1 (>= 12.2.0-14+deb12u1), libgomp1 (>= 12.2.0-14+deb12u1), libitm1 (>= 12.2.0-14+deb12u1), libatomic1 (>= 12.2.0-14+deb12u1), libasan8 (>= 12.2.0-14+deb12u1), liblsan0 (>= 12.2.0-14+deb12u1), libtsan2 (>= 12.2.0-14+deb12u1), libubsan1 (>= 12.2.0-14+deb12u1), libquadmath0 (>= 12.2.0-14+deb12u1)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libgcc-12-dev_12.2.0-14+deb12u1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libgcc-12-dev_12.2.0-14+deb12u1_amd64.deb"
+    },
+    {
+      "Package": "binutils",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/binutils_2.40-2_amd64.deb",
+      "Size": "64980",
+      "SHA256": "83c3e20b53e1fbd84d764c3ba27d26a0376e361ae5d7fb37120196934dd87424",
+      "Depends": "binutils-common (= 2.40-2), libbinutils (= 2.40-2), binutils-x86-64-linux-gnu (= 2.40-2)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/binutils_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/binutils_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "binutils-x86-64-linux-gnu",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/binutils-x86-64-linux-gnu_2.40-2_amd64.deb",
+      "Size": "2245848",
+      "SHA256": "2d7ea8a570d768224d7f2424abbe6f373d2154865a1fa7f56c80d43ecf492521",
+      "Depends": "binutils-common (= 2.40-2), libbinutils (= 2.40-2), libc6 (>= 2.36), libctf-nobfd0 (>= 2.36), libctf0 (>= 2.36), libgcc-s1 (>= 4.2), libgprofng0 (>= 2.40-2), libjansson4 (>= 2.14), libstdc++6 (>= 5), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/binutils-x86-64-linux-gnu_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/binutils-x86-64-linux-gnu_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "libbinutils",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/libbinutils_2.40-2_amd64.deb",
+      "Size": "572104",
+      "SHA256": "fcf55b99e5f8a78f3c8ce9b6957f1024f394cf20c196b100d308a57e43547710",
+      "Depends": "libc6 (>= 2.34), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.2.0), binutils-common (= 2.40-2)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/libbinutils_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libbinutils_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "libctf0",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/libctf0_2.40-2_amd64.deb",
+      "Size": "89796",
+      "SHA256": "3fb7b6f326be3fae4a87a3d33b9269bd06c1e4346a24bd737f265067e3b7427f",
+      "Depends": "libbinutils (= 2.40-2), libc6 (>= 2.33), zlib1g (>= 1:1.2.0)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/libctf0_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libctf0_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "libctf-nobfd0",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/libctf-nobfd0_2.40-2_amd64.deb",
+      "Size": "153384",
+      "SHA256": "ef1dfcf22de41ea90ebd3d505447ccccd999e96b85aa777a1d7d981dc3b347aa",
+      "Depends": "libc6 (>= 2.14), zlib1g (>= 1:1.2.0)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/libctf-nobfd0_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libctf-nobfd0_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "libgprofng0",
+      "Version": "2.40-2",
+      "Filename": "pool/main/b/binutils/libgprofng0_2.40-2_amd64.deb",
+      "Size": "812120",
+      "SHA256": "a3c4092d84f19d13caf90f3c96eec53db8819f0e3a5247434944d71ed75fa53d",
+      "Depends": "libbinutils (= 2.40-2), libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 5.2), zlib1g (>= 1:1.1.4)",
+      "url": "https://deb.debian.org/debian/pool/main/b/binutils/libgprofng0_2.40-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libgprofng0_2.40-2_amd64.deb"
+    },
+    {
+      "Package": "libjansson4",
+      "Version": "2.14-2",
+      "Filename": "pool/main/j/jansson/libjansson4_2.14-2_amd64.deb",
+      "Size": "40788",
+      "SHA256": "3fc9742f9f1a37bcb9931df6074b4d1483419ef832ad5349f47323e75fc27864",
+      "Depends": "libc6 (>= 2.14)",
+      "url": "https://deb.debian.org/debian/pool/main/j/jansson/libjansson4_2.14-2_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libjansson4_2.14-2_amd64.deb"
+    },
+    {
+      "Package": "libisl23",
+      "Version": "0.25-1.1",
+      "Filename": "pool/main/i/isl/libisl23_0.25-1.1_amd64.deb",
+      "Size": "683060",
+      "SHA256": "ebff0b2f8b220c74224197523019366e97ee4770d464bebc48e4865114e4da0e",
+      "Depends": "libc6 (>= 2.14), libgmp10 (>= 2:6.2.1+dfsg1)",
+      "url": "https://deb.debian.org/debian/pool/main/i/isl/libisl23_0.25-1.1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libisl23_0.25-1.1_amd64.deb"
+    },
+    {
+      "Package": "libgmp10",
+      "Version": "2:6.2.1+dfsg1-1.1",
+      "Filename": "pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1_amd64.deb",
+      "Size": "562588",
+      "SHA256": "187aedef2ed763f425c1e523753b9719677633c7eede660401739e9c893482bd",
+      "Depends": "libc6 (>= 2.14)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libgmp10_6.2.1+dfsg1-1.1_amd64.deb"
+    },
+    {
+      "Package": "libmpc3",
+      "Version": "1.3.1-1",
+      "Filename": "pool/main/m/mpclib3/libmpc3_1.3.1-1_amd64.deb",
+      "Size": "51480",
+      "SHA256": "d7f79544790e44f9b0c8cb9034a18c58d37f8702a15f32539050718679e52f80",
+      "Depends": "libc6 (>= 2.4), libgmp10 (>= 2:6.2.1+dfsg1), libmpfr6 (>= 4.0.0)",
+      "url": "https://deb.debian.org/debian/pool/main/m/mpclib3/libmpc3_1.3.1-1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libmpc3_1.3.1-1_amd64.deb"
+    },
+    {
+      "Package": "libmpfr6",
+      "Version": "4.2.0-1",
+      "Filename": "pool/main/m/mpfr4/libmpfr6_4.2.0-1_amd64.deb",
+      "Size": "700900",
+      "SHA256": "37b7a2b4e78890b6a074777f27b96c84f58e81558ba08410c2b6c0ca4a4ad77b",
+      "Depends": "libc6 (>= 2.14), libgmp10 (>= 2:6.2.1+dfsg1)",
+      "url": "https://deb.debian.org/debian/pool/main/m/mpfr4/libmpfr6_4.2.0-1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libmpfr6_4.2.0-1_amd64.deb"
+    },
+    {
+      "Package": "zlib1g",
+      "Version": "1:1.2.13.dfsg-1",
+      "Filename": "pool/main/z/zlib/zlib1g_1.2.13.dfsg-1_amd64.deb",
+      "Size": "86684",
+      "SHA256": "d7dd1d1411fedf27f5e27650a6eff20ef294077b568f4c8c5e51466dc7c08ce4",
+      "Depends": "libc6 (>= 2.14)",
+      "url": "https://deb.debian.org/debian/pool/main/z/zlib/zlib1g_1.2.13.dfsg-1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/zlib1g_1.2.13.dfsg-1_amd64.deb"
+    },
+    {
+      "Package": "libzstd1",
+      "Version": "1.5.4+dfsg2-5",
+      "Filename": "pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-5_amd64.deb",
+      "Size": "290036",
+      "SHA256": "6315b5ac38b724a710fb96bf1042019398cb656718b1522279a5185ed39318fa",
+      "Depends": "libc6 (>= 2.34)",
+      "url": "https://deb.debian.org/debian/pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-5_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libzstd1_1.5.4+dfsg2-5_amd64.deb"
+    },
+    {
+      "Package": "make",
+      "Version": "4.3-4.1",
+      "Filename": "pool/main/m/make-dfsg/make_4.3-4.1_amd64.deb",
+      "Size": "395632",
+      "SHA256": "a1a83af8cbd854af887b72ad196b1f4af58387815e21ced1000253a116a46e2a",
+      "Depends": "libc6 (>= 2.27)",
+      "url": "https://deb.debian.org/debian/pool/main/m/make-dfsg/make_4.3-4.1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/make_4.3-4.1_amd64.deb"
+    },
+    {
+      "Package": "libelf1",
+      "Version": "0.188-2.1",
+      "Filename": "pool/main/e/elfutils/libelf1_0.188-2.1_amd64.deb",
+      "Size": "173796",
+      "SHA256": "619add379c606b3ac6c1a175853b918e6939598a83d8ebadf3bdfd50d10b3c8c",
+      "Depends": "libc6 (>= 2.34), zlib1g (>= 1:1.1.4)",
+      "url": "https://deb.debian.org/debian/pool/main/e/elfutils/libelf1_0.188-2.1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libelf1_0.188-2.1_amd64.deb"
+    },
+    {
+      "Package": "libgcc-s1",
+      "Version": "12.2.0-14+deb12u1",
+      "Filename": "pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_amd64.deb",
+      "Size": "49856",
+      "SHA256": "3016e62cb4b7cd8038822870601f5ed131befe942774d0f745622cc77d8a88f7",
+      "Depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.35)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libgcc-s1_12.2.0-14+deb12u1_amd64.deb"
+    },
+    {
+      "Package": "libstdc++6",
+      "Version": "12.2.0-14+deb12u1",
+      "Filename": "pool/main/g/gcc-12/libstdc++6_12.2.0-14+deb12u1_amd64.deb",
+      "Size": "612604",
+      "SHA256": "5cd3171216d4ab0fc911cfe9c35509bf2dd8f47761c43b7f6a4296701551a24d",
+      "Depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.36), libgcc-s1 (>= 4.2)",
+      "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libstdc++6_12.2.0-14+deb12u1_amd64.deb",
+      "input": "firmware-inbox/input/n76-build-20261026/libstdc++6_12.2.0-14+deb12u1_amd64.deb"
+    }
+  ]
+}
