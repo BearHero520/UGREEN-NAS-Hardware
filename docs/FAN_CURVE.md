@@ -14,9 +14,9 @@ written back through the exact-DMI `ugreenctl` plugin. The existing controller
 owner checks, process lock, minimum PWM floor, manual-mode selection and
 readback therefore still apply to every update.
 
-## Recovered vendor profiles
+## Recovered vendor profiles and compatibility presets
 
-The following points were read from the vendor universal image supplied for
+Except for the explicitly labeled Plus compatibility preset, the following points were read from the vendor universal image supplied for
 DX4600, DXP480T Plus, DXP6800 Pro, DXP4800S and DXP4800 Plus. All files have the
 same SHA-256 (`7bb2746324ac852475727cf23f7016517996b91dfb293d2292d531c1e71581b0`).
 Its `hwmonitor-480t` binary selects the corresponding `/etc/default/*.conf`
@@ -35,6 +35,12 @@ and linearly interpolates between them; it never writes a stop/zero PWM.
 | DXP4800 Plus / Pro | `stock-4800plus` | 42 / 50 / 70 / 78 / 90 | 30 / 40 / 46 / 52 / 55 | 50 / 55 / 60 / 65 / 70 | 65 / 125 / 200 / 235 | 60 / 125 / 205 / 230 |
 | DXP480T Plus | `stock-480tplus` | 25 / 55 / 75 / 85 / 95 | disabled (0 / 0 / 0 / 0 / 0) | 40 / 50 / 60 / 70 / 80 | 55 / 90 / 110 / 128 | 70 / 130 / 150 / 200 |
 | DXP6800 Pro | `stock-6800pro` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
+| DXP6800 Plus (Pro parameters, user-selected) | `stock-6800plus` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
+
+On 2026-10-16 the user explicitly requested Pro parameters for Plus. The
+`stock-6800plus` compatibility preset shares the Pro thermal policy, including
+the system CPU floor (65°C/PWM 125 to 90°C/PWM 220), while retaining exact
+Plus DMI routing. It does not establish the original Plus factory curve.
 
 DX4600 ships with `/etc/fan.conf` mode 2. The vendor daemon lowers every
 configured stop/start threshold by 5°C and raises the mid/full PWM points by

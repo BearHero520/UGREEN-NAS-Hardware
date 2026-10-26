@@ -39,7 +39,7 @@ fi
 
 machine=$(uname -m)
 case "$machine" in
-    x86_64|amd64|i?86) ;;
+    x86_64|amd64|i?86|aarch64|arm64) ;;
     *) printf '%s\n' "error: unsupported CPU architecture: $machine" >&2; exit 1 ;;
 esac
 

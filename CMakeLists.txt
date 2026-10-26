@@ -3,11 +3,26 @@ cmake_minimum_required(VERSION 3.20)
 project(ugreenctl VERSION 0.2.0 LANGUAGES C)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  message(FATAL_ERROR "ugreenctl directly accesses Linux x86 I/O ports and can only be built on Linux.")
+  message(FATAL_ERROR "ugreenctl requires Linux hardware interfaces.")
 endif()
 
-if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|i[3-6]86)$")
-  message(FATAL_ERROR "ugreenctl currently supports x86/x86_64 UGREEN NAS hardware only.")
+# A Windows-hosted Linux cross-build must embed a Linux plugin directory.
+# CMake otherwise defaults to a Windows Program Files installation prefix.
+if(CMAKE_CROSSCOMPILING AND CMAKE_HOST_WIN32)
+  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Linux installation prefix" FORCE)
+  endif()
+  if(NOT CMAKE_INSTALL_PREFIX MATCHES "^/" OR CMAKE_INSTALL_PREFIX MATCHES "[:\\\\]")
+    message(FATAL_ERROR "Linux cross-builds require a Linux absolute CMAKE_INSTALL_PREFIX, for example /usr/local.")
+  endif()
+endif()
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|i[3-6]86)$")
+  set(UGREENCTL_SUPERIO_SOURCE superio/it86x.c)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
+  set(UGREENCTL_SUPERIO_SOURCE superio/it86x_unavailable.c)
+else()
+  message(FATAL_ERROR "ugreenctl supports Linux x86/x86_64 and ARM64 hardware only.")
 endif()
 
 include(GNUInstallDirs)
@@ -28,7 +43,8 @@ target_link_libraries(ugreenctl_core PRIVATE dl)
 set_target_properties(ugreenctl_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(ugreenctl_hardware STATIC
-  superio/it86x.c
+  ${UGREENCTL_SUPERIO_SOURCE}
+  core/identity.c
   fan/it8613_direct.c
   fan/it8613_hwmon.c
   fan/it8613_fan.c
@@ -37,6 +53,7 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
   fan/it8613_dxp6800pro.c
+  fan/it8613_dxp6800plus.c
   fan/thermal_curve.c
   power/it8613_power.c
   power/rtc_wake.c
@@ -48,6 +65,14 @@ add_library(ugreenctl_hardware STATIC
   network/wol_dxp480tplus.c
   network/wol_dxp6800pro.c
   led/led.c
+  led/led_protocol.c
+  led/led_sysfs.c
+  led/led_gpio.c
+  led/led_service.c
+  led/led_cs201x.c
+  models/led_profiles.c
+  disk/disk.c
+  disk/firmware_profiles.c
   ec/ec.c
 )
 target_include_directories(ugreenctl_hardware PUBLIC
@@ -56,12 +81,25 @@ target_include_directories(ugreenctl_hardware PUBLIC
 )
 set_target_properties(ugreenctl_hardware PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+add_library(ugreenctl_cli STATIC core/hardware_cli.c)
+target_include_directories(ugreenctl_cli PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_link_libraries(ugreenctl_cli PUBLIC ugreenctl_hardware ugreenctl_core)
+
 add_executable(ugreenctl core/main.c)
 target_include_directories(ugreenctl PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(ugreenctl PRIVATE ugreenctl_core ugreenctl_hardware dl)
+target_link_libraries(ugreenctl PRIVATE ugreenctl_core ugreenctl_cli dl)
+
+add_executable(ugreen_leds_cli core/led_compat_main.c)
+target_link_libraries(ugreen_leds_cli PRIVATE ugreenctl_cli)
+
+add_executable(ugreenctl-ledd core/led_daemon_main.c)
+target_link_libraries(ugreenctl-ledd PRIVATE ugreenctl_hardware)
 
 add_executable(ugreenctl-fand core/fan_daemon.c)
 target_include_directories(ugreenctl-fand PRIVATE
@@ -70,7 +108,7 @@ target_include_directories(ugreenctl-fand PRIVATE
 )
 target_link_libraries(ugreenctl-fand PRIVATE ugreenctl_hardware)
 
-foreach(target ugreenctl_core ugreenctl_hardware ugreenctl ugreenctl-fand)
+foreach(target ugreenctl_core ugreenctl_hardware ugreenctl_cli ugreenctl ugreenctl-fand ugreen_leds_cli ugreenctl-ledd)
   target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
 endforeach()
 
@@ -96,11 +134,17 @@ add_model_plugin(dxp2800 models/unsupported_model.c)
 target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
 add_model_plugin(dxp4800 models/dxp4800.c)
 add_model_plugin(dxp6800pro models/dxp6800pro.c)
+add_model_plugin(dxp6800plus models/dxp6800plus.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
-install(TARGETS ugreenctl ugreenctl-fand RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp8800plus
+install(TARGETS ugreenctl ugreenctl-fand ugreenctl-ledd RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+# Keep the compatibility name opt-in so installation cannot overwrite an existing CLI.
+option(UGREENCTL_INSTALL_LED_COMPAT "Install the ugreen_leds_cli compatibility executable" OFF)
+if(UGREENCTL_INSTALL_LED_COMPAT)
+  install(TARGETS ugreen_leds_cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp8800plus
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
@@ -118,17 +162,75 @@ install(FILES
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
+  docs/DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md
   docs/DXP4800S_1.19.md
   docs/DXP4800S_INTAKE.md
   docs/DX4600_INTAKE.md
   docs/FAN_CURVE.md
+  THIRD_PARTY_NOTICES.md
   docs/NEW_MODEL_TEMPLATE.md
   models/compatibility.json
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
 )
+install(FILES led/LICENSE.upstream-led DESTINATION ${CMAKE_INSTALL_DOCDIR}/led)
+install(FILES disk/NOTICE.md DESTINATION ${CMAKE_INSTALL_DOCDIR}/disk)
+install(FILES scripts/ugreenctl-ledd.service DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(FILES scripts/ugreenctl-ledd-gt.service DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(PROGRAMS scripts/collect-disk-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(PROGRAMS scripts/collect-led-evidence.sh DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+install(FILES models/official-products.json DESTINATION ${CMAKE_INSTALL_DOCDIR}/models)
+install(FILES
+  docs/LED_CONTROL.zh-CN.md
+  docs/LINUX_DEPLOYMENT.zh-CN.md
+  docs/DISK_MAPPING_FIRMWARE.zh-CN.md
+  docs/ALL_MODELS_FIRMWARE_INTAKE.zh-CN.md
+  docs/ALL_MODELS_LED_EVIDENCE.zh-CN.md
+  docs/ALL_MODELS_DISK_EVIDENCE.zh-CN.md
+  docs/FIRMWARE_RUNTIME_TRACE_20261026.zh-CN.md
+  docs/DH2100_FIRMWARE_SEARCH.zh-CN.md
+  docs/DXP2800_GT_LED_REVERSE.zh-CN.md
+  docs/LED_EVIDENCE_COLLECTION.zh-CN.md
+  docs/DX4600_REVERSE_ENGINEERING.zh-CN.md
+  DESTINATION ${CMAKE_INSTALL_DOCDIR}/docs
+)
 
 if(BUILD_TESTING)
+  # Packaging runs on the build host and does not execute inspected ELF data.
+  find_package(Python3 3.10 QUIET COMPONENTS Interpreter)
+  if(Python3_Interpreter_FOUND)
+    add_test(NAME package-runtime COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_runtime.py)
+  endif()
   add_test(NAME cli-help COMMAND ugreenctl --help)
+  add_test(NAME led-cli-help COMMAND ugreenctl led --help)
+  add_test(NAME led-compat-help COMMAND ugreen_leds_cli --help)
+  add_test(NAME led-holder-help COMMAND ugreenctl-ledd --help)
+  add_executable(test-led tests/test_led.c tests/test_led_gpio.c led/led.c led/led_protocol.c led/led_sysfs.c led/led_gpio.c led/led_service.c led/led_cs201x.c models/led_profiles.c core/identity.c)
+  target_include_directories(test-led PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_compile_definitions(test-led PRIVATE UGREENCTL_LED_TESTING)
+  target_compile_options(test-led PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME led COMMAND test-led)
+  add_executable(test-led-service tests/test_led_service.c led/led_service.c)
+  target_compile_definitions(test-led-service PRIVATE UGREENCTL_LED_SERVICE_TESTING)
+  target_compile_options(test-led-service PRIVATE -Wall -Wextra -Wpedantic)
+  target_link_libraries(test-led-service PRIVATE ugreenctl_hardware)
+  add_test(NAME led-holder COMMAND test-led-service)
+  add_executable(test-led-cs201x tests/test_led_cs201x.c led/led_cs201x.c)
+  target_include_directories(test-led-cs201x PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_compile_definitions(test-led-cs201x PRIVATE UGREENCTL_LED_TESTING)
+  target_compile_options(test-led-cs201x PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME led-cs201x COMMAND test-led-cs201x)
+  add_executable(test-disk-mapping tests/test_disk_mapping.c disk/disk.c disk/firmware_profiles.c)
+  target_include_directories(test-disk-mapping PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_compile_options(test-disk-mapping PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME disk-mapping COMMAND test-disk-mapping)
+  add_executable(test-identity tests/test_identity.c core/identity.c)
+  target_include_directories(test-identity PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-identity PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME identity COMMAND test-identity)
+  add_executable(test-hardware-cli tests/test_hardware_cli.c)
+  target_link_libraries(test-hardware-cli PRIVATE ugreenctl_cli)
+  target_compile_options(test-hardware-cli PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME hardware-cli COMMAND test-hardware-cli)
   add_executable(test-it8613-hwmon tests/test_it8613_hwmon.c)
   target_include_directories(test-it8613-hwmon PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -240,6 +342,16 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp6800pro PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp6800pro COMMAND test-it8613-dxp6800pro)
+  add_executable(test-it8613-dxp6800plus
+    tests/test_it8613_dxp6800plus.c
+    fan/it8613_dxp6800plus.c
+  )
+  target_include_directories(test-it8613-dxp6800plus PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp6800plus PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp6800plus COMMAND test-it8613-dxp6800plus)
   add_executable(test-thermal-curve tests/test_thermal_curve.c)
   target_include_directories(test-thermal-curve PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include

@@ -5,6 +5,10 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 [English](README.md) · [兼容性目录](docs/COMPATIBILITY.zh-CN.md) ·
 [Compatibility catalog](docs/COMPATIBILITY.md)
 
+`Almighty` 分支新增原生 LED 控制、物理盘位映射及 `ugreen_leds_cli` 参数兼容入口。
+快速开始与逐机型限制见 [灯光与盘位说明](docs/LED_CONTROL.zh-CN.md)。
+各 Linux NAS 的运行库、持久目录和服务要求见 [部署指南](docs/LINUX_DEPLOYMENT.zh-CN.md)。
+
 它按照 NAS 机型加载独立的 .so 插件。已实机验证的机型开放正常写入；仅完成固件逆向
 的机型只能在保留全部保护并明确确认风险时开放受限写入。models/ 中存在某机型的插件，
 不代表该机型已被支持。
@@ -22,16 +26,23 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 | DXP4800S (`dxp4800s`) | UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | `sys` 风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；PWM 安全范围为 `40..255`，写入需 `--force --apply`。 |
 | DXP480T Plus (`dxp480tplus`) | UGOS Pro `1.17.0.95`，Build `20260630.111337`，内核 `6.12.30+` | CPU/系统风扇读数、`cpu`/`all` PWM、来电启动、WOL、计划唤醒 | CPU 写入已有实机反馈；系统风扇对 (`all`) 的更正固件映射、直控兜底、WOL 和计划唤醒仍待受控实机验证。 |
 | DXP6800 Pro (`dxp6800pro`) | UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | CPU/成对系统风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；所有写入均需 `--force --apply`。 |
-| DXP2800 / DXP8800 Plus | 无 | 仅用于识别型号 | 没有已实现的硬件控制命令。 |
+| DXP2800 / DXP8800 Plus | 上游 LED 协议记录 | 型号识别与有条件的内置 LED 档案 | 风扇/电源插件仍为占位；LED 写入为实验性。 |
 
-所有机型都要求精确 DMI 匹配。LED 没有已实现的写入协议；不要根据“有插件”推断 LED
-或其他未列功能可用。完整证据和保护条件以
+风扇/电源写入要求精确 DMI；ARM 灯光使用经固件证实的精确设备树型号、
+compatible 和控制器身份。新增 LED 命令使用独立的内置协议档案，
+目前为实验性；不能根据“有插件”推断 LED 或其他未列功能可用。完整证据和保护条件以
 [models/compatibility.json](models/compatibility.json) 与
 [硬件支持说明](docs/HARDWARE_SUPPORT.md) 为准。
+全机型扩展仍在集成，当前逐款证据见
+[灯光取证](docs/ALL_MODELS_LED_EVIDENCE.zh-CN.md)与
+[盘位取证](docs/ALL_MODELS_DISK_EVIDENCE.zh-CN.md)。ARM 在没有原厂 GPIO LED
+驱动时需要显式运行 `ugreenctl-ledd` 保持 GPIO 线路所有权，不会悄悄后台启动服务。
 
 ## 构建和安装
 
-在 x86/x86_64 Linux（例如 NAS 的 SSH 终端）中执行：
+在 x86/x86_64 或 ARM64 Linux（例如 NAS 的 SSH 终端）中执行。
+ARM64 不提供 x86 Super I/O 端口访问；能够编译不代表未建模功能可用：
+TrueNAS SCALE 请使用部署指南的数据集与预编译方式，不在受保护系统上安装编译依赖。
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
     cmake --build build
@@ -59,7 +70,8 @@ run.sh 会在 build/ 中构建程序，并自动传入正确的插件目录。
 ## 命令怎么用：功能、参数与输出
 
 命令的通用格式是 `ugreenctl [选项] <命令> [参数]`。尖括号表示“需要替换成你自己的值”，
-例如 `fan set cpu 120` 里的 `cpu` 和 `120` 就是两个参数。**所有选项都必须写在命令前面。**
+例如 `fan set cpu 120` 里的 `cpu` 和 `120` 就是两个参数。旧风扇/电源命令的全局选项写在命令前；
+新增 LED/盘位命令的 `--json`、`--apply`、`--force` 可放在命令前后。
 
 第一次使用时，按下面顺序操作即可：
 
@@ -74,7 +86,8 @@ sudo ugreenctl info
 sudo ugreenctl fan status
 ```
 
-如果第 2 步提示 DMI 型号不匹配或没有插件，请停止；不要通过 `--model` 强行指定相近机型。
+如果第 2 步提示 DMI 型号不匹配或没有插件，请停止对应的风扇/电源操作；
+LED/盘位命令使用独立内置档案，可先查看 `led list`。不要通过 `--model` 强行指定相近机型。
 
 ### 选项是什么
 
@@ -104,7 +117,8 @@ sudo ugreenctl fan status
 
 风扇 ID 不能混用：DXP4800 Plus/Pro 是 `cpu`、`sys`；DXP4800 和 DXP4800S
 只有 `sys`；DXP6800 Pro 是 `cpu`、`sys`；DXP480T Plus 是 `cpu`、`all`（两个系统
-风扇一起设置）。`led list` 只是预留入口，当前没有 LED 写入功能。
+风扇一起设置）。`led list/status/set/on/off/identify` 和 `disk list/map/locate`
+的参数、JSON、预览与实验性写入条件见 [LED 文档](docs/LED_CONTROL.zh-CN.md)。
 
 ### 先读取，再预览，最后写入
 

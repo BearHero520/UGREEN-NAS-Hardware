@@ -2,6 +2,20 @@
 
 ugreenctl distinguishes a model profile from supported hardware.
 
+The Almighty LED/disk commands use separate compiled capability profiles. Their
+experimental support and per-revision constraints are documented in
+[LED control and physical mapping](LED_CONTROL.zh-CN.md). The model sections
+below retain the fan/power plugin evidence; an older plugin's null LED callback
+does not describe the newer built-in LED command path.
+
+The all-model extension remains in progress. Per-model firmware facts,
+implementation gaps and fixture coverage are recorded in
+[LED evidence](ALL_MODELS_LED_EVIDENCE.zh-CN.md) and
+[disk evidence](ALL_MODELS_DISK_EVIDENCE.zh-CN.md). Linux ARM64 builds retain
+exact device-tree identity checks and cannot use the x86 Super I/O transport.
+The GPIO holder retains line ownership; its availability does not make an
+unverified model or topology supported.
+
 | Level | Meaning |
 | --- | --- |
 | Supported | Controller identity, access sequence, and every exposed write register are verified on the named model. |
@@ -193,3 +207,7 @@ operation, not a BIOS or LED control operation.
 3. Add read-only status only after comparing it with stock firmware.
 4. Add one write function at a time, with a safe default and documented map.
 5. Include a hardware test record in the pull request.
+
+## DXP6800 Plus
+
+Exact DMI `DXP6800 Plus` has an independent firmware-reversed plugin from UGOS Pro 1.20.0.0142. It provides CPU PWM, paired system PWM, three tachometers and AC recovery, with hwmon priority, guarded direct fallback and `--force --apply`. Custom software curves and `stock-6800plus` are supported. At the user's request, this compatibility preset adopts DXP6800 Pro parameters; it is not a recovered Plus factory curve. The user reports physical validation, but its detailed scope is unavailable. WOL remains unverified. See [firmware evidence](DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md).

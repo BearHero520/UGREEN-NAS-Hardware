@@ -1,5 +1,10 @@
 # DXP6800 Pro fan and BIOS/AC-recovery evidence
 
+The newer user-supplied `6800plus.img` (UGOS Pro 1.20.0.0142) reconfirms
+the fan and AC-recovery register map. See
+[the 1.20 firmware check](DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md).
+Its filename does not establish a supported `DXP6800 Plus` DMI alias.
+
 ## Input and extraction
 
 - User-supplied input: `E:\工作台\固件\6800 pro.img`

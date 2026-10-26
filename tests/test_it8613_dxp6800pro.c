@@ -15,6 +15,8 @@ static uint8_t captured_pwm;
 static unsigned int direct_write_calls;
 static const struct it8613_direct_channel *captured_read_channels;
 static size_t captured_read_channel_count;
+static int hwmon_result = -ENODEV;
+static unsigned int direct_read_calls;
 
 static void fail(const char *message)
 {
@@ -34,7 +36,7 @@ int it8613_hwmon_read_fans(const struct it8613_hwmon_channel *channels,
     (void)fan_count;
     (void)error;
     (void)error_size;
-    return -ENODEV;
+    return hwmon_result;
 }
 
 int it8613_hwmon_set_manual_pwm(const struct it8613_hwmon_channel *channels,
@@ -46,7 +48,7 @@ int it8613_hwmon_set_manual_pwm(const struct it8613_hwmon_channel *channels,
     (void)pwm;
     (void)error;
     (void)error_size;
-    return -ENODEV;
+    return hwmon_result;
 }
 
 int it8613_direct_read_fans(const struct it8613_direct_channel *channels,
@@ -59,6 +61,7 @@ int it8613_direct_read_fans(const struct it8613_direct_channel *channels,
     (void)error;
     (void)error_size;
     captured_read_channels = channels;
+    ++direct_read_calls;
     captured_read_channel_count = channel_count;
     *fan_count = channel_count;
     return 0;
@@ -129,6 +132,22 @@ int main(void)
         fail("DXP6800 Pro target guard");
     }
 
-    (void)puts("DXP6800 Pro direct map tests passed");
+    /* A present hwmon owner must never be bypassed on success or I/O failure. */
+    {
+        const int results[] = {0, -EIO, -EACCES, -EBUSY};
+        size_t i;
+        for (i = 0; i < sizeof(results) / sizeof(results[0]); ++i) {
+            hwmon_result = results[i];
+            if (it8613_dxp6800pro_read_fans(fans, &fan_count, error, sizeof(error)) != hwmon_result ||
+                direct_read_calls != 1) {
+                fail("DXP6800 Pro must preserve hwmon read result without direct fallback");
+            }
+            if (it8613_dxp6800pro_set_fan_pwm(true, "sys", 120, error, sizeof(error)) != hwmon_result ||
+                direct_write_calls != 2) {
+                fail("DXP6800 Pro must preserve hwmon write result without direct fallback");
+            }
+        }
+    }
+    (void)puts("DXP6800 Pro direct map and hwmon fallback guard tests passed");
     return EXIT_SUCCESS;
 }

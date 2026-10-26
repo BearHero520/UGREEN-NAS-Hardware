@@ -1,6 +1,14 @@
 # ugreenctl
 
-ugreenctl is a clean-room, plugin-based hardware-management utility for UGREEN
+The `Almighty` branch adds native LED control, physical SATA/NVMe bay mapping and an
+optional `ugreen_leds_cli` argument-compatible executable. See
+[LED and disk commands](docs/LED_CONTROL.zh-CN.md) for commands, evidence and
+model-specific limits. These built-in capability profiles are independent of
+the older fan/power model-plugin ABI; LED writes remain experimental.
+See the [Linux NAS deployment guide](docs/LINUX_DEPLOYMENT.zh-CN.md) for runtime
+libraries, persistent paths, and holder lifecycle on the target systems.
+
+ugreenctl is an open-source, plugin-based hardware-management utility for UGREEN
 NAS systems.
 
 [中文文档](README.zh-CN.md) · [Compatibility catalog](docs/COMPATIBILITY.md) ·
@@ -24,16 +32,22 @@ not a promise that an untested firmware upgrade has the same behavior.
 | DXP4800S (`dxp4800s`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | `sys` fan, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. PWM is limited to `40..255`; writes need `--force --apply`. |
 | DXP480T Plus (`dxp480tplus`) | UGOS Pro `1.17.0.95`, build `20260630.111337`, kernel `6.12.30+` | Fan readings, `cpu`/`all` PWM, AC recovery, WOL, scheduled wake | CPU writes have physical feedback. The corrected system-pair map, direct fallback, WOL, and scheduled wake await controlled physical validation. |
 | DXP6800 Pro (`dxp6800pro`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | CPU/paired-system fans, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. Every write needs `--force --apply`. |
-| DXP2800 / DXP8800 Plus | none | Model detection only | No hardware-control command is implemented. |
+| DXP2800 / DXP8800 Plus | Upstream LED protocol records | Model detection and conditional built-in LED profiles | Fan/power plugins remain placeholders; LED writes are experimental. |
 
-Every operation requires an exact DMI match. No LED write protocol has been
-implemented. The machine-readable [compatibility catalog](models/compatibility.json)
+Fan/power writes require exact DMI matching. LED commands use their own
+compiled profiles with exact DMI or firmware-proven ARM device-tree identity,
+controller identity and ownership checks. ARM GPIO control without the stock
+driver requires the explicit `ugreenctl-ledd` holder; GPIO line ownership is
+kept until the holder stops. The all-model integration is still in progress;
+see the [LED evidence](docs/ALL_MODELS_LED_EVIDENCE.zh-CN.md) and
+[disk evidence](docs/ALL_MODELS_DISK_EVIDENCE.zh-CN.md). The machine-readable [compatibility catalog](models/compatibility.json)
 and [hardware support document](docs/HARDWARE_SUPPORT.md) are the authoritative
 records of evidence and safeguards.
 
 ## Build
 
-Build on an x86/x86_64 Linux host:
+Build on an x86/x86_64 or ARM64 Linux host. The x86 Super I/O transport is
+unavailable on ARM64; compiling the utility does not enable unsupported controls:
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
     cmake --build build
@@ -47,13 +61,15 @@ For a build-tree run, point the CLI at the generated plugins:
 
 ## One-command scripts
 
-Copy or clone the repository onto the Linux NAS, then run:
+On Debian/Ubuntu or a suitable Linux host, copy or clone the repository and run:
 
     sh ./scripts/install.sh --install-deps
 
 This optionally installs the build prerequisites using the NAS package manager,
 builds the project, and installs ugreenctl to /usr/local. Omit
 --install-deps when CMake and a C compiler are already installed.
+TrueNAS SCALE should use a prebuilt archive in a persistent dataset as described
+in the deployment guide; do not install build prerequisites into its protected system.
 
 For a build-tree run without installing files:
 
@@ -73,7 +89,9 @@ The general command form is:
 ugreenctl [options] <command> [arguments]
 ```
 
-Put every option before the command. The CLI identifies the NAS from its exact
+Put global options before older fan/power commands. The built-in LED/disk
+commands also accept `--json`, `--apply`, and `--force` after the command.
+The CLI identifies the NAS from its exact
 DMI product name; `--model` selects a plugin but never spoofs the identity or
 bypasses the match.
 
@@ -99,8 +117,9 @@ bypasses the match.
 | `power rtc-wake set <positive-unix-epoch>` | `RTC wake set to <epoch>` after an applied, forced write. |
 | `power rtc-wake clear` | `RTC wake cleared` after an applied, forced write. |
 
-`led list` is reserved in the command-line interface, but LED control has not
-been verified for any model and currently returns an error.
+`led list/status/set/on/off/identify` and `disk list/map/locate` are available
+through the built-in profiles. See [the LED command guide](docs/LED_CONTROL.zh-CN.md)
+for experimental write requirements, mapping evidence and compatibility behavior.
 
 Fan IDs are deliberately model-specific: DXP4800 Plus/Pro accepts `cpu` and
 `sys`; DXP4800, DXP4800S, and DXP6800 Pro accept `sys` (DXP6800 Pro also

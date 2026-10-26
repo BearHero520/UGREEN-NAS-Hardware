@@ -144,6 +144,14 @@ int main(void)
         plan.cpu_pwm != 103 || plan.system_pwm != 97) {
         fail("DXP6800 Pro stock channels did not preserve recovered points");
     }
+    write_file(path, "profile=stock-6800plus\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0 ||
+        ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 103 || plan.system_pwm != 97 ||
+        !config.system_cpu_floor_enabled || config.system_cpu_floor_start_pwm != 125 ||
+        config.system_cpu_floor_end_pwm != 220) {
+        fail("DXP6800 Plus compatibility preset must retain Pro points and CPU floor");
+    }
     snapshot.cpu_celsius = -1;
     snapshot.cpu_peak_celsius = -1;
     if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != -ENODATA ||

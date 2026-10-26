@@ -6,6 +6,8 @@
 #include <string.h>
 
 #include "loader.h"
+#include "hardware_cli.h"
+#include "led/led.h"
 #include "fan/thermal_curve.h"
 #include "power/rtc_wake.h"
 #include "ugreenctl.h"
@@ -36,12 +38,21 @@ static void usage(FILE *stream)
                   "  ugreenctl [options] power rtc-wake clear\n"
                   "  ugreenctl [options] network wol get\n"
                   "  ugreenctl [options] network wol set <on|off>\n"
-                  "  ugreenctl [options] led list\n\n"
-                  "Options (must appear before the command):\n"
+                  "  ugreenctl led list\n"
+                  "  ugreenctl led status [all|power|netdev|diskN...] [--json]\n"
+                  "  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>\n"
+                  "              [--brightness <0-255|N%%>] [--mode on|off|blink|breath]\n"
+                  "              [--on-ms N --off-ms N] [--force --apply]\n"
+                  "  ugreenctl led on|off <targets...> [--force --apply]\n"
+                  "  ugreenctl led identify <target> [--seconds N] [--force --apply]\n"
+                  "  ugreenctl disk list|map [--json]\n"
+                  "  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\n"
+                  "Options (LED/disk options may also follow the command):\n"
                   "  --model <id>        use a specific model plugin\n"
                   "  --plugin-dir <dir>  directory containing model .so files\n"
                   "  --apply             perform a requested write (writes are dry runs otherwise)\n"
                   "  --force             acknowledge an experimental model write\n"
+                  "  --json              structured output for LED/disk commands\n"
                   "  --version           print the version\n"
                   "  --help              print this help\n\n"
                   "Fan control prefers the Linux hwmon node named it8613. If it is absent,\n"
@@ -353,6 +364,11 @@ int main(int argc, char **argv)
     int arg = 1;
     int result;
 
+    result = ugreenctl_hardware_cli(argc, argv);
+    if (result >= 0) {
+        return result;
+    }
+
     while (arg < argc && strncmp(argv[arg], "--", 2) == 0) {
         if (strcmp(argv[arg], "--help") == 0) {
             usage(stdout);
@@ -401,6 +417,21 @@ int main(int argc, char **argv)
             const struct ugreenctl_plugin *item = plugins.items[index].plugin;
             (void)printf("%-14s %-36s ", item->id, item->display_name);
             print_capabilities(item->capabilities);
+            {
+                const struct ugreenctl_led_profile *profiles;
+                size_t count, p;
+                profiles = ugreenctl_led_profiles(&count);
+                for (p = 0; p < count; ++p) {
+                    const char *const *name;
+                    for (name = item->dmi_product_names; name != NULL && *name != NULL; ++name) {
+                        if (strcmp(*name, profiles[p].product_name) == 0) {
+                            (void)printf("; led-profile=%s (experimental%s)", profiles[p].id,
+                                         profiles[p].product_version ? ", revision restricted" : "");
+                            break;
+                        }
+                    }
+                }
+            }
             (void)putchar('\n');
         }
         ugreenctl_plugins_close(&plugins);
