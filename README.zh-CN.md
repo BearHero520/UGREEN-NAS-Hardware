@@ -1,5 +1,7 @@
 # ugreenctl
 
+N76 已改为显式用户态实验直控，不含驱动编译功能；见 [直控说明与未验证项](docs/N76_DIRECT_CONTROL.zh-CN.md)。
+
 ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管理工具。
 
 [English](README.md) · [兼容性目录](docs/COMPATIBILITY.zh-CN.md) ·
@@ -8,8 +10,6 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 `Almighty` 分支新增原生 LED 控制、物理盘位映射及 `ugreen_leds_cli` 参数兼容入口。
 快速开始与逐机型限制见 [灯光与盘位说明](docs/LED_CONTROL.zh-CN.md)。
 各 Linux NAS 的运行库、持久目录和服务要求见 [部署指南](docs/LINUX_DEPLOYMENT.zh-CN.md)。
-DH2600／DXP480T Plus 可手动触发匹配当前内核的 N76 模块构建，见
-[N76 编译说明](docs/N76_MANUAL_BUILD.zh-CN.md)；默认预览，编译后不自动安装或加载。
 
 它按照 NAS 机型加载独立的 .so 插件。已实机验证的机型开放正常写入；仅完成固件逆向
 的机型只能在保留全部保护并明确确认风险时开放受限写入。models/ 中存在某机型的插件，

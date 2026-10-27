@@ -20,6 +20,8 @@ struct ugreenctl_led_test_io {
     void (*pause_ms)(void *opaque, unsigned int milliseconds);
     int (*read_identity)(void *opaque, struct ugreenctl_led_identity *identity,
                          char *error, size_t size);
+    int (*read_byte)(void *opaque, uint8_t reg, uint8_t *value);
+    int (*write_byte)(void *opaque, uint8_t reg, uint8_t value);
 };
 
 bool ugreenctl_led_test_process_is_owner(const char *comm, const char *executable,

@@ -1,5 +1,7 @@
 # Linux NAS 部署
 
+> 2026-10-27 更新：N76 增加显式 `--n76-direct BUS:ADDR` 实验直控，用户接受真实输出未验证的限制；模式回读保留，其余字段保持 unknown。下文原厂驱动依赖及拒绝裸写描述记录此前的严格回读策略，当前例外和范围以 [N76 直控说明](N76_DIRECT_CONTROL.zh-CN.md) 为准。无驱动编译功能。
+
 本指南面向 fnOS、Debian/Ubuntu、PVE、Unraid、TrueNAS SCALE。当前 25 款整合仍未完成，
 具体机型、驱动依赖和未知盘位见 [灯光与盘位说明](LED_CONTROL.zh-CN.md)。下列部署方式
 不代表已在这些系统的 NAS 实机验证。不要混用不同版本的程序、插件和能力目录。
@@ -149,11 +151,6 @@ Shutdown 阶段部分资源可能已经停止，须在运行目录/数据集卸�
 GPIO 的 `ugreenctl-ledd --force --apply` 需要持续持有线路 FD；DXP2800 GT 的显式
 `--takeover-flow --force --apply` 还管理全局 FLOW 与原始 LED 状态。N76 不能由 GPIO holder
 替代原厂驱动；其无驱动回读缺口仍未解决。
-
-N76 可通过 `ugreenctl-n76 check` 检查编译前提，再显式运行 `build --apply` 构建适合
-当前内核的配套模块，见 `N76_MANUAL_BUILD.zh-CN.md`。该入口不安装依赖或模块、不加载
-驱动；定制 NAS 内核必须提供匹配的头文件、配置和符号文件，TrueNAS 不会自动开启开发
-模式或运行 apt。构建完成不代表实机加载、签名和灯光回读已验证。
 
 升级前停止选定服务，或向已核对身份的前台 holder 发送 SIGTERM，等待退出并检查恢复错误，
 再切换整套版本目录。不要在旧进程运行时覆盖其程序或混入新版插件。SIGKILL、SSH 意外断开、

@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory(prefix='almighty-packaging-') as temporary:
         (root / directory / 'fixture.c').write_text('/* fixture */\n', encoding='utf-8')
     # Copy metadata and author scripts; production C/H are represented by fixtures.
     for name in sorted(p.source_inputs(REPO)):
-        if Path(name).suffix in ('.c', '.h') and Path(name).parts[0] in p.SOURCE_DIRS:
+        if Path(name).suffix in ('.c', '.h'):
             continue
         target = root / name
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -86,10 +86,6 @@ with tempfile.TemporaryDirectory(prefix='almighty-packaging-') as temporary:
         assert all(member.isfile() and 'firmware-inbox' not in member.name and '..' not in member.name.split('/') for member in members)
         assert len([member for member in members if member.name.endswith('.so')]) == 9
         assert archive.extractfile(plans[0]['stem'] + '/manifest.json').read() == plans[0]['manifest']
-        helper = archive.getmember(plans[0]['stem'] + '/usr/local/bin/ugreenctl-n76')
-        assert helper.mode == 0o755
-        for name in p.N76_RESOURCES:
-            assert archive.extractfile(plans[0]['stem'] + '/usr/local/share/ugreenctl/n76/' + Path(name).name).read() == (REPO / name).read_bytes()
     checks += 4
     output = root / 'out'
     assert len(p.write_packages(plans, output)) == 5

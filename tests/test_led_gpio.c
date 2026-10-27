@@ -112,7 +112,7 @@ static void run_model(bool four)
 {
     char root[]="/tmp/ugreenctl-gpio-test-XXXXXX",device[4096],path[4096],error[256];
     struct gpio_fixture fixture={0};struct ugreenctl_led_gpio *context;
-    struct ugreenctl_led_access access={true,true};struct ugreenctl_led_value value;
+    struct ugreenctl_led_access access={.force=true,.apply=true};struct ugreenctl_led_value value;
     struct ugreenctl_led_patch patch={0};unsigned int bank=four ? 1 : 0,id=four ? 5 : 3;
     CHECK(mkdtemp(root));create_tree(root,four);(void)snprintf(device,sizeof(device),"%s/dev",root);
     fixture.values[0]=1;

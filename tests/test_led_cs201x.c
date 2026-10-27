@@ -111,13 +111,13 @@ static void pause_ms(void *opaque,unsigned int duration)
 static const struct ugreenctl_led_cs201x_test_io io={detect,owners,lock,unlock,permission,read_port,write_port,pause_ms};
 static struct ugreenctl_led_cs201x *open_fixture(struct fixture *f)
 {
-    struct ugreenctl_led_cs201x *c=NULL;char error[512];const struct ugreenctl_led_access access={true,true};
+    struct ugreenctl_led_cs201x *c=NULL;char error[512];const struct ugreenctl_led_access access={.force=true,.apply=true};
     int r=ugreenctl_led_cs201x_test_open(&access,&io,f,&c,error,sizeof(error));
     if (r) fprintf(stderr,"fixture open: %d %s\n",r,error);CHECK(!r && c);CHECK(f->ldn==3);return c;
 }
 static void reject_open(struct fixture *f,int expected)
 {
-    struct ugreenctl_led_cs201x *c=NULL;char error[512];const struct ugreenctl_led_access access={true,true};
+    struct ugreenctl_led_cs201x *c=NULL;char error[512];const struct ugreenctl_led_access access={.force=true,.apply=true};
     CHECK(ugreenctl_led_cs201x_test_open(&access,&io,f,&c,error,sizeof(error))==expected);
     CHECK(!c && !f->target_writes && f->ldn==3);
     CHECK(f->unlocks==(f->locks && !f->lock_error ? 1U : 0U));CHECK(f->revokes==f->grants-(f->permission_error ? 1U : 0U));
@@ -191,13 +191,13 @@ static void test_patch_and_guards(void)
     CHECK(ugreenctl_led_cs201x_apply(c,2,&patch,NULL,error,sizeof(error))==-ESTALE);
     CHECK(f.target_writes==writes);ugreenctl_led_cs201x_close(c);
     reset(&f);{
-        const struct ugreenctl_led_access access={false,true};
+        const struct ugreenctl_led_access access={.force=false,.apply=true};
         CHECK(!ugreenctl_led_cs201x_test_open(&access,&io,&f,&c,error,sizeof(error)));
         CHECK(ugreenctl_led_cs201x_apply(c,0,&patch,NULL,error,sizeof(error))==-EPERM && !f.target_writes);
         ugreenctl_led_cs201x_close(c);
     }
     reset(&f);{
-        const struct ugreenctl_led_access access={true,false};
+        const struct ugreenctl_led_access access={.force=true,.apply=false};
         CHECK(!ugreenctl_led_cs201x_test_open(&access,&io,&f,&c,error,sizeof(error)));
         CHECK(ugreenctl_led_cs201x_apply(c,0,&patch,NULL,error,sizeof(error))==-EPERM && !f.target_writes);
         ugreenctl_led_cs201x_close(c);
@@ -250,14 +250,14 @@ static void test_identify(void)
 }
 static struct ugreenctl_led_cs201x *open_holder(struct fixture *f,bool takeover)
 {
-    const struct ugreenctl_led_access access={true,true};struct ugreenctl_led_cs201x *c=NULL;char error[512];
+    const struct ugreenctl_led_access access={.force=true,.apply=true};struct ugreenctl_led_cs201x *c=NULL;char error[512];
     int r=ugreenctl_led_cs201x_test_open_holder(&access,takeover,&io,f,&c,error,sizeof(error));
     if (r) fprintf(stderr,"holder open: %d %s\n",r,error);CHECK(!r && c);return c;
 }
 static void test_holder_lifecycle(void)
 {
     struct fixture f;struct ugreenctl_led_cs201x *c=NULL;char error[512];unsigned char before[256];unsigned int flow;
-    const struct ugreenctl_led_access access={true,true};
+    const struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_patch patch={UGREENCTL_LED_PATCH_RGB|UGREENCTL_LED_PATCH_BRIGHTNESS,{.red=231,.green=177,.blue=99,.brightness=199}};
     reset(&f);f.memory[0x40]=0;
     CHECK(ugreenctl_led_cs201x_test_open_holder(&access,false,&io,&f,&c,error,sizeof(error))==-EBUSY && !c && !f.target_writes && !f.flow_writes);
@@ -275,13 +275,13 @@ static void test_holder_lifecycle(void)
         CHECK(f.grants==f.revokes && f.unlocks==1);
     }
     reset(&f);f.memory[0x40]=0;f.allow_flow=true;
-    { const struct ugreenctl_led_access read_only={false,true};
+    { const struct ugreenctl_led_access read_only={.force=false,.apply=true};
       CHECK(ugreenctl_led_cs201x_test_open_holder(&read_only,true,&io,&f,&c,error,sizeof(error))==-EPERM && !c && !f.port_writes); }
 }
 static void test_holder_startup_failures(void)
 {
     struct fixture f;struct ugreenctl_led_cs201x *c=NULL;char error[512];unsigned char before[256];unsigned int kind;
-    const struct ugreenctl_led_access access={true,true};
+    const struct ugreenctl_led_access access={.force=true,.apply=true};
     for (kind=0;kind<4;++kind) {
         reset(&f);f.memory[0x40]=0;f.allow_flow=true;
         if (kind==0) f.memory[3]=255;
@@ -342,7 +342,7 @@ int main(void)
     test_identity_and_ownership();test_reads();test_patch_and_guards();test_unreadable_snapshots();test_rollback();test_identify();
     test_holder_lifecycle();test_holder_startup_failures();test_raw_identify_sessions();test_holder_restore_failures();
 #if !defined(__x86_64__) && !defined(__i386__)
-    { struct ugreenctl_led_cs201x *c=NULL;char error[128];const struct ugreenctl_led_access access={true,true};
+    { struct ugreenctl_led_cs201x *c=NULL;char error[128];const struct ugreenctl_led_access access={.force=true,.apply=true};
       CHECK(ugreenctl_led_cs201x_open(&access,&c,error,sizeof(error))==-ENOTSUP && !c);
       CHECK(ugreenctl_led_cs201x_open_holder(&access,true,&c,error,sizeof(error))==-ENOTSUP && !c); }
 #endif

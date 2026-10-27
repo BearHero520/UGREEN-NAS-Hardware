@@ -48,6 +48,9 @@ struct ugreenctl_hardware_options {
     size_t action_count;
     unsigned int seconds;
     const char *map_file;
+    bool n76_direct;
+    unsigned int n76_bus;
+    uint16_t n76_address;
 };
 
 /* Parsing performs no hardware access. -1 means a command handled by main.c;

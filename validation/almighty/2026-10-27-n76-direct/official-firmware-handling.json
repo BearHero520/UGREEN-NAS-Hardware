@@ -1,0 +1,65 @@
+{
+  "inputs": [
+    {
+      "version": "1.20",
+      "path": "firmware-inbox\\work\\dxp6800plus\\kernel\\usr\\lib\\modules\\6.18.15\\kernel\\drivers\\ugreen\\dh2600\\leds-mcu-n76e003-dh2600.ko",
+      "bytes": 31192,
+      "sha256": "c7c91f25bbf636939c68f5ae2d7cfbfed6ab55b82eee35981581bc60fd7040b5"
+    },
+    {
+      "version": "1.20",
+      "path": "firmware-inbox\\work\\dxp6800plus\\kernel\\usr\\lib\\modules\\6.18.15\\kernel\\drivers\\ugreen\\dxp480t\\leds-mcu-n76e003.ko",
+      "bytes": 32392,
+      "sha256": "2ed2f93f6c72a2783163169e805c4c04dfa49bf30185f00355d179486bf60694"
+    }
+  ],
+  "functions": {
+    "leds-mcu-n76e003-dh2600.ko": {
+      "color_show": {
+        "symbol_offset": "0x1c0",
+        "smbus_reads": 0,
+        "smbus_writes": 0
+      },
+      "rbrightness_show": {
+        "symbol_offset": "0x270",
+        "smbus_reads": 0,
+        "smbus_writes": 0
+      },
+      "mode_show": {
+        "symbol_offset": "0xb0",
+        "smbus_reads": 2,
+        "smbus_writes": 0
+      },
+      "mcu_work": {
+        "symbol_offset": "0x610",
+        "smbus_reads": 0,
+        "smbus_writes": 3
+      },
+      "disassembly_sha256": "5459693a1c295f545472028bacd6d0ef36503e0756a6b9fb51e8022a09e6df8b"
+    },
+    "leds-mcu-n76e003.ko": {
+      "color_show": {
+        "symbol_offset": "0x180",
+        "smbus_reads": 0,
+        "smbus_writes": 0
+      },
+      "rbrightness_show": {
+        "symbol_offset": "0x230",
+        "smbus_reads": 0,
+        "smbus_writes": 0
+      },
+      "mode_show": {
+        "symbol_offset": "0x70",
+        "smbus_reads": 2,
+        "smbus_writes": 0
+      },
+      "mcu_work": {
+        "symbol_offset": "0x680",
+        "smbus_reads": 0,
+        "smbus_writes": 5
+      },
+      "disassembly_sha256": "86188324d0da021e415a41f7f9982588d6f25231f1ac4f7f25f789249db81561"
+    }
+  },
+  "findings": "Stock workers log I2C failures and continue; output/color/PWM caches are not actual output reads. Direct code stops on errors and marks unknown state."
+}

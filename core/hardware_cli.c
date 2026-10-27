@@ -9,6 +9,7 @@
 #include "core/identity.h"
 #include "disk/disk.h"
 #include "led/led.h"
+#include "led/led_n76_protocol.h"
 
 static int syntax(char *error, size_t size, const char *message)
 {
@@ -320,6 +321,19 @@ int ugreenctl_hardware_parse(int argc, char **argv, bool compatibility,
         if (strcmp(argv[i],"--json")==0) o->json=true;
         else if (strcmp(argv[i],"--apply")==0) o->apply=true;
         else if (strcmp(argv[i],"--force")==0) o->force=true;
+        else if (strcmp(argv[i],"--n76-direct")==0) {
+            char bus[8]; const char *colon; size_t length;
+            if (o->n76_direct || ++i>=argc || !(colon=strchr(argv[i], ':')) ||
+                (length=(size_t)(colon-argv[i]))==0 || length>=sizeof(bus)) {
+                free(args); return syntax(error,size,"--n76-direct requires one explicit BUS:0x31 or BUS:0x26");
+            }
+            memcpy(bus,argv[i],length); bus[length]=0;
+            if (number(bus,65535,&o->n76_bus) || (strcmp(colon+1,"0x31") && strcmp(colon+1,"0x26"))) {
+                free(args); return syntax(error,size,"N76 bus must be numeric and address exactly 0x31 or 0x26");
+            }
+            o->n76_address=!strcmp(colon+1,"0x31") ? 0x31 : 0x26;
+            o->n76_direct=true;
+        }
         else if (strcmp(argv[i],"--plugin-dir")==0) {
             if (++i>=argc) { free(args); return syntax(error,size,"--plugin-dir requires a directory"); }
             /* New hardware commands use built-in exact profiles; retain this
@@ -345,6 +359,10 @@ int ugreenctl_hardware_parse(int argc, char **argv, bool compatibility,
     if (result==0 && o->map_file!=NULL &&
         o->command!=UGREENCTL_HW_DISK_LIST && o->command!=UGREENCTL_HW_DISK_LOCATE)
         result=syntax(error,size,"--map-file is only available for disk commands");
+    if (result==0 && o->n76_direct &&
+        o->command!=UGREENCTL_HW_LED_LIST && o->command!=UGREENCTL_HW_LED_STATUS &&
+        o->command!=UGREENCTL_HW_LED_SET && o->command!=UGREENCTL_HW_LED_COMPAT)
+        result=syntax(error,size,"N76 direct supports LED list/status/set only; unknown state cannot be restored by identify/locate");
     free(args);
     return result;
 }
@@ -371,6 +389,10 @@ static const char help_text[] =
     "\n"
     "--json, --apply, --force can appear before or after the command.\n"
     "Writes are previews until --apply; experimental hardware also needs --force.\n"
+    "N76: --n76-direct BUS:0x31 (or BUS:0x26) selects explicit userspace I2C.\n"
+    "     Exact DH2600/DXP480T Plus only; no scan, module build or loading.\n"
+    "     Set requires explicit mode/color; output/PWM/timing remain UNVERIFIED.\n"
+    "     Default without this option retains the bound-driver sysfs path.\n"
     "--force never bypasses DMI, MCU identity, driver ownership, or lock checks.\n"
     "Identify restores the complete original LED state after its time limit\n"
     "or SIGINT/SIGTERM. Restoration is best effort if communication fails.\n"
@@ -480,6 +502,11 @@ static void print_value(const struct ugreenctl_led_value *value,
         else (void)printf("%u",value->off_ms);
         (void)fputs(",\"unknown_fields\":",stdout); field_names(value->unknown_fields);
         (void)fputs(",\"cached_fields\":",stdout); field_names(value->cached_fields);
+        if (value->n76_mode_valid) {
+            (void)printf(",\"n76_mode_registers\":[%u,%u],\"n76_mcu_version\":%u,\"hardware_state_verified\":false",
+                value->n76_modes[0],value->n76_modes[1],value->n76_version);
+            if (value->unverified_write) (void)fputs(",\"write_result\":\"sent-unverified\",\"verification\":\"mode-registers-only\"",stdout);
+        }
         (void)putchar('}');
     } else {
         (void)printf("mode=%s brightness=",value->unknown_fields & UGREENCTL_LED_PATCH_MODE ? "unknown" : ugreenctl_led_mode_name(value->mode));
@@ -492,6 +519,9 @@ static void print_value(const struct ugreenctl_led_value *value,
         if (value->unknown_fields & UGREENCTL_LED_PATCH_TIMING) (void)fputs(" timing=unknown",stdout);
         else (void)printf(" on_ms=%u off_ms=%u",value->on_ms,value->off_ms);
         if (value->cached_fields) { (void)fputs(" cached_fields=",stdout); field_names(value->cached_fields); }
+        if (value->n76_mode_valid) (void)printf(" n76_modes=%u,%u mcu_version=%u hardware_state=UNVERIFIED%s",
+            value->n76_modes[0],value->n76_modes[1],value->n76_version,
+            value->unverified_write ? " write_result=sent-unverified (mode registers checked only)" : "");
     }
 }
 
@@ -776,7 +806,8 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
     struct ugreenctl_led_identity identity;
     struct ugreenctl_led_descriptor leds[UGREENCTL_MAX_LEDS];
     struct ugreenctl_led_session *session=NULL;
-    struct ugreenctl_led_access access={o->force,o->apply};
+    struct ugreenctl_led_access access={.force=o->force,.apply=o->apply,
+        .n76_direct=o->n76_direct,.n76_bus=o->n76_bus,.n76_address=o->n76_address};
     struct ugreenctl_led_value initial[UGREENCTL_MAX_LEDS];
     struct operation_result *records=NULL;
     struct ugreenctl_hardware_options request=*o;
@@ -790,6 +821,8 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
     char error[512]={0};
     result=ugreenctl_led_detect(&identity,error,sizeof(error));
     if (result) return backend_failure(o,result,error,0);
+    if (o->n76_direct && strcmp(identity.profile->protocol,"sysfs-n76"))
+        return failure(o,"unsupported","--n76-direct is restricted to exact DH2600/DXP480T Plus",3,0);
     result=select_targets(o,&identity,leds,&count,error,sizeof(error));
     if (result) return backend_failure(o,result,error,0);
     if (identify && ((leds[0].mode_mask & 3U)!=3U || !leds[0].max_brightness ||
@@ -809,6 +842,11 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
             else patch_for_action(&request.actions[a],&leds[t],&patch);
             result=ugreenctl_led_validate_target_patch(&leds[t],&patch,error,sizeof(error));
             if (result) return backend_failure(o,result,error,0);
+            if (o->n76_direct) {
+                struct ugreenctl_n76_plan plan;
+                result=ugreenctl_n76_plan(identity.profile,leds[t].id,&patch,&plan,error,sizeof(error));
+                if (result) return backend_failure(o,result,error,0);
+            }
         }
     }
     if (identify) writes=true;
@@ -835,7 +873,7 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
                 else patch_for_action(&request.actions[a],&leds[t],&patch);
                 result=ugreenctl_led_preflight(session,leds[t].id,&planned,&patch,error,sizeof(error));
                 if (result) { ugreenctl_led_close(session); return backend_failure(o,result,error,0); }
-                if (combined && !leds[t].rgb && leds[t].max_brightness==1 && (patch.fields&UGREENCTL_LED_PATCH_COLOR) &&
+                if (combined && !o->n76_direct && !leds[t].rgb && leds[t].max_brightness==1 && (patch.fields&UGREENCTL_LED_PATCH_COLOR) &&
                     (planned.unknown_fields&UGREENCTL_LED_PATCH_COLOR) &&
                     !((patch.fields&UGREENCTL_LED_PATCH_MODE) && patch.value.mode==UGREENCTL_LED_MODE_ON) &&
                     !((patch.fields&UGREENCTL_LED_PATCH_BRIGHTNESS) && patch.value.brightness)) {
@@ -900,6 +938,7 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
     if (o->json) {
         (void)fputs("{\"schema_version\":1,\"ok\":true,\"data\":{",stdout); identity_json(&identity);
         controller_json(bus,chip,probed,confirmed);
+        if (o->n76_direct) (void)printf(",\"transport\":\"n76-direct\",\"requested_bus\":%u,\"requested_address\":%u,\"hardware_state_verified\":false",o->n76_bus,o->n76_address);
         (void)printf(",\"dry_run\":%s,\"operations\":[",writes && !o->apply ? "true" : "false");
         for (a=0;a<action_count*count;++a) {
             const struct operation_result *record=&records[a];
@@ -915,6 +954,7 @@ static int led_execute(const struct ugreenctl_hardware_options *o)
         }
         (void)fputs("]}}\n",stdout);
     } else {
+        if (o->n76_direct) (void)printf("N76 direct: /dev/i2c-%u address=0x%02x; output/color/PWM/timing are NOT hardware-verified.\n",o->n76_bus,o->n76_address);
         if (writes && !o->apply) (void)puts("Preview only. Add --apply to write; experimental profiles also require --force.");
         if (!o->compatibility && o->command==UGREENCTL_HW_LED_STATUS) {
             (void)printf("Controller: bus=%s chip_id=",bus);

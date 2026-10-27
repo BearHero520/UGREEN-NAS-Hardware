@@ -122,7 +122,7 @@ static void pause_ms(void *opaque, unsigned int milliseconds)
     if (milliseconds == 100 && fixture->cancel != NULL) *fixture->cancel = 1;
 }
 static const struct ugreenctl_led_test_io io = {
-    owners, lock, unlock, chip, read_status, write_command, ack, pause_ms, NULL
+    owners, lock, unlock, chip, read_status, write_command, ack, pause_ms, NULL, NULL, NULL
 };
 
 static int read_machine(void *opaque,struct ugreenctl_led_identity *identity,char *error,size_t size)
@@ -148,7 +148,7 @@ static int open_fixture(struct fixture *fixture, bool force, bool apply,
                         struct ugreenctl_led_session **session)
 {
     struct ugreenctl_led_identity identity = {0};
-    const struct ugreenctl_led_access access = {force, apply};
+    const struct ugreenctl_led_access access = {.force=force,.apply=apply};
     char error[256];
     (void)snprintf(identity.product_name, sizeof(identity.product_name), "DXP4800 Plus");
     return ugreenctl_led_test_open(&identity, &access, &io, fixture, session, error, sizeof(error));
@@ -244,7 +244,7 @@ static void test_smbus_and_capabilities(void)
 {
     struct fixture fixture;
     struct ugreenctl_led_identity identity={0};
-    const struct ugreenctl_led_access access={true,true};
+    const struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_session *session;
     struct ugreenctl_led_patch patch=rgb_patch();
     struct ugreenctl_led_value readback;
@@ -560,7 +560,7 @@ static void test_sysfs_n76(bool dh2600)
     char path[4096],node[4096],driver[4096],module[4096],client[4096],link[4096],error[256];
     struct fixture fixture;
     struct ugreenctl_led_identity identity={0};
-    struct ugreenctl_led_access access={true,true};
+    struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_session *session;
     struct ugreenctl_led_value value;
     struct ugreenctl_led_patch patch=rgb_patch();
@@ -666,7 +666,7 @@ static void test_sysfs_gpio(bool four)
     char path[4096],node[4096],platform[4096],driver[4096],module[4096],error[256],link[4096];
     const char *const names[]={"power","network_stat","disk1","disk2","disk3","disk4"};
     struct fixture fixture;struct ugreenctl_led_session *session;
-    struct ugreenctl_led_identity identity={0};struct ugreenctl_led_access access={true,true};
+    struct ugreenctl_led_identity identity={0};struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_patch patch={0};struct ugreenctl_led_value value;unsigned int i;
     CHECK(mkdtemp(root));
     (void)snprintf(platform,sizeof(platform),"%s/devices/platform/ug-led",root);make_directories(platform);
@@ -723,7 +723,7 @@ static void test_machine_version_guard(void)
     struct ugreenctl_led_test_io checked_io=io;
     struct ugreenctl_led_identity baseline={0};
     struct ugreenctl_led_session *session;
-    const struct ugreenctl_led_access access={true,true};
+    const struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_patch patch={UGREENCTL_LED_PATCH_BRIGHTNESS,{.brightness=90}};
     struct ugreenctl_led_value value;
     char error[256];size_t i;
@@ -755,9 +755,11 @@ static void test_machine_version_guard(void)
 }
 
 void ugreenctl_led_gpio_fixture_tests(void);
+void ugreenctl_led_n76_fixture_tests(void);
 
 int main(void)
 {
+    ugreenctl_led_n76_fixture_tests();
     test_process_identity();
     test_wire_protocol();
     test_profile_selection();

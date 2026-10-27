@@ -40,7 +40,8 @@ DOCUMENTS = (
     "docs/ALMIGHTY_STATUS.zh-CN.md",
     "docs/BUILD_REPRODUCIBILITY.zh-CN.md",
     "docs/AC_RECOVERY_PERSISTENCE.zh-CN.md",
-    "docs/N76_MANUAL_BUILD.zh-CN.md",
+    "docs/N76_DIRECT_CONTROL.zh-CN.md",
+    "tools/n76/sources.json",
     "integration/llled/ac-recovery/README.zh-CN.md",
     "integration/llled/ac-recovery/llled-startup-persistence.patch",
     "integration/llled/ac-recovery/source-hashes.json",
@@ -67,7 +68,6 @@ EXAMPLES = (
     "scripts/ugreenctl-startup.py",
     "scripts/ugreenctl-startup.service",
 )
-N76_RESOURCES = ("tools/n76/prepare_sources.py", "tools/n76/sources.json", "tools/n76/ugreenctl_n76_identity.h")
 
 
 class PackageError(Exception):
@@ -160,13 +160,12 @@ def source_inputs(root: Path) -> set[str]:
               "tests/test_package_almighty.py", *DOCUMENTS, *EXAMPLES,
               "models/compatibility.json", "models/official-products.json",
               "tests/test_startup_state.py"}
-    inputs.update(("scripts/ugreenctl-n76.py", "tests/test_n76_build.py", "tools/n76/test_prepare_sources.py", *N76_RESOURCES))
     # Author-maintained reproduction source and external-input metadata, never
     # the actual downloaded runtimes or firmware.
-    for directory in ("tools/testing", "tools/toolchains", "tools/n76"):
+    for directory in ("tools/testing", "tools/toolchains"):
         if (root / directory).is_dir():
             for path in (root / directory).rglob("*"):
-                if path.is_file() and path.suffix in (".py", ".cmake", ".cmd", ".json", ".c", ".h"):
+                if path.is_file() and path.suffix in (".py", ".cmake", ".cmd", ".json"):
                     inputs.add(path.relative_to(root).as_posix())
     for directory in SOURCE_DIRS:
         require((root / directory).is_dir(), f"Missing source directory: {directory}")
@@ -515,9 +514,6 @@ def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) ->
             entries[f"{doc_base}/{name}"] = (source(name), 0o644)
         for name in EXAMPLES:
             entries[f"{doc_base}/examples/{Path(name).name}"] = (source(name), 0o755 if name.endswith(".sh") else 0o644)
-        entries[(prefix / bindir / "ugreenctl-n76").as_posix().lstrip("/")] = (source("scripts/ugreenctl-n76.py"), 0o755)
-        for name in N76_RESOURCES:
-            entries[(prefix / "share/ugreenctl/n76" / Path(name).name).as_posix().lstrip("/")] = (source(name), 0o644)
         entries[f"{doc_base}/verification-root.json"] = (verification_data, 0o644)
         for log_architecture, data in logs.items():
             entries[f"{doc_base}/verification/ctest-{log_architecture}.log"] = (data, 0o644)
@@ -543,7 +539,6 @@ def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) ->
             "runtime_abi": runtime,
             "compatibility_cli_installation": "Opt-in; never overwrite an existing ugreen_leds_cli without administrator choice",
             "services": "Examples only; no installation or startup is performed",
-            "n76_build": "Optional Python3.10+ manual build helper; pinned upstream sources downloaded only on build --apply, matching running kernel prerequisites required. No module installation/loading or hardware validation.",
             "verification_sha256": sha256(verification_data), "catalog": catalog,
             "full_suite": full_suite[architecture],
             "full_suite_artifacts": verification["full_suite_artifacts"],

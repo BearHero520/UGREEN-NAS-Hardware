@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include "led/led.h"
 #include "led/led_protocol.h"
+#include "led/led_n76_protocol.h"
 #include "led/led_sysfs.h"
 #include "led/led_gpio.h"
 #include "led/led_service.h"
@@ -20,6 +21,7 @@
 #include <sys/file.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -38,6 +40,8 @@ struct led_io {
     void (*pause_ms)(void *opaque, unsigned int milliseconds);
     int (*read_identity)(void *opaque,struct ugreenctl_led_identity *identity,
                          char *error,size_t size);
+    int (*read_byte)(void *, uint8_t, uint8_t *);
+    int (*write_byte)(void *, uint8_t, uint8_t);
 };
 
 struct ugreenctl_led_session {
@@ -48,6 +52,8 @@ struct ugreenctl_led_session {
     int fd, lock_fd;
     bool locked;
     uint16_t chip_id;
+    uint8_t n76_version;
+    bool n76_failed;
     char bus[64];
     unsigned int bus_number;
     struct ugreenctl_led_sysfs *sysfs;
@@ -254,21 +260,29 @@ static int production_owners(void *opaque)
 {
     static const char *const modules[] = {
         "led_ugreen", "leds_mcu_28a48", "leds_mcu_68a88", "leds_mcu", "leds_mcu_n76e003",
-        "leds_ugreen", "ugreen_led", "ugreen_leds", "ug_mcu"
+        "leds_ugreen", "ugreen_led", "ugreen_leds", "ug_mcu", "leds_mcu_n76e003_dh2600"
     };
     struct ugreenctl_led_session *session = opaque;
     struct stat metadata;
     char path[256];
     size_t i;
     int result;
-    if (session->identity.profile && strncmp(session->identity.profile->protocol,"sysfs-",6)==0)
+    if (!session->access.n76_direct && session->identity.profile && strncmp(session->identity.profile->protocol,"sysfs-",6)==0)
         return process_owners();
     for (i = 0; i < sizeof(modules) / sizeof(modules[0]); ++i) {
         (void)snprintf(path, sizeof(path), "/sys/module/%s", modules[i]);
         if (lstat(path, &metadata) == 0) return -EBUSY;
         if (errno != ENOENT) return -errno;
     }
-    if (session->bus[0] != '\0') {
+    if (session->access.n76_direct) {
+        const unsigned int addresses[] = {0x31, 0x26};
+        for (i = 0; i < 2; ++i) {
+            (void)snprintf(path, sizeof(path), "/sys/bus/i2c/devices/%u-%04x",
+                           session->access.n76_bus, addresses[i]);
+            if (lstat(path, &metadata) == 0) return -EBUSY;
+            if (errno != ENOENT) return -errno;
+        }
+    } else if (session->bus[0] != '\0') {
         (void)snprintf(path, sizeof(path), "/sys/bus/i2c/devices/%u-003a/driver", session->bus_number);
         if (lstat(path, &metadata) == 0) return -EBUSY;
         if (errno != ENOENT) return -errno;
@@ -315,11 +329,42 @@ static int smbus(struct ugreenctl_led_session *session, uint8_t direction,
     return 0;
 }
 
+static int production_read_byte(void *opaque, uint8_t reg, uint8_t *value)
+{
+    struct ugreenctl_led_session *session = opaque;
+    union i2c_smbus_data data = {0};
+    struct timespec delay = {0, 1000000L};
+    int result;
+    /* Recheck kernel ownership, never use I2C_SLAVE_FORCE. */
+    if (ioctl(session->fd, I2C_SLAVE, session->access.n76_address) < 0) return -errno;
+    while (nanosleep(&delay, &delay) < 0 && errno == EINTR) { }
+    result = smbus(session, I2C_SMBUS_READ, reg, I2C_SMBUS_BYTE_DATA, &data);
+    if (!result) *value = data.byte;
+    return result;
+}
+
+static int production_write_byte(void *opaque, uint8_t reg, uint8_t value)
+{
+    struct ugreenctl_led_session *session = opaque;
+    union i2c_smbus_data data = {0};
+    if (ioctl(session->fd, I2C_SLAVE, session->access.n76_address) < 0) return -errno;
+    data.byte = value;
+    return smbus(session, I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE_DATA, &data);
+}
+
 static int production_chip_id(void *opaque, uint16_t *chip_id)
 {
     struct ugreenctl_led_session *session = opaque;
     union i2c_smbus_data data;
     int result;
+    if (session->access.n76_direct) {
+        uint8_t high, low;
+        result = session->io.read_byte(session->opaque, 0x5a, &high);
+        if (result < 0) return result;
+        result = session->io.read_byte(session->opaque, 0x5b, &low);
+        if (!result) *chip_id = (uint16_t)((unsigned int)high << 8 | low);
+        return result;
+    }
     memset(&data, 0, sizeof(data));
     result = smbus(session, I2C_SMBUS_READ, session->identity.profile->chip_register,
                     I2C_SMBUS_WORD_DATA, &data);
@@ -385,7 +430,7 @@ static int production_identity(void *opaque,struct ugreenctl_led_identity *ident
 static const struct led_io production_io = {
     production_owners, production_lock, production_unlock,
     production_chip_id, production_read, production_write,
-    production_ack, production_pause, production_identity
+    production_ack, production_pause, production_identity, production_read_byte, production_write_byte
 };
 
 static int verify_session_identity(struct ugreenctl_led_session *session,char *error,size_t size)
@@ -472,6 +517,40 @@ static int acquire(struct ugreenctl_led_session *session, char *error, size_t er
     return 0;
 }
 
+static bool n76_profile(const struct ugreenctl_led_profile *profile)
+{
+    return profile && !strcmp(profile->protocol, "sysfs-n76") &&
+        ((!strcmp(profile->id, "dh2600-n76") && !strcmp(profile->product_name, "DH2600")) ||
+         (!strcmp(profile->id, "dxp480t-n76") && !strcmp(profile->product_name, "DXP480T Plus")));
+}
+
+static int n76_probe(struct ugreenctl_led_session *session, char *error, size_t size)
+{
+    int result = verify_session_identity(session, error, size);
+    if (!result) result = session->io.owners(session->opaque);
+    if (!result) result = session->io.read_chip_id(session->opaque, &session->chip_id);
+    if (!result && session->chip_id != 0xa5b5) result = -ENODEV;
+    if (!result) result = session->io.read_byte(session->opaque, 0x5d, &session->n76_version);
+    return result < 0 ? fail(error, size, result, "N76 identity/version probe failed; no writes performed") : 0;
+}
+
+static int n76_open_bus(struct ugreenctl_led_session *session, char *error, size_t size)
+{
+    unsigned long functions = 0;
+    struct stat st;
+    const unsigned long required = I2C_FUNC_SMBUS_READ_BYTE_DATA | I2C_FUNC_SMBUS_WRITE_BYTE_DATA;
+    session->bus_number = session->access.n76_bus;
+    (void)snprintf(session->bus, sizeof(session->bus), "/dev/i2c-%u", session->bus_number);
+    session->fd = open(session->bus, O_RDWR | O_CLOEXEC | O_NOFOLLOW);
+    if (session->fd < 0) return fail(error, size, -errno, "cannot open explicit N76 I2C bus");
+    if (fstat(session->fd, &st) < 0) return -errno;
+    if (!S_ISCHR(st.st_mode) || major(st.st_rdev) != 89 || minor(st.st_rdev) != session->bus_number)
+        return fail(error, size, -ENODEV, "N76 bus must be the requested Linux i2c-dev character device");
+    if (ioctl(session->fd, I2C_FUNCS, &functions) < 0) return -errno;
+    if ((functions & required) != required) return fail(error, size, -ENOTSUP, "N76 requires SMBus byte-data operations");
+    return n76_probe(session, error, size);
+}
+
 static int probe(struct ugreenctl_led_session *session, char *error, size_t error_size)
 {
     struct ugreenctl_led_value value;
@@ -498,6 +577,10 @@ int ugreenctl_led_open(const struct ugreenctl_led_access *access,
     session->fd = -1; session->lock_fd = -1;
     session->access = *access; session->io = production_io; session->opaque = session;
     result = ugreenctl_led_detect(&session->identity, error, error_size);
+    if (result == 0 && access->n76_direct &&
+        (!n76_profile(session->identity.profile) || access->n76_bus > 65535 ||
+         (access->n76_address != 0x31 && access->n76_address != 0x26)))
+        result = fail(error, error_size, -ENOTSUP, "direct N76 requires exact DH2600/DXP480T Plus and explicit BUS:0x31 or BUS:0x26");
     if (result==0 && (!strcmp(session->identity.profile->protocol,"cs201x-sio") ||
                        !strcmp(session->identity.profile->protocol,"sysfs-gpio"))) {
         result=ugreenctl_led_service_connect(&session->identity,access,&session->service,error,error_size);
@@ -519,7 +602,9 @@ int ugreenctl_led_open(const struct ugreenctl_led_access *access,
         *output=session;return 0;
     }
     if (result == 0) result = acquire(session, error, error_size);
-    if (result == 0 && strncmp(session->identity.profile->protocol,"sysfs-",6)==0) {
+    if (result == 0 && session->access.n76_direct) {
+        result = n76_open_bus(session, error, error_size);
+    } else if (result == 0 && strncmp(session->identity.profile->protocol,"sysfs-",6)==0) {
         result=ugreenctl_led_sysfs_open(session->identity.profile,"/sys",identify_authorize,session,&session->sysfs,error,error_size);
         if (result==0) (void)snprintf(session->bus,sizeof(session->bus),"sysfs:%s",session->identity.profile->sysfs_driver);
         else if (result==-ENOTSUP && !strcmp(session->identity.profile->protocol,"sysfs-gpio"))
@@ -545,6 +630,8 @@ uint16_t ugreenctl_led_chip_id(const struct ugreenctl_led_session *session)
 
 bool ugreenctl_led_identity_confirmed(const struct ugreenctl_led_session *session)
 {
+    if (session && session->access.n76_direct)
+        return session->locked && !session->n76_failed && n76_profile(session->identity.profile) && session->chip_id == 0xa5b5;
     if (session && session->cs201x) return ugreenctl_led_cs201x_identity_confirmed(session->cs201x);
     if (session && session->service) return ugreenctl_led_service_identity_confirmed(session->service);
     if (session && session->sysfs) return ugreenctl_led_sysfs_identity_confirmed(session->sysfs);
@@ -587,6 +674,24 @@ int ugreenctl_led_read(struct ugreenctl_led_session *session, uint8_t id,
     result = session->io.owners(session->opaque);
     if (result < 0) return fail(error, error_size, result, "LED controller ownership changed or is unreadable");
     if (session->sysfs) return ugreenctl_led_sysfs_read(session->sysfs,id,value,error,error_size);
+    if (session->access.n76_direct) {
+        uint16_t chip = 0;
+        uint8_t version = 0;
+        unsigned int bit = id == 1 ? 4 : id == 2 ? 2 : 0;
+        memset(value, 0, sizeof(*value));
+        value->unknown_fields = UGREENCTL_LED_PATCH_MODE | UGREENCTL_LED_PATCH_RGB |
+            UGREENCTL_LED_PATCH_COLOR | UGREENCTL_LED_PATCH_BRIGHTNESS | UGREENCTL_LED_PATCH_TIMING;
+        result = session->io.read_chip_id(session->opaque, &chip);
+        if (!result) result = session->io.read_byte(session->opaque, 0x5d, &version);
+        if (!result && (chip != session->chip_id || chip != 0xa5b5 || version != session->n76_version)) result = -ESTALE;
+        if (!result) result = session->io.read_byte(session->opaque, (uint8_t)(0x50 + bit), &value->n76_modes[0]);
+        if (!result) result = session->io.read_byte(session->opaque, (uint8_t)(0x51 + bit), &value->n76_modes[1]);
+        if (!result && (value->n76_modes[0] > 3 || value->n76_modes[1] > 3)) result = -EBADMSG;
+        if (result < 0) return fail(error, error_size, result, "N76 identity/version/mode read failed; actual outputs remain unknown");
+        value->n76_mode_valid = true;
+        value->n76_version = version;
+        return 0;
+    }
     memset(value, 0, sizeof(*value));
     for (attempt = 0; attempt < 3; ++attempt) {
         session->io.pause_ms(session->opaque, attempt == 0 ? 8 : 3);
@@ -623,6 +728,14 @@ static int authorize_write(struct ugreenctl_led_session *session, char *error, s
         return fail(error, error_size, -ENOTSUP, "LED chip identity unavailable; writes refused even with --force");
     if (current != session->identity.profile->expected_chip_id || current != session->chip_id)
         return fail(error, error_size, -ENOTSUP, "LED chip identity 0x%04x does not match the model's expected MCU family", current);
+    if (session->access.n76_direct) {
+        uint8_t version = 0;
+        if (session->n76_failed) return fail(error, error_size, -EIO, "N76 session failed; reopen after inspecting unknown output state");
+        result = session->io.read_byte(session->opaque, 0x5d, &version);
+        if (result < 0 || version != session->n76_version)
+            return fail(error, error_size, result < 0 ? result : -ESTALE, "N76 MCU version changed or is unreadable");
+        return 0;
+    }
     if (strcmp(session->identity.profile->protocol, "legacy-i2c-block") != 0 &&
         strcmp(session->identity.profile->protocol, "smbus-block-be") != 0 &&
         strcmp(session->identity.profile->protocol, "smbus-block-le") != 0)
@@ -671,6 +784,10 @@ int ugreenctl_led_preflight(struct ugreenctl_led_session *session, uint8_t id,
     const struct ugreenctl_led_descriptor *target=find_target(session,id);
     if (!target || !before)
         return fail(error,error_size,-EINVAL,"LED preflight requires a modeled target and prior state");
+    if (session->access.n76_direct) {
+        struct ugreenctl_n76_plan plan;
+        return ugreenctl_n76_plan(session->identity.profile, id, patch, &plan, error, error_size);
+    }
     if (session->sysfs)
         return ugreenctl_led_sysfs_preflight(session->sysfs,id,before,patch,error,error_size);
     return ugreenctl_led_validate_state_patch(session->identity.profile,target,before,patch,error,error_size);
@@ -691,6 +808,36 @@ int ugreenctl_led_apply(struct ugreenctl_led_session *session, uint8_t id,
     if (result < 0) return result;
     result = authorize_write(session, error, error_size);
     if (result < 0) return result;
+    if (session->access.n76_direct) {
+        struct ugreenctl_n76_plan plan;
+        size_t i;
+        result = ugreenctl_n76_plan(session->identity.profile, id, patch, &plan, error, error_size);
+        if (result < 0) return result;
+        result = ugreenctl_led_read(session, id, &local, error, error_size);
+        if (result < 0) return result;
+        for (i = 0; i < plan.count; ++i) {
+            uint8_t actual;
+            result = authorize_write(session, error, error_size);
+            if (result < 0) break;
+            result = session->io.write_byte(session->opaque, plan.commands[i].reg, plan.commands[i].value);
+            if (result < 0) break;
+            session->io.pause_ms(session->opaque, plan.commands[i].settle_ms);
+            if (plan.commands[i].reg == plan.mode_registers[0] || plan.commands[i].reg == plan.mode_registers[1]) {
+                result = session->io.read_byte(session->opaque, plan.commands[i].reg, &actual);
+                if (!result && actual != plan.commands[i].value) result = -EIO;
+                if (result < 0) break;
+            }
+        }
+        if (!result) result = ugreenctl_led_read(session, id, &local, error, error_size);
+        if (!result && (local.n76_modes[0] != plan.expected_modes[0] || local.n76_modes[1] != plan.expected_modes[1])) result = -EIO;
+        if (result < 0) {
+            session->n76_failed = true;
+            return fail(error, error_size, result, "N76 transaction failed; outputs may have changed and cannot be restored from unknown state");
+        }
+        local.unverified_write = true;
+        if (readback) *readback = local;
+        return 0;
+    }
     if (session->cs201x) return ugreenctl_led_cs201x_apply(session->cs201x,id,patch,readback,error,error_size);
     if (session->service) return ugreenctl_led_service_apply(session->service,id,patch,readback,error,error_size);
     if (session->sysfs) return ugreenctl_led_sysfs_apply(session->sysfs,id,patch,readback,error,error_size);
@@ -890,11 +1037,16 @@ static int test_open_impl(const struct ugreenctl_led_identity *identity,
     session->io.write_command = io->write_command; session->io.read_ack = io->read_ack;
     session->io.pause_ms = io->pause_ms;
     session->io.read_identity = io->read_identity;
+    session->io.read_byte = io->read_byte; session->io.write_byte = io->write_byte;
     if (session->identity.profile == NULL) result = -ENOTSUP;
     else result = acquire(session, error, error_size);
     if (result==0 && sysfs_root!=NULL)
         result=ugreenctl_led_sysfs_open(session->identity.profile,sysfs_root,identify_authorize,session,&session->sysfs,error,error_size);
-    else if (result == 0) result = probe(session, error, error_size);
+    else if (result == 0 && access->n76_direct) {
+        if (!n76_profile(session->identity.profile) || !io->read_byte || !io->write_byte ||
+            (access->n76_address != 0x31 && access->n76_address != 0x26) || access->n76_bus > 65535) result = -ENOTSUP;
+        else result = n76_probe(session, error, error_size);
+    } else if (result == 0) result = probe(session, error, error_size);
     if (result < 0) { ugreenctl_led_close(session); return result; }
     *output = session;
     return 0;

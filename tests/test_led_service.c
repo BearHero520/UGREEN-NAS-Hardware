@@ -166,7 +166,7 @@ static void nonroot_peer(void)
 int main(void)
 {
     struct ugreenctl_led_service_client *remote=NULL;
-    struct ugreenctl_led_access access={true,true};
+    struct ugreenctl_led_access access={.force=true,.apply=true};
     struct ugreenctl_led_patch patch={.fields=UGREENCTL_LED_PATCH_MODE|UGREENCTL_LED_PATCH_BRIGHTNESS|UGREENCTL_LED_PATCH_COLOR};
     struct ugreenctl_led_value value;
     char error[256];

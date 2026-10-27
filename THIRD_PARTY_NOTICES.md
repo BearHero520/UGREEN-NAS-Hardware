@@ -15,13 +15,4 @@ Linux I2C userspace API documentation:
 <https://www.kernel.org/doc/html/latest/i2c/dev-interface.html>.
 No Linux kernel or systemd implementation source is copied into this project.
 
-The optional manual N76 build component downloads selected UGREEN kernel LED
-driver sources only when explicitly requested. The pinned upstream commit,
-per-file SHA-256 values and URLs are in `tools/n76/sources.json`; upstream files
-and generated kernel modules are not included in this repository or tool archive.
-Generated driver/trigger files retain their upstream GPL identifiers and notices.
-The separately identified local safety overlay
-`tools/n76/ugreenctl_n76_identity.h` is GPL-2.0-or-later. Its read-only mock test
-uses the same identifier. The Python preparation/build tools are project code.
-See `docs/N76_MANUAL_BUILD.zh-CN.md` for provenance, build limits and the distinction
-between driver caches and genuine hardware readback.
+N76 userspace transactions are independently written from the documented wire protocol in the official UGREEN source. Provenance and original SHA-256 values are retained in `tools/n76/sources.json` and `docs/N76_DIRECT_CONTROL.zh-CN.md`. No upstream kernel implementation or driver compiler is bundled.

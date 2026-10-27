@@ -25,6 +25,14 @@ static const struct ugreenctl_led_profile n76_profile={
     .id="fixture-n76", .product_name="DH2600", .protocol="sysfs-n76",
     .disk_count=2, .experimental=true, .evidence="test only"
 };
+static const struct ugreenctl_led_descriptor direct_leds[]={
+    {.name="power",.id=0,.mode_mask=7,.max_brightness=1,.color_mask=14,.min_on_ms=20,.min_off_ms=20}
+};
+static const struct ugreenctl_led_profile direct_profile={
+    .id="dh2600-n76",.product_name="DH2600",.protocol="sysfs-n76",.experimental=true,
+    .leds=direct_leds,.led_count=1
+};
+static bool direct_fixture, direct_open;
 static unsigned int detects, opens, reads, writes, identifies, closes, scans;
 static unsigned int preflights;
 static int open_error, failed_read_id=-1;
@@ -48,6 +56,7 @@ static void expect(bool condition, const char *message)
 static void reset(void)
 {
     detects=opens=reads=writes=identifies=closes=scans=0;
+    direct_fixture=direct_open=false;
     preflights=0; normal_available=timer_available=true;
     open_error=0; failed_read_id=-1; mapped=true; expected_map_file=NULL;
     failed_write_id=-1; fixture_max_brightness=0; fixture_status_mode=UGREENCTL_LED_MODE_OFF;
@@ -66,7 +75,7 @@ int ugreenctl_led_detect(struct ugreenctl_led_identity *identity,
     (void)error; (void)size; ++detects;
     (void)memset(identity,0,sizeof(*identity));
     (void)snprintf(identity->product_name,sizeof(identity->product_name),"DXP4800");
-    identity->profile=n76 ? &n76_profile : &profile; return 0;
+    identity->profile=direct_fixture ? &direct_profile : n76 ? &n76_profile : &profile; return 0;
 }
 
 size_t ugreenctl_led_descriptors(const struct ugreenctl_led_profile *p,
@@ -101,7 +110,9 @@ int ugreenctl_led_open(const struct ugreenctl_led_access *access,
                       struct ugreenctl_led_session **session,
                       char *error, size_t size)
 {
-    (void)access; ++opens;
+    direct_open=access->n76_direct;
+    if (direct_open) expect(access->n76_bus==1 && access->n76_address==0x31,"direct selector reaches backend");
+    ++opens;
     if (open_error) {
         (void)snprintf(error,size,"fixture owner conflict"); return open_error;
     }
@@ -119,6 +130,8 @@ int ugreenctl_led_read(struct ugreenctl_led_session *session, uint8_t id,
     value->mode=UGREENCTL_LED_MODE_ON; value->brightness=100; value->blue=255;
     if (fixture_status_mode) { value->mode=fixture_status_mode; value->on_ms=200; value->off_ms=800; }
     value->unknown_fields=unknown_fields; value->cached_fields=cached_fields;
+    if (direct_open) { value->unknown_fields=31;value->n76_mode_valid=true;value->n76_version=7; }
+
     if (n76) {
         value->color=UGREENCTL_LED_COLOR_WHITE;
         if (id==3 && n76_last_effect) value->mode=UGREENCTL_LED_MODE_BLINK;
@@ -148,6 +161,7 @@ int ugreenctl_led_preflight(struct ugreenctl_led_session *session, uint8_t id,
     expect(session==&fake_session,"valid preflight session"); ++preflights;
     for (i=0;i<count && targets[i].id!=id;++i) { }
     expect(i<count,"preflight modeled target");
+    if (direct_open) return 0; /* Actual direct preflight is covered by test-led. */
     result=ugreenctl_led_validate_state_patch(current,&targets[i],before,patch,error,size);
     if (result) return result;
     if (n76 && ((mode<=UGREENCTL_LED_MODE_ON && !normal_available) ||
@@ -170,7 +184,9 @@ int ugreenctl_led_apply(struct ugreenctl_led_session *session, uint8_t id,
     else if (patch->fields&UGREENCTL_LED_PATCH_COLOR) seen_values[writes]=(unsigned int)patch->value.color;
     else if (patch->fields&UGREENCTL_LED_PATCH_BRIGHTNESS) seen_values[writes]=patch->value.brightness;
     else seen_values[writes]=(unsigned int)patch->value.mode;
-    ++writes; *readback=patch->value; return 0;
+    ++writes; *readback=patch->value;
+    if (direct_open) { readback->unknown_fields=31;readback->cached_fields=0;readback->n76_mode_valid=true;readback->unverified_write=true; }
+    return 0;
 }
 
 int ugreenctl_led_identify(struct ugreenctl_led_session *session, uint8_t id,
@@ -282,6 +298,10 @@ static void parse_tests(void)
     char *identify_all[]={"ugreenctl","led","identify","all"};
     char *identify_zero[]={"ugreenctl","led","identify","disk1","--seconds","0"};
     char *locate[]={"ugreenctl","disk","locate","SN:with spaces","--seconds","60","--map-file","/tmp/map"};
+    char *direct[]={"ugreenctl","led","status","--n76-direct","12:0x26"};
+    char *bad_direct[]={"ugreenctl","led","status","--n76-direct","1:0x3a"};
+    char *direct_locate[]={"ugreenctl","disk","locate","slot1","--n76-direct","1:0x31"};
+    char *direct_dupe[]={"ugreenctl","led","status","--n76-direct","1:0x31","--n76-direct","1:0x26"};
     char *wrong_map[]={"ugreenctl","led","list","--map-file","/tmp/map"};
     struct { char **argv; size_t count; bool compat; } invalid[]={
         {hex_bad,sizeof(hex_bad)/sizeof(*hex_bad),false},
@@ -299,9 +319,13 @@ static void parse_tests(void)
         {legacy_overflow,sizeof(legacy_overflow)/sizeof(*legacy_overflow),true},
         {identify_all,sizeof(identify_all)/sizeof(*identify_all),false},
         {identify_zero,sizeof(identify_zero)/sizeof(*identify_zero),false},
-        {wrong_map,sizeof(wrong_map)/sizeof(*wrong_map),false}
+        {wrong_map,sizeof(wrong_map)/sizeof(*wrong_map),false},
+        {bad_direct,sizeof(bad_direct)/sizeof(*bad_direct),false},
+        {direct_locate,sizeof(direct_locate)/sizeof(*direct_locate),false},
+        {direct_dupe,sizeof(direct_dupe)/sizeof(*direct_dupe),false}
     };
     size_t i;
+    expect(ugreenctl_hardware_parse(5,direct,false,&o,error,sizeof(error))==0 && o.n76_direct && o.n76_bus==12 && o.n76_address==0x26,"explicit N76 selector");
     expect(ugreenctl_hardware_parse((int)(sizeof(new_command)/sizeof(*new_command)),new_command,false,&o,error,sizeof(error))==0,
            "new LED options parse anywhere");
     expect(o.apply && o.force && o.json && o.target_count==1 && o.action_count==3,"new command flags/actions");
@@ -617,8 +641,30 @@ static void command_routing_regression_tests(void)
     reset();
 }
 
+static void n76_direct_cli_tests(void)
+{
+    char *preview[]={"ugreenctl","led","set","power","--mode","on","--color","white","--n76-direct","1:0x31","--json"};
+    char *apply[]={"ugreenctl","led","set","power","--mode","blink","--color","orange","--n76-direct","1:0x31","--json","--force","--apply"};
+    char *bad[]={"ugreenctl","led","set","power","--color","white","--n76-direct","1:0x31","--json","--force","--apply"};
+    char *status[]={"ugreenctl","led","status","power","--n76-direct","1:0x31","--json"};
+    char captured[4096];
+    reset();direct_fixture=n76=true;
+    expect(capture_cli(sizeof(preview)/sizeof(*preview),preview,false,captured,sizeof(captured))==0 && !opens && !writes,"N76 preview does not open a bus");
+    expect(strstr(captured,"\"transport\":\"n76-direct\"") && strstr(captured,"\"hardware_state_verified\":false"),"N76 preview declares direct unverified output");
+    reset();direct_fixture=n76=true;
+    expect(capture_cli(sizeof(apply)/sizeof(*apply),apply,false,captured,sizeof(captured))==0 && opens==1 && writes==1,"N76 direct blink accepted with explicit mode and color");
+    expect(strstr(captured,"\"write_result\":\"sent-unverified\"") && strstr(captured,"\"state\":{\"mode\":null") && strstr(captured,"\"color\":null") && strstr(captured,"\"brightness\":null"),"N76 sent parameters never become verified output");
+    reset();direct_fixture=n76=true;
+    expect(capture_cli(sizeof(bad)/sizeof(*bad),bad,false,captured,sizeof(captured))!=0 && !opens && !writes,"incomplete direct request rejected before I2C");
+    reset();direct_fixture=n76=true;
+    expect(capture_cli(sizeof(status)/sizeof(*status),status,false,captured,sizeof(captured))==0 && !writes && opens==1,"N76 status only reads");
+    expect(strstr(captured,"\"n76_mode_registers\":[0,0]") && !strstr(captured,"sent-unverified"),"reading mode zero never claims off or sent");
+    reset();
+}
+
 int main(void)
 {
+    n76_direct_cli_tests();
     parse_tests(); execution_tests(); cli_contract_regression_tests(); command_routing_regression_tests();
     (void)puts("Hardware CLI parsing and safe execution tests passed");
     return EXIT_SUCCESS;

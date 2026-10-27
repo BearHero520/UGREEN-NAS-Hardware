@@ -114,6 +114,10 @@ struct ugreenctl_led_value {
     enum ugreenctl_led_color color;
     unsigned int unknown_fields;
     unsigned int cached_fields;
+    /* Direct N76: mode registers are readable, actual outputs are not.
+     * Never replace unknown_fields with the user's requested values. */
+    bool n76_mode_valid, unverified_write;
+    uint8_t n76_modes[2], n76_version;
 };
 
 enum ugreenctl_led_patch_field {
@@ -132,6 +136,9 @@ struct ugreenctl_led_patch {
 struct ugreenctl_led_access {
     bool force;
     bool apply;
+    bool n76_direct;
+    unsigned int n76_bus;
+    uint16_t n76_address;
 };
 
 struct ugreenctl_led_session;

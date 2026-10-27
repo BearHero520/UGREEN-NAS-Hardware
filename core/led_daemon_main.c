@@ -10,7 +10,7 @@ static void stopping(int number) { stop=number; }
 
 int main(int argc,char **argv)
 {
-    struct ugreenctl_led_access access={false,false};
+    struct ugreenctl_led_access access={.force=false,.apply=false};
     struct sigaction handler;
     bool takeover_flow=false;
     char error[512]={0};
