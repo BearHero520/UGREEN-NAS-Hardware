@@ -2,3 +2,4 @@
 research/almighty/methods/** -text
 validation/almighty/** -text
 integration/llled/ac-recovery/*.patch -text
+artifacts/Almighty/** -text
