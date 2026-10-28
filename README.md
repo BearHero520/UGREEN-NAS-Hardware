@@ -20,17 +20,17 @@ NAS systems.
 
 ## Download and quick start
 
-[v0.3.0-preview.1](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0-preview.1)
-provides Linux x86_64 and aarch64 archives, manifests and `SHA256SUMS`. This is an
-experimental preview: the catalog covers 25 target models, with model-specific
-gaps and physical validation still pending. See the [release notes](docs/RELEASE_v0.3.0-preview.1.zh-CN.md).
+[v0.3.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0)
+provides Linux x86_64 and aarch64 archives, manifests and `SHA256SUMS`. This is a
+stable software release; the catalog covers 25 target models with model-specific
+experimental capabilities and physical validation still pending. See the [release notes](docs/RELEASE_v0.3.0.zh-CN.md).
 
 Download the archive for your architecture and compare its `sha256sum` output
 with its entry in `SHA256SUMS`. For x86_64, extract and check without installing:
 
 ```sh
-tar -xzf ugreenctl-almighty-0.3.0-linux-x86_64-preview.tar.gz
-cd ugreenctl-almighty-0.3.0-linux-x86_64-preview
+tar -xzf ugreenctl-almighty-0.3.0-linux-x86_64.tar.gz
+cd ugreenctl-almighty-0.3.0-linux-x86_64
 ./usr/local/bin/ugreenctl --version
 ./usr/local/bin/ugreenctl --plugin-dir ./usr/local/lib/ugreenctl/models models
 ./usr/local/bin/ugreenctl led list --json

@@ -34,6 +34,7 @@ DOCUMENTS = (
     "led/LICENSE.upstream-led", "disk/NOTICE.md",
     "docs/ALMIGHTY_PACKAGING.zh-CN.md", "docs/ARCHITECTURE.md",
     "docs/RELEASE_v0.3.0-preview.1.zh-CN.md",
+    "docs/RELEASE_v0.3.0.zh-CN.md",
     "docs/UGREEN_CONTROL_MIGRATION.zh-CN.md",
     "docs/HARDWARE_SUPPORT.md", "docs/COMPATIBILITY.md",
     "docs/COMPATIBILITY.zh-CN.md", "docs/FAN_CURVE.md",
@@ -453,12 +454,13 @@ def check_catalog(compatibility: dict, official: dict, verification: dict, previ
         raise PackageError(f"Missing/invalid catalog field: {exc}") from exc
 
 
-def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) -> list[dict]:
+def prepare(root: Path, builds: dict, verification_path: Path, preview: bool, release: bool = False) -> list[dict]:
+    require(not (preview and release), "Choose either preview or release channel")
     verification_data = read_regular(verification_path)
     verification = load_json(verification_data, str(verification_path))
     # Fail the scope gate first, even when other checkpoint hashes are stale.
-    require(preview or verification.get("complete") is True,
-            "verification.complete is not true; use --preview for a local incomplete/experimental package")
+    require(preview or release or verification.get("complete") is True,
+            "verification.complete is not true; explicitly select --preview or --release without changing capability status")
     sources = verified_hashes(root, verification.get("source_sha256"), "source", True)
     binaries = verified_hashes(root, verification.get("binary_sha256"), "binary", False)
     missing = sorted(name for name in source_inputs(root) if path_identity(root / name) not in sources)
@@ -469,7 +471,7 @@ def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) ->
 
     compatibility = load_json(source("models/compatibility.json"), "compatibility")
     official = load_json(source("models/official-products.json"), "official-products")
-    catalog = check_catalog(compatibility, official, verification, preview)
+    catalog = check_catalog(compatibility, official, verification, preview or release)
     logs = suite_artifacts(root, verification)
     version_match = re.search(rb"project\(ugreenctl\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)\s", source("CMakeLists.txt"))
     require(version_match is not None, "Cannot determine CMake project version")
@@ -538,6 +540,7 @@ def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) ->
             "schema_version": 1, "package": stem, "architecture": architecture,
             "version": version, "branch": "main", "status": status,
             "preview": preview, "scope_complete": catalog["scope_complete"],
+            "release_channel": "stable" if release else "preview" if preview else "complete-local",
             "verification_complete": verification["complete"],
             "physical_validation": verification.get("physical_validation", "unknown"),
             "install_prefix": str(prefix), "plugin_directory": model_dir.decode("utf-8"),
@@ -596,7 +599,9 @@ def main() -> int:
     parser.add_argument("--aarch64-build", type=Path, required=True)
     parser.add_argument("--verification", type=Path, required=True)
     parser.add_argument("--output", type=Path, help="Default: SOURCE/firmware-inbox/work/almighty-packages")
-    parser.add_argument("--preview", action="store_true", help="Explicitly permit an incomplete, experimental local preview")
+    channel = parser.add_mutually_exclusive_group()
+    channel.add_argument("--preview", action="store_true", help="Explicitly select the preview distribution channel")
+    channel.add_argument("--release", action="store_true", help="Select the stable distribution channel; retain experimental capability status and all validation requirements")
     parser.add_argument("--check-only", action="store_true", help="Validate everything without writing archives")
     args = parser.parse_args()
     try:
@@ -608,7 +613,7 @@ def main() -> int:
         require(not inside(output, root / "firmware-inbox/input")
                 and all(not inside(output, build) for build in builds.values()),
                 "Output cannot be an original-input or build directory")
-        plans = prepare(root, builds, args.verification.resolve(), args.preview)
+        plans = prepare(root, builds, args.verification.resolve(), args.preview, args.release)
         if args.check_only:
             print("Validated " + ", ".join(plan["stem"] for plan in plans) + "; no files written")
         else:

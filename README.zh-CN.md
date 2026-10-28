@@ -19,17 +19,17 @@ ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管�
 
 ## 下载与快速开始
 
-[v0.3.0-preview.1](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0-preview.1)
+[v0.3.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0)
 提供 Linux x86_64、aarch64 两种归档、manifest 和 `SHA256SUMS`。
-本版为实验性预览：目录覆盖 25 款目标机型，仍有逐机型实现与实机验证缺项，
-详见[更新说明](docs/RELEASE_v0.3.0-preview.1.zh-CN.md)。
+本版为正式软件发布；目录覆盖 25 款目标机型，仍保留逐机型实验能力与实机验证缺项，
+详见[更新说明](docs/RELEASE_v0.3.0.zh-CN.md)。
 
 按架构下载归档，将 `sha256sum <归档文件>` 的输出与 `SHA256SUMS` 对应条目比较。
 以 x86_64 为例，解包后先执行只读检查：
 
 ```sh
-tar -xzf ugreenctl-almighty-0.3.0-linux-x86_64-preview.tar.gz
-cd ugreenctl-almighty-0.3.0-linux-x86_64-preview
+tar -xzf ugreenctl-almighty-0.3.0-linux-x86_64.tar.gz
+cd ugreenctl-almighty-0.3.0-linux-x86_64
 ./usr/local/bin/ugreenctl --version
 ./usr/local/bin/ugreenctl --plugin-dir ./usr/local/lib/ugreenctl/models models
 ./usr/local/bin/ugreenctl led list --json

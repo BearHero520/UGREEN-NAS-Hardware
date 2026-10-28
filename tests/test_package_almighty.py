@@ -83,6 +83,14 @@ with tempfile.TemporaryDirectory(prefix='almighty-packaging-') as temporary:
     assert len(plans) == 2
     assert json.loads(plans[0]['manifest'])['status'] == 'experimental-incomplete'
     checks += 2
+    stable = p.prepare(root, builds, verification_path, False, release=True)
+    stable_manifest = json.loads(stable[0]['manifest'])
+    assert stable_manifest['release_channel'] == 'stable' and stable_manifest['preview'] is False
+    assert stable_manifest['status'] == 'experimental-incomplete'
+    assert stable_manifest['scope_complete'] is False and stable_manifest['verification_complete'] is False
+    assert not stable[0]['stem'].endswith('-preview')
+    refused(lambda: p.prepare(root, builds, verification_path, True, release=True), 'either preview or release')
+    checks += 4
     data = p.archive_bytes(plans[0])
     assert data == p.archive_bytes(plans[0])
     with tarfile.open(fileobj=io.BytesIO(data), mode='r:gz') as archive:

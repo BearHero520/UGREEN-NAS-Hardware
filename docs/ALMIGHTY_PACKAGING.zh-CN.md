@@ -1,14 +1,16 @@
 # 主分支本地打包（沿用 Almighty 格式）
 
-`Almighty` 已合入 `main` 并删除分支。当前预发布为 `v0.3.0-preview.1`，归档沿用
+`Almighty` 已合入 `main` 并删除分支。当前正式发布为 `v0.3.0`，归档沿用
 `ugreenctl-almighty` 命名，manifest 来源分支为 `main`；历史归档保持原字节。
 
 `scripts/package-almighty.py` 使用 Python 3.10+ 标准库，将两个 Linux Release 构建目录
 整理为 x86_64 / aarch64 本地归档。脚本不安装、启动服务、修改系统或发布文件。
 
 默认要求 `verification-root.json` 的 `complete` 为布尔值 `true`，且当前兼容目录标记整合完成。
-当前尚有物理 M.2 等缺口，只能显式生成 `--preview`；文件名和 manifest 会注明
-`preview` / `experimental-incomplete`。测试通过不表示已在 NAS 实机或各发行版验证。
+当前尚有物理 M.2 等缺口，默认完整交付门槛继续拒绝。显式 `--preview` 生成预览包；
+按用户正式发布要求使用 `--release` 生成无 `-preview` 后缀的正式渠道包。两个渠道
+均保留 `experimental-incomplete`、未完成机型与实际验证记录，所有哈希、ELF、
+测试与载荷校验一致。正式渠道不等于硬件能力全部验证。
 
 ```sh
 python scripts/package-almighty.py \
@@ -49,7 +51,7 @@ python scripts/package-almighty.py \
   两份独立完整 CTest 纯文本日志需 SHA 匹配、全部配置测试逐一 Passed 且完整成功统计一致；
   打包器不使用可能被增量回归覆盖的 `LastTest.log`。两份明确日志随包留证，不递归复制提取目录。
 
-非 preview 还要求每个目标的 LED、SATA/NVMe 状态均为明确完成值，`remaining` 为空，
+未显式选择 `--preview` 或 `--release` 的完整本地交付还要求每个目标的 LED、SATA/NVMe 状态均为明确完成值，`remaining` 为空，
 且未知 M.2 清单为空；单独改动全局 `complete` 不能把现有缺口包装为完整交付。
 
 此外校验 ELF64/小端及正确架构，插件必须为 `ET_DYN`，十插件集合必须完整且无额外模块。
@@ -72,7 +74,7 @@ python scripts/package-almighty.py \
 ```sh
 cd /path/to/output
 sha256sum -c SHA256SUMS
-tar -tzf ugreenctl-almighty-0.3.0-linux-x86_64-preview.tar.gz
+tar -tzf ugreenctl-almighty-0.3.0-linux-x86_64.tar.gz
 ```
 
 打包器静态校验不代替集成者从实际归档目录运行只读插件加载检查：
