@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import re
 import struct
 import tarfile
 import tempfile
@@ -37,10 +38,13 @@ with tempfile.TemporaryDirectory(prefix='almighty-packaging-') as temporary:
         target = root / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO / name).read_bytes())
+    version = re.search(r'project\(ugreenctl\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)\s',
+                        (root / 'CMakeLists.txt').read_text(encoding='utf-8')).group(1)
     builds = {architecture: root / ('build-' + architecture) for architecture in p.ARCH_MACHINES}
     for architecture, build in builds.items():
         (build / 'models').mkdir(parents=True)
-        (build / 'CMakeCache.txt').write_text('CMAKE_BUILD_TYPE:STRING=Release\nCMAKE_INSTALL_PREFIX:PATH=/usr/local\nCMAKE_INSTALL_LIBDIR:PATH=lib\nCMAKE_PROJECT_VERSION:STATIC=0.2.0\n', encoding='utf-8')
+        (build / 'CMakeCache.txt').write_text('CMAKE_BUILD_TYPE:STRING=Release\nCMAKE_INSTALL_PREFIX:PATH=/usr/local\nCMAKE_INSTALL_LIBDIR:PATH=lib\n'
+                                            + f'CMAKE_PROJECT_VERSION:STATIC={version}\n', encoding='utf-8')
         (build / 'CTestTestfile.cmake').write_text(''.join(f'add_test("test-{index}" "fixture")\n' for index in range(23)), encoding='utf-8')
         for name in p.PROGRAMS + tuple('models/' + name + '.so' for name in p.PLUGINS):
             data = bytearray(120)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(ugreenctl VERSION 0.2.0 LANGUAGES C)
+project(ugreenctl VERSION 0.3.0 LANGUAGES C)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   message(FATAL_ERROR "ugreenctl requires Linux hardware interfaces.")

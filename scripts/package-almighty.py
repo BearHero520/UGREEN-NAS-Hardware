@@ -33,6 +33,8 @@ DOCUMENTS = (
     "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "README.zh-CN.md",
     "led/LICENSE.upstream-led", "disk/NOTICE.md",
     "docs/ALMIGHTY_PACKAGING.zh-CN.md", "docs/ARCHITECTURE.md",
+    "docs/RELEASE_v0.3.0-preview.1.zh-CN.md",
+    "docs/UGREEN_CONTROL_MIGRATION.zh-CN.md",
     "docs/HARDWARE_SUPPORT.md", "docs/COMPATIBILITY.md",
     "docs/COMPATIBILITY.zh-CN.md", "docs/FAN_CURVE.md",
     "docs/LED_CONTROL.zh-CN.md", "docs/LED_EVIDENCE_COLLECTION.zh-CN.md",
@@ -413,7 +415,7 @@ def check_catalog(compatibility: dict, official: dict, verification: dict, previ
                 == {"EM_DXP2800_V1.0.24", "DXP2800 V1.2 251215"},
                 "DXP2800 must retain its two independently evidenced exact revisions")
         require({m["id"] for m in compatibility["models"]} == set(PLUGINS)
-                and len(compatibility["models"]) == len(PLUGINS), "Plugin catalog differs from nine-module whitelist")
+                and len(compatibility["models"]) == len(PLUGINS), "Plugin catalog differs from model whitelist")
         require(type(verification.get("complete")) is bool, "verification.complete must be a JSON boolean")
         completed_led_states = {"implemented", "implemented-experimental", "implemented-conditional", "verified"}
         completed_disk_states = {"implemented", "implemented-conditional", "not-applicable", "verified"}
@@ -534,7 +536,7 @@ def prepare(root: Path, builds: dict, verification_path: Path, preview: bool) ->
         }
         manifest = {
             "schema_version": 1, "package": stem, "architecture": architecture,
-            "version": version, "branch": "Almighty", "status": status,
+            "version": version, "branch": "main", "status": status,
             "preview": preview, "scope_complete": catalog["scope_complete"],
             "verification_complete": verification["complete"],
             "physical_validation": verification.get("physical_validation", "unknown"),

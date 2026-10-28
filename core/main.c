@@ -12,7 +12,7 @@
 #include "core/wake_cli.h"
 #include "ugreenctl.h"
 
-#define UGREENCTL_VERSION "0.2.0"
+#define UGREENCTL_VERSION "0.3.0"
 
 struct cli_options {
     const char *model_directory;
