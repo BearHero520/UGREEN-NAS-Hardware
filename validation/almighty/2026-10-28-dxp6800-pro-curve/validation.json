@@ -1,0 +1,17 @@
+{
+  "upstream_ctest": {
+    "passed": 33,
+    "failed": 0
+  },
+  "application_checks": [
+    "linux-app DXP6800 curve API passed",
+    "almighty DXP6800 curve API passed",
+    "both TypeScript and frontend builds passed",
+    "both FPK input checks passed",
+    "almighty importer 9 tests passed"
+  ],
+  "physical_validation": "not performed",
+  "parameters": "DXP6800 Pro; explicitly user-selected compatibility preset",
+  "fpk_rebuilt": false,
+  "binary_sha256": "dc949844028e6d5b325584a47aca4a420c9d4c6a129a087ce161f53f3c4a3744"
+}

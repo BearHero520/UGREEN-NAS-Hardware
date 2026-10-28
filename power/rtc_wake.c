@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 
 #include "power/rtc_wake.h"
+#include "models/wake_profiles.h"
 
 #include <ctype.h>
 #include <dirent.h>
@@ -13,37 +14,69 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-static int wakealarm_path(char *path, size_t path_size, char *error, size_t error_size)
+/* Select exactly one controller matching this independently identified model.
+ * Never choose the first rtcN, and never retry on a different device after an error. */
+int ugreenctl_rtc_select_at(const char *root, const struct ugreenctl_rtc_profile *profile,
+                           char *path, size_t path_size, char *error, size_t error_size)
 {
+    char directory_path[PATH_MAX], candidate[PATH_MAX], attribute[PATH_MAX], line[256];
     DIR *directory;
     struct dirent *entry;
-
-    directory = opendir("/sys/class/rtc");
-    if (directory == NULL) {
-        (void)snprintf(error, error_size, "cannot inspect RTC wake support: %s", strerror(errno));
+    unsigned matches = 0;
+    if (!root || !profile || !profile->rtc_name || !path || !path_size) return -EINVAL;
+    if (snprintf(directory_path,sizeof(directory_path),"%s/class/rtc",root)>=(int)sizeof(directory_path)) return -ENAMETOOLONG;
+    directory=opendir(directory_path);
+    if (!directory) {
+        (void)snprintf(error,error_size,"cannot inspect RTC devices: %s",strerror(errno));
         return -errno;
     }
-    while ((entry = readdir(directory)) != NULL) {
-        int length;
+    path[0]=0;
+    while ((entry=readdir(directory))) {
+        const char *digit;
+        FILE *stream;
         struct stat status;
-
-        if (strncmp(entry->d_name, "rtc", 3) != 0 || entry->d_name[3] == '\0') {
-            continue;
+        int good=0;
+        size_t name_length=strlen(profile->rtc_name);
+        if (strncmp(entry->d_name,"rtc",3) || !entry->d_name[3]) continue;
+        for (digit=entry->d_name+3; *digit && isdigit((unsigned char)*digit); ++digit) {}
+        if (*digit) continue;
+        if (snprintf(candidate,sizeof(candidate),"%s/%s",directory_path,entry->d_name)>=(int)sizeof(candidate) ||
+            snprintf(attribute,sizeof(attribute),"%s/name",candidate)>=(int)sizeof(attribute)) continue;
+        stream=fopen(attribute,"r");
+        if (!stream) continue;
+        if (fgets(line,sizeof(line),stream)) {
+            line[strcspn(line,"\r\n")]=0;
+            good=!strncmp(line,profile->rtc_name,name_length) &&
+                (line[name_length]==0 || line[name_length]==' ');
         }
-        length = snprintf(path, path_size, "/sys/class/rtc/%s/wakealarm", entry->d_name);
-        if (length < 0 || (size_t)length >= path_size) {
-            (void)closedir(directory);
-            (void)snprintf(error, error_size, "RTC wakealarm path is too long");
-            return -ENAMETOOLONG;
+        (void)fclose(stream);
+        if (!good) continue;
+        if (profile->rtc_of_path) {
+            good=0;
+            if (snprintf(attribute,sizeof(attribute),"%s/device/uevent",candidate)>=(int)sizeof(attribute)) continue;
+            stream=fopen(attribute,"r");
+            if (!stream) continue;
+            while (fgets(line,sizeof(line),stream)) {
+                line[strcspn(line,"\r\n")]=0;
+                if (!strncmp(line,"OF_FULLNAME=",12) && !strcmp(line+12,profile->rtc_of_path)) good=1;
+            }
+            (void)fclose(stream);
+            if (!good) continue;
         }
-        if (stat(path, &status) == 0 && S_ISREG(status.st_mode)) {
-            (void)closedir(directory);
-            return 0;
-        }
+        if (snprintf(attribute,sizeof(attribute),"%s/wakealarm",candidate)>=(int)sizeof(attribute) ||
+            lstat(attribute,&status) || !S_ISREG(status.st_mode)) continue;
+        ++matches;
+        if (strlen(attribute)>=path_size) { (void)closedir(directory); return -ENAMETOOLONG; }
+        strcpy(path,attribute);
     }
     (void)closedir(directory);
-    (void)snprintf(error, error_size, "no RTC wakealarm interface is available");
-    return -ENODEV;
+    if (matches!=1) {
+        path[0]=0;
+        (void)snprintf(error,error_size,"expected one %s RTC wakealarm for %s; found %u (unknown/ambiguous hardware)",
+                       profile->rtc_name,profile->product,matches);
+        return -ENODEV;
+    }
+    return 0;
 }
 
 static int write_wakealarm(const char *path, const char *value,
@@ -53,7 +86,7 @@ static int write_wakealarm(const char *path, const char *value,
     size_t length = strlen(value);
     ssize_t written;
 
-    fd = open(path, O_WRONLY | O_CLOEXEC);
+    fd = open(path, O_WRONLY | O_CLOEXEC | O_NOFOLLOW);
     if (fd < 0) {
         (void)snprintf(error, error_size, "cannot open RTC wakealarm: %s", strerror(errno));
         return -errno;
@@ -102,104 +135,99 @@ int ugreenctl_rtc_wake_parse(const char *value, time_t *epoch,
         (void)snprintf(error, error_size, "RTC wakealarm returned an out-of-range value");
         return -ERANGE;
     }
+    if ((long long)(time_t)parsed != parsed) return -ERANGE;
     *epoch = (time_t)parsed;
     return 0;
 }
 
-int ugreenctl_rtc_wake_read(time_t *epoch, char *error, size_t error_size)
+static int read_alarm(const char *path, time_t *epoch, char *error, size_t error_size)
 {
-    char path[PATH_MAX];
     char value[64];
-    int fd;
-    int result;
+    int fd=open(path,O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
     ssize_t count;
-
-    if (epoch == NULL) {
-        (void)snprintf(error, error_size, "RTC wakealarm output is required");
-        return -EINVAL;
-    }
-    result = wakealarm_path(path, sizeof(path), error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    fd = open(path, O_RDONLY | O_CLOEXEC);
-    if (fd < 0) {
-        (void)snprintf(error, error_size, "cannot read RTC wakealarm: %s", strerror(errno));
-        return -errno;
-    }
-    count = read(fd, value, sizeof(value) - 1U);
+    if (fd<0) { (void)snprintf(error,error_size,"cannot read RTC wakealarm: %s",strerror(errno)); return -errno; }
+    count=read(fd,value,sizeof(value)-1);
+    if (count<0) { int saved=errno; (void)close(fd); return -saved; }
     (void)close(fd);
-    if (count < 0) {
-        (void)snprintf(error, error_size, "cannot read RTC wakealarm: %s", strerror(errno));
-        return -errno;
-    }
-    value[count] = '\0';
-    return ugreenctl_rtc_wake_parse(value, epoch, error, error_size);
+    if ((size_t)count==sizeof(value)-1) return -EOVERFLOW;
+    value[count]=0;
+    return ugreenctl_rtc_wake_parse(value,epoch,error,error_size);
 }
 
-int ugreenctl_rtc_wake_clear(char *error, size_t error_size)
+int ugreenctl_rtc_wake_read(const struct ugreenctl_rtc_profile *profile, time_t *epoch,
+                           char *error, size_t error_size)
 {
     char path[PATH_MAX];
-    int result = wakealarm_path(path, sizeof(path), error, error_size);
+    int result=ugreenctl_rtc_select_at("/sys",profile,path,sizeof(path),error,error_size);
+    return result ? result : read_alarm(path,epoch,error,error_size);
+}
 
-    if (result != 0) {
-        return result;
+int ugreenctl_rtc_validate_epoch(const struct ugreenctl_rtc_profile *profile, time_t epoch,
+                                time_t now, char *error, size_t error_size)
+{
+    if (!profile || !profile->resolution_seconds || now==(time_t)-1 || epoch<=now || epoch-now<=60) {
+        (void)snprintf(error,error_size,"RTC time must be more than 60 seconds in the future"); return -EINVAL;
     }
-    result = write_wakealarm(path, "0", error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    {
-        time_t epoch = -1;
-
-        result = ugreenctl_rtc_wake_read(&epoch, error, error_size);
-        if (result != 0) {
-            return result;
-        }
-        if (epoch != 0) {
-            (void)snprintf(error, error_size, "RTC wakealarm clear did not read back as disabled");
-            return -EIO;
-        }
+    if (epoch % profile->resolution_seconds) {
+        (void)snprintf(error,error_size,"this RTC requires %u-second aligned epochs; no silent rounding",
+                       profile->resolution_seconds); return -EINVAL;
     }
     return 0;
 }
 
-int ugreenctl_rtc_wake_set(time_t epoch, char *error, size_t error_size)
+/* Caller holds the RTC process lock and has rechecked machine identity.
+ * Keep one path for clear, set and readback; clearing failure stops the write. */
+static int update_alarm(const struct ugreenctl_rtc_profile *profile, time_t epoch,
+                        char *error, size_t error_size)
 {
-    char path[PATH_MAX];
-    char value[64];
-    time_t readback;
-    time_t now = time(NULL);
-    int result;
-
-    if (now == (time_t)-1 || epoch <= now + 60) {
-        (void)snprintf(error, error_size, "RTC wake time must be at least 60 seconds in the future");
-        return -EINVAL;
+    char path[PATH_MAX],value[64];
+    time_t observed=-1;
+    int result=ugreenctl_rtc_select_at("/sys",profile,path,sizeof(path),error,error_size);
+    if (result) return result;
+    if (epoch) {
+        char clock_path[PATH_MAX];
+        time_t rtc_now, system_now;
+        size_t prefix=strlen(path)-strlen("wakealarm");
+        if (snprintf(clock_path,sizeof(clock_path),"%.*ssince_epoch",(int)prefix,path)>=(int)sizeof(clock_path))
+            return -ENAMETOOLONG;
+        result=read_alarm(clock_path,&rtc_now,error,error_size);
+        if (result) return result;
+        system_now=time(NULL);
+        /* sysfs alarm epochs use the RTC's time base. Do not silently schedule
+         * a Unix timestamp on a LOCAL or unsynchronised hardware clock. */
+        if (system_now==(time_t)-1 || rtc_now<=0 ||
+            (rtc_now>system_now ? rtc_now-system_now : system_now-rtc_now)>5) {
+            (void)snprintf(error,error_size,"RTC clock differs from system UTC or is unknown; alarm unchanged (check RTC time base/synchronisation)");
+            return -EINVAL;
+        }
     }
-    result = wakealarm_path(path, sizeof(path), error, error_size);
-    if (result != 0) {
-        return result;
+    result=read_alarm(path,&observed,error,error_size);
+    if (result) return result;
+    result=write_wakealarm(path,"0",error,error_size);
+    if (result) return result;
+    result=read_alarm(path,&observed,error,error_size);
+    if (result) return result;
+    if (observed!=0) {
+        (void)snprintf(error,error_size,"RTC alarm clear readback mismatch; stopped"); return -EIO;
     }
-    result = write_wakealarm(path, "0", error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    if (snprintf(value, sizeof(value), "%lld", (long long)epoch) >= (int)sizeof(value)) {
-        (void)snprintf(error, error_size, "RTC wake time is out of range");
-        return -ERANGE;
-    }
-    result = write_wakealarm(path, value, error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    result = ugreenctl_rtc_wake_read(&readback, error, error_size);
-    if (result != 0) {
-        return result;
-    }
-    if (readback != epoch) {
-        (void)snprintf(error, error_size,
-                       "RTC wakealarm readback did not match requested wake time");
-        return -EIO;
+    if (!epoch) return 0;
+    (void)snprintf(value,sizeof(value),"%lld",(long long)epoch);
+    result=write_wakealarm(path,value,error,error_size);
+    if (result) return result;
+    result=read_alarm(path,&observed,error,error_size);
+    if (result) return result;
+    if (observed!=epoch) {
+        (void)snprintf(error,error_size,"RTC alarm readback mismatch; state not confirmed"); return -EIO;
     }
     return 0;
+}
+int ugreenctl_rtc_wake_clear(const struct ugreenctl_rtc_profile *profile, char *error, size_t error_size)
+{
+    return update_alarm(profile,0,error,error_size);
+}
+int ugreenctl_rtc_wake_set(const struct ugreenctl_rtc_profile *profile, time_t epoch,
+                          char *error, size_t error_size)
+{
+    int result=ugreenctl_rtc_validate_epoch(profile,epoch,time(NULL),error,error_size);
+    return result ? result : update_alarm(profile,epoch,error,error_size);
 }

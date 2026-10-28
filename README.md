@@ -1,5 +1,7 @@
 # ugreenctl
 
+The `Almighty` implementation is merged into `main` for the UGreen Control migration. Application development and updates now use [UGreen-Control](https://github.com/BearHero520/UGreen-Control); see the [migration record](docs/UGREEN_CONTROL_MIGRATION.zh-CN.md).
+
 Experimental N76 userspace control (no module builder): [usage and unverified-output semantics](docs/N76_DIRECT_CONTROL.zh-CN.md).
 
 The `Almighty` branch adds native LED control, physical SATA/NVMe bay mapping and an

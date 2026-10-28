@@ -1,0 +1,726 @@
+Start testing: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+----------------------------------------------------------
+8/33 Testing: led
+8/33 Test: led
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-led"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+N76 direct: exact maps, unverified outputs, readback errors and fail-closed writes passed
+E:\¹¤×÷Ì¨\UGREEN-NAS-Hardware\firmware-inbox\work\almighty-tools\qemu\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.vNext.CBS_8wekyb3d8bbwe\AppxManifest.xml' for package #4 (`Microsoft.WindowsAppRuntime.CBS.1.6_6000.410.1743.0_x64__8wekyb3d8bbwe'): error code 0x2
+LED protocol, identity, ownership, readback and restoration tests passed
+<end of output>
+Test time =   4.06 sec
+----------------------------------------------------------
+Test Passed.
+"led" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led" time elapsed: 00:00:04
+----------------------------------------------------------
+
+9/33 Testing: led-holder
+9/33 Test: led-holder
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-led-service"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led-holder" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+E:\¹¤×÷Ì¨\UGREEN-NAS-Hardware\firmware-inbox\work\almighty-tools\qemu\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.vNext.CBS_8wekyb3d8bbwe\AppxManifest.xml' for package #4 (`Microsoft.WindowsAppRuntime.CBS.1.6_6000.410.1743.0_x64__8wekyb3d8bbwe'): error code 0x2
+LED holder IPC, raw identify restoration, authorization and identity tests passed
+<end of output>
+Test time =   6.83 sec
+----------------------------------------------------------
+Test Passed.
+"led-holder" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led-holder" time elapsed: 00:00:06
+----------------------------------------------------------
+
+11/33 Testing: disk-mapping
+11/33 Test: disk-mapping
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-disk-mapping"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"disk-mapping" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+E:\¹¤×÷Ì¨\UGREEN-NAS-Hardware\firmware-inbox\work\almighty-tools\qemu\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.vNext.CBS_8wekyb3d8bbwe\AppxManifest.xml' for package #4 (`Microsoft.WindowsAppRuntime.CBS.1.6_6000.410.1743.0_x64__8wekyb3d8bbwe'): error code 0x2
+disk mapping tests passed
+<end of output>
+Test time =   7.50 sec
+----------------------------------------------------------
+Test Passed.
+"disk-mapping" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"disk-mapping" time elapsed: 00:00:07
+----------------------------------------------------------
+
+16/33 Testing: it8613-power
+16/33 Test: it8613-power
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-power"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-power" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+it8613 power tests passed
+<end of output>
+Test time =   3.66 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-power" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-power" time elapsed: 00:00:03
+----------------------------------------------------------
+
+23/33 Testing: rtc-wake
+23/33 Test: rtc-wake
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-rtc-wake"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"rtc-wake" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+RTC wakealarm parsing tests passed
+<end of output>
+Test time =   3.81 sec
+----------------------------------------------------------
+Test Passed.
+"rtc-wake" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"rtc-wake" time elapsed: 00:00:03
+----------------------------------------------------------
+
+6/33 Testing: led-compat-help
+6/33 Test: led-compat-help
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/ugreen_leds_cli" "--help"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led-compat-help" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Usage: ugreen_leds_cli TARGET ... [ACTION ...] [--apply] [--force] [--json]
+TARGET: power, netdev, disk1..disk8, all (availability depends on model).
+Actions, executed in the given order:
+  -on | -off
+  -color R G B          each component 0..255
+  -brightness N         0..255
+  -blink ON_MS OFF_MS | -breath ON_MS OFF_MS (total 1..65535 ms)
+  -status               query complete LED state
+No action means -status. Put all targets before action flags.
+
+This entry point provides argument compatibility with ugreen_leds_cli.
+Writes default to preview and require --apply; experimental profiles also
+require --force. Existing scripts must explicitly acknowledge these options.
+DMI, MCU identity, owner checks and locks always apply.
+<end of output>
+Test time =   3.98 sec
+----------------------------------------------------------
+Test Passed.
+"led-compat-help" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led-compat-help" time elapsed: 00:00:03
+----------------------------------------------------------
+
+29/33 Testing: wake-profiles
+29/33 Test: wake-profiles
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-wake-profiles"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"wake-profiles" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+25 independent RTC and WOL profiles; identity, RTC ambiguity/resolution, PCI/DT NIC guards passed
+<end of output>
+Test time =   3.97 sec
+----------------------------------------------------------
+Test Passed.
+"wake-profiles" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"wake-profiles" time elapsed: 00:00:03
+----------------------------------------------------------
+
+17/33 Testing: it8613-dxp4800
+17/33 Test: it8613-dxp4800
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp4800"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp4800" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP4800 direct map tests passed
+<end of output>
+Test time =   3.97 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp4800" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp4800" time elapsed: 00:00:03
+----------------------------------------------------------
+
+22/33 Testing: wol-runtime
+22/33 Test: wol-runtime
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-wol-runtime"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"wol-runtime" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Renamed physical NIC selection, virtual exclusion, preflight and readback passed
+<end of output>
+Test time =   3.97 sec
+----------------------------------------------------------
+Test Passed.
+"wol-runtime" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"wol-runtime" time elapsed: 00:00:03
+----------------------------------------------------------
+
+19/33 Testing: it8613-dx4600
+19/33 Test: it8613-dx4600
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dx4600"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dx4600" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DX4600 direct map tests passed
+<end of output>
+Test time =   3.94 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dx4600" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dx4600" time elapsed: 00:00:03
+----------------------------------------------------------
+
+4/33 Testing: cli-help
+4/33 Test: cli-help
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/ugreenctl" "--help"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"cli-help" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+ugreenctl 0.2.0 - UGREEN NAS Hardware Management Utility
+
+Usage:
+  ugreenctl [options] models
+  ugreenctl [options] info
+  ugreenctl [options] thermal status
+  ugreenctl [options] fan status
+  ugreenctl [options] fan set <fan-id> <0-255>
+  ugreenctl [options] power startup get
+  ugreenctl [options] power startup set <on|off|restore>
+  ugreenctl [options] power rtc-wake models|get
+  ugreenctl [options] power rtc-wake set <unix-epoch>
+  ugreenctl [options] power rtc-wake clear
+  ugreenctl [options] network wol models|get [--interface NAME]
+  ugreenctl [options] network wol set <on|off> [--interface NAME]
+  ugreenctl led list
+  ugreenctl led status [all|power|netdev|diskN...] [--json]
+  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>
+              [--brightness <0-255|N%>] [--mode on|off|blink|breath]
+              [--on-ms N --off-ms N] [--force --apply]
+  ugreenctl led on|off <targets...> [--force --apply]
+  ugreenctl led identify <target> [--seconds N] [--force --apply]
+  ugreenctl disk list|map [--json]
+  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]
+
+Options (LED/disk options may also follow the command):
+  --model <id>        select an exact model (wake commands use independent profiles)
+  --plugin-dir <dir>  directory containing model .so files
+  --apply             perform a requested write (writes are dry runs otherwise)
+  --force             acknowledge an experimental model write
+  --json              structured output for LED/disk commands
+  --version           print the version
+  --help              print this help
+
+Fan control prefers the Linux hwmon node named it8613. If it is absent,
+a guarded direct Super I/O fallback is available only with no active owner.
+Writes require an exact DMI match and always select manual PWM mode.
+<end of output>
+Test time =   3.93 sec
+----------------------------------------------------------
+Test Passed.
+"cli-help" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"cli-help" time elapsed: 00:00:03
+----------------------------------------------------------
+
+30/33 Testing: wake-cli
+30/33 Test: wake-cli
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-wake-cli"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"wake-cli" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+0
+dry-run: wake request validated against exact model; no hardware access; use --force --apply
+error: selected RTC model does not match machine identity
+error: wake control is experimental; requires --force --apply
+error: automatic NIC mapping is unconfirmed; specify --interface <physical-ethernet-name>
+dry-run: wake request validated against exact model; no hardware access; use --force --apply
+error: --interface only applies to WOL
+error: RTC is not independently firmware-mapped for this exact machine
+error: RTC is not independently firmware-mapped for this exact machine
+Independent RTC routing without WOL/plugin; exact identity, dry-run and argument gates passed
+<end of output>
+Test time =   3.92 sec
+----------------------------------------------------------
+Test Passed.
+"wake-cli" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"wake-cli" time elapsed: 00:00:03
+----------------------------------------------------------
+
+10/33 Testing: led-cs201x
+10/33 Test: led-cs201x
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-led-cs201x"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led-cs201x" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+E:\¹¤×÷Ì¨\UGREEN-NAS-Hardware\firmware-inbox\work\almighty-tools\qemu\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.vNext.CBS_8wekyb3d8bbwe\AppxManifest.xml' for package #4 (`Microsoft.WindowsAppRuntime.CBS.1.6_6000.410.1743.0_x64__8wekyb3d8bbwe'): error code 0x2
+CS2011 LED transport fixtures passed
+<end of output>
+Test time =   3.89 sec
+----------------------------------------------------------
+Test Passed.
+"led-cs201x" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led-cs201x" time elapsed: 00:00:03
+----------------------------------------------------------
+
+5/33 Testing: led-cli-help
+5/33 Test: led-cli-help
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/ugreenctl" "led" "--help"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led-cli-help" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Usage:
+  ugreenctl led list
+  ugreenctl led status [TARGET ...]
+  ugreenctl led set TARGET ... [--color COLOR] [--brightness VALUE] [--mode MODE]
+  ugreenctl led on|off TARGET ...
+  ugreenctl led identify TARGET [--seconds 1..60]
+  ugreenctl disk list|map
+  ugreenctl disk locate /dev/sdX|serial:SERIAL|slotN [--seconds 1..60]
+
+TARGET: power, netdev, netdev2, diskN, or all; use led list for capabilities.
+COLOR: blue, red, green, white, yellow, cyan, magenta, purple, orange,
+       black, '#RRGGBB', or R,G,B for RGB; palette LEDs also accept
+       white-orange, none, channel1/channel2/both when listed.
+       Quote hex colors in a shell.
+VALUE: raw hardware range or 0%..100% of that range. MODE: on/off/blink/breath
+       where supported by the target.
+Blink/breath: --on-ms N --off-ms N (default 500/500; total 1..65535 ms).
+Target-specific minimum durations are shown by led list --json.
+
+--json, --apply, --force can appear before or after the command.
+Writes are previews until --apply; experimental hardware also needs --force.
+N76: --n76-direct BUS:0x31 (or BUS:0x26) selects explicit userspace I2C.
+     Exact DH2600/DXP480T Plus only; no scan, module build or loading.
+     Set requires explicit mode/color; output/PWM/timing remain UNVERIFIED.
+     Default without this option retains the bound-driver sysfs path.
+--force never bypasses DMI, MCU identity, driver ownership, or lock checks.
+Identify restores the complete original LED state after its time limit
+or SIGINT/SIGTERM. Restoration is best effort if communication fails.
+Disk mapping uses physical PCI/ATA topology, never sdX enumeration order.
+Unverified mappings remain unknown; locate refuses them. Calibrated physical
+maps are read from /etc/ugreenctl/disk-map.conf (or --map-file PATH).
+Calibration files must be root-owned and not group/world-writable:
+  model=DXP4800 Plus
+  slot1 topology=pci-0000:00:17.0-ata-1
+Record only physical slot/topology pairs confirmed on your machine.
+<end of output>
+Test time =   3.98 sec
+----------------------------------------------------------
+Test Passed.
+"led-cli-help" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led-cli-help" time elapsed: 00:00:03
+----------------------------------------------------------
+
+13/33 Testing: hardware-cli
+13/33 Test: hardware-cli
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-hardware-cli"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"hardware-cli" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+error [unsupported]: N76 direct plan requires an explicit mode; current output is unknown
+error [invalid_argument]: -brightness requires an integer from 0 to 255
+error [experimental_confirmation]: experimental LED writes require --force --apply
+error [unsupported]: LED 'disk9' is unsupported by exact profile 'fixture'
+error [controller_busy]: fixture owner conflict
+error [hardware_error]: fixture read failure
+error [unmapped_disk]: fixture unmapped topology
+{"schema_version":1,"ok":false,"error":{"code":"invalid_argument","message":"-brightness requires an integer from 0 to 255","completed_operations":0}}
+{"schema_version":1,"ok":true,"data":{"product":"DXP4800","product_version":"","board_version":"","bios_vendor":null,"bios_version":null,"bios_date":null,"bios_compatibility":"not-independently-validated","profile":"fixture","protocol":"legacy-i2c-block","identity_source":"","experimental":true,"bus":null,"chip_id":null,"write_identity_confirmed":null,"dry_run":true,"operations":[{"step":1,"target":"power","action":"set","rgb":[0,0,255],"applied":false}]}}
+{"schema_version":1,"ok":false,"error":{"code":"experimental_confirmation","message":"experimental LED writes require --force --apply","completed_operations":0}}
+{"schema_version":1,"ok":false,"error":{"code":"unsupported","message":"LED 'disk9' is unsupported by exact profile 'fixture'","completed_operations":0}}
+{"schema_version":1,"ok":false,"error":{"code":"controller_busy","message":"fixture owner conflict","completed_operations":0}}
+{"schema_version":1,"ok":false,"error":{"code":"hardware_error","message":"fixture read failure","completed_operations":0}}
+{"schema_version":1,"ok":true,"data":{"product":"DXP4800","product_version":"","board_version":"","bios_vendor":null,"bios_version":null,"bios_date":null,"bios_compatibility":"not-independently-validated","profile":"fixture","protocol":"legacy-i2c-block","identity_source":"","experimental":true,"bus":"/dev/i2c-fixture","chip_id":50610,"write_identity_confirmed":true,"dry_run":false,"operations":[{"step":1,"target":"power","action":"on","applied":true,"state":{"mode":"on","brightness":0,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":2,"target":"power","action":"color","rgb":[10,20,30],"applied":true,"state":{"mode":"off","brightness":0,"rgb":[10,20,30],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":3,"target":"power","action":"status","applied":false,"state":{"mode":"on","brightness":100,"rgb":[0,0,255],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":4,"target":"power","action":"brightness","brightness":7,"applied":true,"state":{"mode":"off","brightness":7,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":5,"target":"power","action":"off","applied":true,"state":{"mode":"off","brightness":0,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":1,"target":"disk1","action":"on","applied":true,"state":{"mode":"on","brightness":0,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":2,"target":"disk1","action":"color","rgb":[10,20,30],"applied":true,"state":{"mode":"off","brightness":0,"rgb":[10,20,30],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":3,"target":"disk1","action":"status","applied":false,"state":{"mode":"on","brightness":100,"rgb":[0,0,255],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":4,"target":"disk1","action":"brightness","brightness":7,"applied":true,"state":{"mode":"off","brightness":7,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}},{"step":5,"target":"disk1","action":"off","applied":true,"state":{"mode":"off","brightness":0,"rgb":[0,0,0],"color":null,"on_ms":0,"off_ms":0,"unknown_fields":[],"cached_fields":[]}}]}}
+{"schema_version":1,"ok":false,"error":{"code":"unmapped_disk","message":"fixture unmapped topology","completed_operations":0}}
+{"schema_version":1,"ok":true,"data":{"product":"DXP4800","product_version":"","board_version":"","bios_vendor":null,"bios_version":null,"bios_date":null,"bios_compatibility":"not-independently-validated","profile":"fixture","protocol":"legacy-i2c-block","identity_source":"","experimental":true,"bus":"/dev/i2c-fixture","chip_id":50610,"write_identity_confirmed":true,"target":"disk1","action":"identify","seconds":7,"dry_run":false,"restored":true}}
+{"schemerror [unsupported]: this LED cannot perform a reversible on/off identification
+a_version":1,"ok":true,"data":{"product":"DXP4800","profile_known":true,"profile":"fixture","disks":[{"device":"/dev/sda","serial":"SN1","wwn":"","namespaces":[],"topology":"","interface":"sata","slot_name":"ata1","mapped":true,"slot":1,"led":"disk1","led_supported":true,"mapping_source":"","reason":""}]}}
+{"schema_version":1,"ok":true,"data":{"product":"DXP4800","product_version":"","board_version":"","bios_vendor":null,"bios_version":null,"bios_date":null,"bios_compatibility":"not-independently-validated","profile":"fixture","protocol":"legacy-i2c-block","identity_source":"","experimental":true,"bus":null,"chip_id":null,"write_identity_confirmed":null,"target":"disk1","action":"identify","seconds":7,"dry_run":true,"restored":null}}
+{"schema_version":1,"ok":false,"error":{"code":"unsupported","message":"this LED cannot perform a reversible on/off identification","completed_operations":0}}
+error [unsupported]: palette color is not supported by this LED
+error [unsupported]: a binary GPIO LED has no dormant color register; include --mode on when selecting its color
+error [unsupported]: brightness exceeds this LED's supported range
+error [unsupported]: palette color is not supported by this LED
+error [unsupported]: this physical disk slot has no verified independently controllable LED
+disk2    set color=white brightness=1 -> mode=off brightness=1 color=white on_ms=0 off_ms=0
+disk2    set color=white mode=on -> mode=on brightness=0 color=white on_ms=0 off_ms=0
+{"schema_version":1,"ok":false,"error":{"code":"unsupported","message":"this physical disk slot has no verified independently controllable LED","completed_operations":0}}
+error [unsupported]: N76 changes with an unknown mode or during an effect require the complete requested mode and timing
+error [unsupported]: N76 blink requires one white or orange channel; the stock driver does not blink combined colors
+error [unsupported]: N76 changes with an unknown mode or during an effect require the complete requested mode and timing
+power    set color=orange mode=on -> mode=on brightness=0 color=orange on_ms=0 off_ms=0
+disk2    set color=orange mode=on -> mode=on brightness=0 color=orange on_ms=0 off_ms=0
+error [unsupported]: N76 changes with an unknown mode or during an effect require the complete requested mode and timing
+error [unsupported]: fixture required backend trigger is unavailable
+error [unsupported]: fixture required backend trigger is unavailable
+error [hardware_error]: fixture write failure
+error [hardware_error]: fixture write failure
+error [hardware_error]: fixture write failure (1 operations completed before failure)
+E:\¹¤×÷Ì¨\UGREEN-NAS-Hardware\firmware-inbox\work\almighty-tools\qemu\qemu-system-x86_64.exe: warning: GLib-GIO: Failed to open application manifest `C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.vNext.CBS_8wekyb3d8bbwe\AppxManifest.xml' for package #4 (`Microsoft.WindowsAppRuntime.CBS.1.6_6000.410.1743.0_x64__8wekyb3d8bbwe'): error code 0x2
+error [hardware_error]: fixture write failure (1 operations completed before failure)
+error [invalid_argument]: unexpected option before LED/disk command
+error [invalid_argument]: unexpected option before LED/disk command
+error [invalid_argument]: unexpected option before LED/disk command
+error [invalid_argument]: unexpected option before LED/disk command
+error [invalid_argument]: unexpected option before LED/disk command
+Hardware CLI parsing and safe execution tests passed
+<end of output>
+Test time =   3.92 sec
+----------------------------------------------------------
+Test Passed.
+"hardware-cli" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"hardware-cli" time elapsed: 00:00:03
+----------------------------------------------------------
+
+24/33 Testing: it8613-dxp480t
+24/33 Test: it8613-dxp480t
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp480t"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp480t" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP480T direct map tests passed
+<end of output>
+Test time =   3.89 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp480t" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp480t" time elapsed: 00:00:03
+----------------------------------------------------------
+
+28/33 Testing: thermal-curve
+28/33 Test: thermal-curve
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-thermal-curve"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"thermal-curve" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   4.00 sec
+----------------------------------------------------------
+Test Passed.
+"thermal-curve" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"thermal-curve" time elapsed: 00:00:03
+----------------------------------------------------------
+
+18/33 Testing: it8613-dxp4800s
+18/33 Test: it8613-dxp4800s
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp4800s"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp4800s" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP4800S mapping and fallback boundary tests passed
+<end of output>
+Test time =   3.85 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp4800s" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp4800s" time elapsed: 00:00:03
+----------------------------------------------------------
+
+14/33 Testing: it8613-hwmon
+14/33 Test: it8613-hwmon
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-hwmon"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-hwmon" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+it8613 hwmon tests passed
+<end of output>
+Test time =   3.88 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-hwmon" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-hwmon" time elapsed: 00:00:03
+----------------------------------------------------------
+
+26/33 Testing: it8613-dxp6800plus
+26/33 Test: it8613-dxp6800plus
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp6800plus"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp6800plus" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP6800 Plus direct map and hwmon fallback guard tests passed
+<end of output>
+Test time =   3.91 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp6800plus" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp6800plus" time elapsed: 00:00:03
+----------------------------------------------------------
+
+15/33 Testing: it8613-direct
+15/33 Test: it8613-direct
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-direct"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-direct" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+it8613 direct tests passed
+<end of output>
+Test time =   3.99 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-direct" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-direct" time elapsed: 00:00:03
+----------------------------------------------------------
+
+7/33 Testing: led-holder-help
+7/33 Test: led-holder-help
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/ugreenctl-ledd" "--help"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"led-holder-help" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Usage: ugreenctl-ledd --force --apply [--takeover-flow]
+Foreground LED holder for verified ARM GPIO models and DXP2800 GT.
+Keeps controller resources and locks until SIGINT/SIGTERM.
+Root-only clients use /run/ugreenctl-ledd.sock through ugreenctl.
+No kernel modules are loaded or unloaded; no implicit backgrounding.
+GPIO: stopping releases lines; output persistence is not guaranteed.
+GT: --takeover-flow explicitly disables global autonomous effects while running.
+GT: requires active Host2EC; restores all four LEDs and original FLOW on clean exit.
+The original autonomous animation phase cannot be restored.
+<end of output>
+Test time =   3.99 sec
+----------------------------------------------------------
+Test Passed.
+"led-holder-help" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"led-holder-help" time elapsed: 00:00:03
+----------------------------------------------------------
+
+27/33 Testing: it8613-dxp6800
+27/33 Test: it8613-dxp6800
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp6800"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp6800" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP6800 direct map and hwmon fallback guard tests passed
+<end of output>
+Test time =   4.00 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp6800" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp6800" time elapsed: 00:00:03
+----------------------------------------------------------
+
+25/33 Testing: it8613-dxp6800pro
+25/33 Test: it8613-dxp6800pro
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-it8613-dxp6800pro"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"it8613-dxp6800pro" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP6800 Pro direct map and hwmon fallback guard tests passed
+<end of output>
+Test time =   3.87 sec
+----------------------------------------------------------
+Test Passed.
+"it8613-dxp6800pro" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"it8613-dxp6800pro" time elapsed: 00:00:03
+----------------------------------------------------------
+
+21/33 Testing: wol-dxp4800
+21/33 Test: wol-dxp4800
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-wol-dxp4800"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"wol-dxp4800" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Firmware-mapped Wake-on-LAN map tests passed
+<end of output>
+Test time =   3.83 sec
+----------------------------------------------------------
+Test Passed.
+"wol-dxp4800" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"wol-dxp4800" time elapsed: 00:00:03
+----------------------------------------------------------
+
+31/33 Testing: rtc-runtime
+31/33 Test: rtc-runtime
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-rtc-runtime"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"rtc-runtime" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+RTC transactions: clear-before-set, pinned path, readback and fail-closed errors passed
+<end of output>
+Test time =   3.77 sec
+----------------------------------------------------------
+Test Passed.
+"rtc-runtime" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"rtc-runtime" time elapsed: 00:00:03
+----------------------------------------------------------
+
+20/33 Testing: dx4600-plugin
+20/33 Test: dx4600-plugin
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-dx4600-plugin"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"dx4600-plugin" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DX4600 plugin metadata and write guards passed
+<end of output>
+Test time =   3.81 sec
+----------------------------------------------------------
+Test Passed.
+"dx4600-plugin" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"dx4600-plugin" time elapsed: 00:00:03
+----------------------------------------------------------
+
+12/33 Testing: identity
+12/33 Test: identity
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-identity"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"identity" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Machine identity safety tests passed
+<end of output>
+Test time =   3.84 sec
+----------------------------------------------------------
+Test Passed.
+"identity" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"identity" time elapsed: 00:00:03
+----------------------------------------------------------
+
+32/33 Testing: wol-interface
+32/33 Test: wol-interface
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-wol-interface"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"wol-interface" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Explicit WOL: driver capability, interface replacement, write errors and readback checked
+<end of output>
+Test time =   3.85 sec
+----------------------------------------------------------
+Test Passed.
+"wol-interface" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"wol-interface" time elapsed: 00:00:03
+----------------------------------------------------------
+
+3/33 Testing: startup-state
+3/33 Test: startup-state
+Command: "C:/Users/15221/AppData/Local/Python/pythoncore-3.14-64/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tests/test_startup_state.py"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"startup-state" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+test_backend_set_error_after_possible_write_keeps_old_desire_and_reports_unknown (__main__.BackendContractTests.test_backend_set_error_after_possible_write_keeps_old_desire_and_reports_unknown) ... ok
+test_cli_accepts_options_after_command_and_rejects_overrides (__main__.BackendContractTests.test_cli_accepts_options_after_command_and_rejects_overrides) ... ok
+test_exact_binary_argv_flags_no_shell_no_model_or_inherited_environment (__main__.BackendContractTests.test_exact_binary_argv_flags_no_shell_no_model_or_inherited_environment) ... ok
+test_exit_timeout_and_os_errors_are_not_accepted_as_readback (__main__.BackendContractTests.test_exit_timeout_and_os_errors_are_not_accepted_as_readback) ... ok
+test_get_requires_exact_token_not_json_extra_lines_last_or_garbled_data (__main__.BackendContractTests.test_get_requires_exact_token_not_json_extra_lines_last_or_garbled_data) ... ok
+test_identity_reads_fixed_nonserial_paths_only (__main__.BackendContractTests.test_identity_reads_fixed_nonserial_paths_only) ... ok
+test_production_runtime_rejects_windows_or_nonroot (__main__.BackendContractTests.test_production_runtime_rejects_windows_or_nonroot) ... ok
+test_relative_binary_or_plugins_rejected (__main__.BackendContractTests.test_relative_binary_or_plugins_rejected) ... ok
+test_set_timeout_or_failure_is_an_attempt_not_confirmed_hardware_write (__main__.BackendContractTests.test_set_timeout_or_failure_is_an_attempt_not_confirmed_hardware_write) ... ok
+test_real_atomic_save_restart_apply_and_permissions (__main__.RealLinuxFilesystemTests.test_real_atomic_save_restart_apply_and_permissions) ... skipped 'real Linux dirfd/flock tests require root; mock tests cover Windows contracts'
+test_real_flock_rejects_competing_process_lock (__main__.RealLinuxFilesystemTests.test_real_flock_rejects_competing_process_lock) ... skipped 'real Linux dirfd/flock tests require root; mock tests cover Windows contracts'
+test_real_symlink_fifo_hardlink_and_bad_ancestor_refuse (__main__.RealLinuxFilesystemTests.test_real_symlink_fifo_hardlink_and_bad_ancestor_refuse) ... skipped 'real Linux dirfd/flock tests require root; mock tests cover Windows contracts'
+test_atomic_save_sync_order_and_safe_mode (__main__.StartupStateTests.test_atomic_save_sync_order_and_safe_mode) ... ok
+test_both_flags_required_and_show_never_executes (__main__.StartupStateTests.test_both_flags_required_and_show_never_executes) ... ok
+test_creation_is_private_and_only_explicit_write_creates_directory (__main__.StartupStateTests.test_creation_is_private_and_only_explicit_write_creates_directory) ... ok
+test_current_ten_product_three_policy_coordination (__main__.StartupStateTests.test_current_ten_product_three_policy_coordination) ... ok
+test_dry_run_never_invokes_backend_or_creates_files_or_lock (__main__.StartupStateTests.test_dry_run_never_invokes_backend_or_creates_files_or_lock) ... ok
+test_every_identity_field_change_blocks_apply_but_show_explains (__main__.StartupStateTests.test_every_identity_field_change_blocks_apply_but_show_explains) ... ok
+test_explicit_set_rebinds_identity_only_after_successful_readback (__main__.StartupStateTests.test_explicit_set_rebinds_identity_only_after_successful_readback) ... ok
+test_failed_set_does_not_replace_old_record_or_run_postread (__main__.StartupStateTests.test_failed_set_does_not_replace_old_record_or_run_postread) ... ok
+test_fifo_symlink_socket_permissions_owner_and_hardlink_reject_before_read (__main__.StartupStateTests.test_fifo_symlink_socket_permissions_owner_and_hardlink_reject_before_read) ... ok
+test_identity_change_after_write_does_not_save (__main__.StartupStateTests.test_identity_change_after_write_does_not_save) ... ok
+test_identity_change_during_preread_blocks_write (__main__.StartupStateTests.test_identity_change_during_preread_blocks_write) ... ok
+test_initial_unknown_does_not_prevent_explicit_set (__main__.StartupStateTests.test_initial_unknown_does_not_prevent_explicit_set) ... ok
+test_last_is_saved_as_restore (__main__.StartupStateTests.test_last_is_saved_as_restore) ... ok
+test_lock_is_exclusive_and_released_and_uses_nofollow_dirfd (__main__.StartupStateTests.test_lock_is_exclusive_and_released_and_uses_nofollow_dirfd) ... ok
+test_missing_binary_explicit_write_rejects_before_creating_any_files (__main__.StartupStateTests.test_missing_binary_explicit_write_rejects_before_creating_any_files) ... ok
+test_no_saved_record_or_directory_no_backend_or_file_mutation (__main__.StartupStateTests.test_no_saved_record_or_directory_no_backend_or_file_mutation) ... ok
+test_nonroot_before_any_path_or_backend_access (__main__.StartupStateTests.test_nonroot_before_any_path_or_backend_access) ... ok
+test_path_components_are_not_normalized_past_symlinks (__main__.StartupStateTests.test_path_components_are_not_normalized_past_symlinks) ... ok
+test_post_replace_directory_sync_failure_reports_uncertainty (__main__.StartupStateTests.test_post_replace_directory_sync_failure_reports_uncertainty) ... ok
+test_postread_failure_unknown_mismatch_preserve_old_record (__main__.StartupStateTests.test_postread_failure_unknown_mismatch_preserve_old_record) ... ok
+test_reboot_start_stop_and_repeated_apply_reassert_saved_desire (__main__.StartupStateTests.test_reboot_start_stop_and_repeated_apply_reassert_saved_desire) ... ok
+test_save_failures_keep_old_record_before_replace_and_report_written_hardware (__main__.StartupStateTests.test_save_failures_keep_old_record_before_replace_and_report_written_hardware) ... ok
+test_strict_json_rejects_oversize_duplicates_schemas_and_values (__main__.StartupStateTests.test_strict_json_rejects_oversize_duplicates_schemas_and_values) ... ok
+test_unsafe_path_ancestors_final_directory_and_lock (__main__.StartupStateTests.test_unsafe_path_ancestors_final_directory_and_lock) ... ok
+test_unsupported_backend_or_preread_error_never_sets (__main__.StartupStateTests.test_unsupported_backend_or_preread_error_never_sets) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.018s
+
+OK (skipped=3)
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"startup-state" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"startup-state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/33 Testing: package-runtime
+1/33 Test: package-runtime
+Command: "C:/Users/15221/AppData/Local/Python/pythoncore-3.14-64/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tests/test_package_runtime.py"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"package-runtime" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.001s
+
+OK
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"package-runtime" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"package-runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/33 Testing: dxp6800-plugin
+33/33 Test: dxp6800-plugin
+Command: "C:/Program Files/Python311/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tools/testing/run_linux.py" "--runtime-root" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/firmware-inbox/work/almighty-tools" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800/test-dxp6800-plugin"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"dxp6800-plugin" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+DXP6800 plugin metadata and write guards passed
+<end of output>
+Test time =   3.87 sec
+----------------------------------------------------------
+Test Passed.
+"dxp6800-plugin" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"dxp6800-plugin" time elapsed: 00:00:03
+----------------------------------------------------------
+
+2/33 Testing: package-policy
+2/33 Test: package-policy
+Command: "C:/Users/15221/AppData/Local/Python/pythoncore-3.14-64/python.exe" "E:/å·¥ä½œå°/UGREEN-NAS-Hardware/tests/test_package_almighty.py"
+Directory: E:/å·¥ä½œå°/UGREEN-NAS-Hardware/build-dxp6800
+"package-policy" start time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Packaging policy fixtures passed: 29 checks
+<end of output>
+Test time =   3.89 sec
+----------------------------------------------------------
+Test Passed.
+"package-policy" end time: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä
+"package-policy" time elapsed: 00:00:03
+----------------------------------------------------------
+
+End testing: Oct 28 10:14 ÖĞ¹ú±ê×¼Ê±¼ä

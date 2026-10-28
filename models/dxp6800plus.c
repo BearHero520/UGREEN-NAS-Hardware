@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "fan/it8613_dxp6800plus.h"
+#include "network/wol_dxp6800plus.h"
 #include "power/it8613_power.h"
 
 static const char * const product_names[] = {
@@ -57,7 +58,26 @@ static int read_status(const struct ugreenctl_request *request,
     (void)read_startup_policy(request, &status->startup_policy,
                               startup_error, sizeof(startup_error));
     status->wol_policy = UGREENCTL_WOL_UNKNOWN;
+    (void)dxp6800plus_read_wol_policy(&status->wol_policy,
+                                      startup_error, sizeof(startup_error));
     return 0;
+}
+
+static int read_wol_policy(const struct ugreenctl_request *request,
+                           enum ugreenctl_wol_policy *policy,
+                           char *error, size_t error_size)
+{
+    (void)request;
+    return dxp6800plus_read_wol_policy(policy, error, error_size);
+}
+
+static int set_wol_policy(const struct ugreenctl_request *request,
+                          enum ugreenctl_wol_policy policy,
+                          char *error, size_t error_size)
+{
+    int result = require_experimental_override(request, error, error_size);
+    if (result != 0) return result;
+    return dxp6800plus_set_wol_policy(policy, error, error_size);
 }
 
 static int set_fan_pwm(const struct ugreenctl_request *request,
@@ -91,7 +111,7 @@ const struct ugreenctl_plugin *ugreenctl_plugin_v5(void)
         .id = "dxp6800plus",
         .display_name = "UGREEN DXP6800 Plus (firmware-reversed)",
         .dmi_product_names = product_names,
-        .capabilities = UGREENCTL_CAP_FAN | UGREENCTL_CAP_POWER,
+        .capabilities = UGREENCTL_CAP_FAN | UGREENCTL_CAP_POWER | UGREENCTL_CAP_WOL,
         .read_status = read_status,
         .set_fan_pwm = set_fan_pwm,
         .set_startup_policy = set_startup_policy,
@@ -100,8 +120,8 @@ const struct ugreenctl_plugin *ugreenctl_plugin_v5(void)
         .read_fans = read_fans,
         .read_startup_policy = read_startup_policy,
         .controller_name = "ITE IT8613 hwmon/direct",
-        .set_wol_policy = NULL,
-        .read_wol_policy = NULL
+        .set_wol_policy = set_wol_policy,
+        .read_wol_policy = read_wol_policy
     };
     return &plugin;
 }

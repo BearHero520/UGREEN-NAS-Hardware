@@ -529,12 +529,13 @@ static bool profile_is_valid(const char *profile)
            strcmp(profile, "stock-4800plus") == 0 ||
            strcmp(profile, "stock-480tplus") == 0 ||
            strcmp(profile, "stock-6800pro") == 0 ||
-           strcmp(profile, "stock-6800plus") == 0;
+           strcmp(profile, "stock-6800plus") == 0 ||
+           strcmp(profile, "stock-6800") == 0;
 }
 
 /* Stock points were recovered from /etc/default configuration files in
- * the vendor universal image. The Plus preset deliberately adopts Pro points
- * at the user's request; it is not evidence of a recovered Plus stock curve.
+ * the vendor universal image. The DXP6800 and Plus presets deliberately adopt Pro points
+ * at the user's request; it is not evidence of their recovered factory curves.
  * This only restores the thermal policy; model
  * plugins remain the single owner of hardware detection and writes. */
 static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
@@ -586,7 +587,8 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
         config->system_pwm = (struct ugreenctl_curve_pwm_points){55, 90, 110, 128};
         config->cpu_pwm = (struct ugreenctl_curve_pwm_points){70, 130, 150, 200};
     } else if (strcmp(config->profile, "stock-6800pro") == 0 ||
-               strcmp(config->profile, "stock-6800plus") == 0) {
+               strcmp(config->profile, "stock-6800plus") == 0 ||
+               strcmp(config->profile, "stock-6800") == 0) {
         config->cpu = (struct ugreenctl_curve_thresholds){25, 38, 55, 75, 90};
         config->hdd = (struct ugreenctl_curve_thresholds){30, 35, 43, 48, 55};
         config->ssd = (struct ugreenctl_curve_thresholds){45, 50, 60, 65, 70};

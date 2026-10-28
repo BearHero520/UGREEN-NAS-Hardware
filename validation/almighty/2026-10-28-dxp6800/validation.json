@@ -1,0 +1,15 @@
+{
+  "architecture": "Linux x86_64",
+  "execution": "isolated QEMU, no hardware passthrough",
+  "ctest": {
+    "passed": 33,
+    "failed": 0,
+    "log_sha256": "d5064ad02542ab81df47803c671422a05e281868177730fb740767040704a2b7"
+  },
+  "physical_validation": "not-performed",
+  "firmware_module_sha256": "dbecee7bcd4920fdc685a3162e7b7402ac12ee0994e7a87f43d1ce08da87ed4b",
+  "binaries": {
+    "models/dxp6800.so": "bb2d604e4d9961ad9fcc64e5603f55754d975c86a16f95e5e4f98e0ea6d08ebc",
+    "ugreenctl-fand": "2a3ea28e58467b471c365e666a0987d9e58d7506ef8adfda8d06ac5deca133a4"
+  }
+}

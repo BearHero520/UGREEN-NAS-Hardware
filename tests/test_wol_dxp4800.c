@@ -8,6 +8,7 @@
 #include "network/wol_dxp4800s.h"
 #include "network/wol_dxp480tplus.h"
 #include "network/wol_dxp6800pro.h"
+#include "network/wol_dxp6800plus.h"
 
 static const char * const *captured_interfaces;
 static size_t captured_interface_count;
@@ -115,6 +116,9 @@ int main(void)
                  dxp480tplus_set_wol_policy, 1);
     expect_route("DXP6800 Pro", dxp6800pro_read_wol_policy,
                  dxp6800pro_set_wol_policy, 0);
+
+    expect_route("DXP6800 Plus", dxp6800plus_read_wol_policy,
+                 dxp6800plus_set_wol_policy, 0);
 
     (void)puts("Firmware-mapped Wake-on-LAN map tests passed");
     return EXIT_SUCCESS;

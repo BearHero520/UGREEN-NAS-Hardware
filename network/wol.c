@@ -344,7 +344,7 @@ int ugreenctl_wol_set_policy_with_renamed_count(const char * const *interfaces,
         request.ifr_data = (char *)&wol;
         if (ioctl(fd, SIOCETHTOOL, &request) != 0) {
             (void)snprintf(error, error_size, "cannot set Wake-on-LAN on %s: %s",
-                           interfaces[index], strerror(errno));
+                           mapped_interfaces[index], strerror(errno));
             (void)close(fd);
             return -errno;
         }

@@ -54,9 +54,12 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_dxp480t.c
   fan/it8613_dxp6800pro.c
   fan/it8613_dxp6800plus.c
+  fan/it8613_dxp6800.c
   fan/thermal_curve.c
   power/it8613_power.c
   power/rtc_wake.c
+  models/wake_profiles.c
+  network/wol_interface.c
   network/wol.c
   network/wol_dx4600.c
   network/wol_dxp4800.c
@@ -64,6 +67,7 @@ add_library(ugreenctl_hardware STATIC
   network/wol_dxp4800s.c
   network/wol_dxp480tplus.c
   network/wol_dxp6800pro.c
+  network/wol_dxp6800plus.c
   led/led.c
   led/led_n76_protocol.c
   led/led_protocol.c
@@ -82,7 +86,7 @@ target_include_directories(ugreenctl_hardware PUBLIC
 )
 set_target_properties(ugreenctl_hardware PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_library(ugreenctl_cli STATIC core/hardware_cli.c)
+add_library(ugreenctl_cli STATIC core/hardware_cli.c core/wake_cli.c)
 target_include_directories(ugreenctl_cli PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -136,6 +140,7 @@ target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN
 add_model_plugin(dxp4800 models/dxp4800.c)
 add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp6800plus models/dxp6800plus.c)
+add_model_plugin(dxp6800 models/dxp6800.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
@@ -145,7 +150,7 @@ option(UGREENCTL_INSTALL_LED_COMPAT "Install the ugreen_leds_cli compatibility e
 if(UGREENCTL_INSTALL_LED_COMPAT)
   install(TARGETS ugreen_leds_cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
-install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp8800plus
+install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp6800 dxp8800plus
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
@@ -159,6 +164,7 @@ install(FILES
   docs/DX4600_REVERSE_ENGINEERING.zh-CN.md
   docs/WOL_FIRMWARE_EVIDENCE.md
   docs/WOL_FIRMWARE_EVIDENCE.zh-CN.md
+  docs/ALL_MODELS_WAKE_EVIDENCE.zh-CN.md
   docs/SCHEDULED_POWER_FIRMWARE_EVIDENCE.md
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
@@ -322,6 +328,7 @@ if(BUILD_TESTING)
     network/wol_dxp4800s.c
     network/wol_dxp480tplus.c
     network/wol_dxp6800pro.c
+  network/wol_dxp6800plus.c
   )
   target_include_directories(test-wol-dxp4800 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -329,6 +336,10 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-wol-dxp4800 PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME wol-dxp4800 COMMAND test-wol-dxp4800)
+  add_executable(test-wol-runtime tests/test_wol_runtime.c)
+  target_include_directories(test-wol-runtime PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-wol-runtime PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+  add_test(NAME wol-runtime COMMAND test-wol-runtime)
   add_executable(test-rtc-wake tests/test_rtc_wake.c)
   target_include_directories(test-rtc-wake PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -367,6 +378,16 @@ if(BUILD_TESTING)
   )
   target_compile_options(test-it8613-dxp6800plus PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME it8613-dxp6800plus COMMAND test-it8613-dxp6800plus)
+  add_executable(test-it8613-dxp6800
+    tests/test_it8613_dxp6800.c
+    fan/it8613_dxp6800.c
+  )
+  target_include_directories(test-it8613-dxp6800 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  target_compile_options(test-it8613-dxp6800 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp6800 COMMAND test-it8613-dxp6800)
   add_executable(test-thermal-curve tests/test_thermal_curve.c)
   target_include_directories(test-thermal-curve PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -375,4 +396,21 @@ if(BUILD_TESTING)
   target_link_libraries(test-thermal-curve PRIVATE ugreenctl_hardware)
   target_compile_options(test-thermal-curve PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME thermal-curve COMMAND test-thermal-curve)
+endif()
+
+if(BUILD_TESTING)
+  foreach(test_name wake-profiles wake-cli rtc-runtime wol-interface)
+    string(REPLACE "-" "_" test_source ${test_name})
+    add_executable(test-${test_name} tests/test_${test_source}.c)
+    target_link_libraries(test-${test_name} PRIVATE ugreenctl_hardware)
+    target_compile_options(test-${test_name} PRIVATE -Wall -Wextra -Wpedantic -UNDEBUG)
+    add_test(NAME ${test_name} COMMAND test-${test_name})
+  endforeach()
+endif()
+
+if(BUILD_TESTING)
+  add_executable(test-dxp6800-plugin tests/test_dxp6800_plugin.c models/dxp6800.c)
+  target_include_directories(test-dxp6800-plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-dxp6800-plugin PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME dxp6800-plugin COMMAND test-dxp6800-plugin)
 endif()

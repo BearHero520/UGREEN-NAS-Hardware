@@ -1,0 +1,950 @@
+{
+  "kind": "Debian12 libc6 user-space ABI smoke only",
+  "scope_complete": false,
+  "not_validated": [
+    "Debian full OS installation",
+    "NAS hardware",
+    "LED writes",
+    "systemd integration",
+    "target distributions"
+  ],
+  "isolation": "Disposable RAM-only QEMU initramfs; no network, host mounts or hardware passthrough. Only --help, models and loader provenance commands.",
+  "base_runner": {
+    "path": "firmware-inbox/work/almighty-tools/run_linux.py",
+    "sha256": "c3e03b09c692e7f9bf74273e26ea585666e1659a915cffb338f27cf339bf755e",
+    "usage": "Imported entry/archive_files serialization only. Did not invoke run() or include either existing Debian libc overlay."
+  },
+  "binary_freeze": {
+    "path": "firmware-inbox/work/almighty-linux-compat-20261027/ubuntu-abi/freeze.json",
+    "sha256": "0a9a5b72b6d49b726b38f90e83c33894ffd291a749a1a3dd04990b185633c804",
+    "status": null
+  },
+  "packages_json_sha256": "19cbf9353930dcf75100645b4af7e25401dd1cdd3f78713a71c7781d5b9df878",
+  "libc6_version": "2.36-9+deb12u14",
+  "architectures": {
+    "amd64": {
+      "passed": true,
+      "package": {
+        "url": "https://deb.debian.org/debian/pool/main/g/glibc/libc6_2.36-9+deb12u14_amd64.deb",
+        "checksum_source": "https://packages.debian.org/bookworm/amd64/libc6/download",
+        "input": "firmware-inbox/input/libc6_2.36-9+deb12u14_amd64.deb",
+        "bytes": 2759320,
+        "sha256": "ba4f88f73dbc3ae9055f3c20f4523bfdbaf1ad13ff95e258924f77d20b4fbedf",
+        "architecture": "amd64",
+        "version": "2.36-9+deb12u14",
+        "data_tar": "amd64/data.tar.xz",
+        "data_tar_sha256": "de7c4d37f95d396f005fe84383d081554f843cb5fa138b7b2593e67cc66482b7"
+      },
+      "base_rootfs_sha256": "412454ed98025ad9cd910d13f3d448b184e81502baa83180e89f98d0f13674be",
+      "kernel_sha256": "6b58e5d779e44e57c9efa20232da18650415eceb9d4f544e5c165c1f392c5d51",
+      "qemu_sha256": "47d57a6072e0bb3bd98f87926eb129eb1736dfe818c67b3b81ef7ce4edd0b3cd",
+      "initrd_sha256": "dba9c7d7c3be64ebbbeeda44d33647ea7989da442a8a74b1c4b17d680ffdfe20",
+      "qemu_exit_code": 0,
+      "qemu_host_stderr_log": "amd64/qemu-host-stderr.log",
+      "qemu_host_stderr_sha256": "d6949706012ea1676999c5381baa9fc372bfe1e549a211f8ec7a24f0af8aead3",
+      "serial_log": "amd64/serial.log",
+      "serial_log_sha256": "a98f8f02ff99a2be5a0319bcd248d4264d6806e8e449aa3a63328b96c16aec23",
+      "guest_package_file_sha256": {
+        "lib/x86_64-linux-gnu/libc.so.6": "6b4a45352fd0c540a9c7c718f35ce8c8e46a4e482f9d3885a910c32d1a0e1421",
+        "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "02bcda52c1a5dfc236f94d9e5255b4a0e26347d8a372a5223b650e31f291ce3c"
+      },
+      "glibc_overlay_source_only": "amd64/data.tar.xz",
+      "existing_glibc_overlay_included": false,
+      "payloads": {
+        "ugreenctl": {
+          "sha256": "9e37d9d97ee03b9bc438dfdfa005509385824dc6eaad68b09e46897fb384c265",
+          "elf_runtime": {
+            "interpreter": "/lib64/ld-linux-x86-64.so.2",
+            "needed_libraries": [
+              "libc.so.6",
+              "libdl.so.2",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.10",
+                "GLIBC_2.14",
+                "GLIBC_2.17",
+                "GLIBC_2.2.5",
+                "GLIBC_2.27",
+                "GLIBC_2.3",
+                "GLIBC_2.7"
+              ],
+              "libdl.so.2": [
+                "GLIBC_2.2.5"
+              ]
+            },
+            "glibc_symbol_floor": "2.27",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreen_leds_cli": {
+          "sha256": "7bf18542c1bc887087e979f96f6db0548e086fc23f65eca33759fe05617d1568",
+          "elf_runtime": {
+            "interpreter": "/lib64/ld-linux-x86-64.so.2",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.10",
+                "GLIBC_2.14",
+                "GLIBC_2.17",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3",
+                "GLIBC_2.7"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreenctl-fand": {
+          "sha256": "2f3037180a911d751ffffaf772149c7d0477bf80f19a27de5e7eeefd37f1edd1",
+          "elf_runtime": {
+            "interpreter": "/lib64/ld-linux-x86-64.so.2",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.2.5",
+                "GLIBC_2.27",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.27",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreenctl-ledd": {
+          "sha256": "be4a17a6b07aa6937d74a892ecbaf8bb19aa43f0ce91ece86bb95992015b971a",
+          "elf_runtime": {
+            "interpreter": "/lib64/ld-linux-x86-64.so.2",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.10",
+                "GLIBC_2.14",
+                "GLIBC_2.17",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3",
+                "GLIBC_2.7"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dx4600.so": {
+          "sha256": "8467f713f2f841777a0c994443967e1c948cd10f3b253dd6d6c9ea13f28de758",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp2800.so": {
+          "sha256": "eef1cc57c8170d5fd0a785ee12ee46e515125ec4be6fdaffbbe8ee184cdda95c",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [],
+            "required_symbol_versions": {},
+            "glibc_symbol_floor": null,
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800.so": {
+          "sha256": "2da14b3f176ab3270f92b6e788955df933c8c196e23162dc9ac4e1c59d067991",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800plus.so": {
+          "sha256": "71937462e641fd7978c7044b274dbf258b36007dfcab5284fbd55387a32ac5ff",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800s.so": {
+          "sha256": "6fe998379e741071fb626b7bae239ef82c53387861d173e9110b4329c8936b0a",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp480tplus.so": {
+          "sha256": "c7c0a3adbc7612fb05d414c5f2e15040a0690c83d75f56b1715951cee539bc43",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp6800plus.so": {
+          "sha256": "2c9a767f4411161c3ae6a68dcff37b0b179414c2e492cd89597b41696ffd555e",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp6800pro.so": {
+          "sha256": "bf64a854596c9264a091a359c33193bf4f90b7de7ed72bedc161111ec2fc02ff",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.2.5"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.14",
+                "GLIBC_2.2.5",
+                "GLIBC_2.3"
+              ]
+            },
+            "glibc_symbol_floor": "2.14",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp8800plus.so": {
+          "sha256": "1a193937272011c8c5ee5abfc2cbc86bc44608ed3f56713211a725b9fcbb0a8a",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [],
+            "required_symbol_versions": {},
+            "glibc_symbol_floor": null,
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        }
+      },
+      "checks": {
+        "package-hashes": {
+          "argv": [
+            "/bin/busybox",
+            "sha256sum",
+            "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+            "/lib/x86_64-linux-gnu/libc.so.6"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "02bcda52c1a5dfc236f94d9e5255b4a0e26347d8a372a5223b650e31f291ce3c  /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2\n6b4a45352fd0c540a9c7c718f35ce8c8e46a4e482f9d3885a910c32d1a0e1421  /lib/x86_64-linux-gnu/libc.so.6\n",
+          "stderr": ""
+        },
+        "loader-version": {
+          "argv": [
+            "/lib64/ld-linux-x86-64.so.2",
+            "--version"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "ld.so (Debian GLIBC 2.36-9+deb12u14) stable release version 2.36.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\n",
+          "stderr": ""
+        },
+        "libc-version": {
+          "argv": [
+            "/lib/x86_64-linux-gnu/libc.so.6"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "GNU C Library (Debian GLIBC 2.36-9+deb12u14) stable release version 2.36.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 12.2.0.\nlibc ABIs: UNIQUE IFUNC ABSOLUTE\nMinimum supported kernel: 3.2.0\nFor bug reporting instructions, please see:\n<http://www.debian.org/Bugs/>.\n",
+          "stderr": "       472:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       472:\t\n       472:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       472:\t\n"
+        },
+        "loader-list": {
+          "argv": [
+            "/lib64/ld-linux-x86-64.so.2",
+            "--list",
+            "/usr/local/bin/ugreenctl"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "\tlinux-vdso.so.1 (0x00007f83a3c24000)\n\tlibpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f83a3c19000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f83a3a37000)\n\tlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f83a3a32000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007f83a3c26000)\n",
+          "stderr": "       475:\tfind library=libpthread.so.0 [0]; searching\n       475:\t search cache=/etc/ld.so.cache\n       475:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       475:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       475:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       475:\t\n       475:\tfind library=libc.so.6 [0]; searching\n       475:\t search cache=/etc/ld.so.cache\n       475:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       475:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       475:\t\n       475:\tfind library=libdl.so.2 [0]; searching\n       475:\t search cache=/etc/ld.so.cache\n       475:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       475:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       475:\t\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       475:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       475:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       475:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       475:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       475:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       475:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n"
+        },
+        "rtc-catalog": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "power",
+            "rtc-wake",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dh2600\tDH2600\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600\tDX4600\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600plus\tDX4600+\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600pro\tDX4600 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4700\tDX4700\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4700plus\tDX4700+\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp2800\tDXP2800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp2800gt\tDXP2800 GT\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800\tDXP4800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800s\tDXP4800S\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800plus\tDXP4800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800pro\tDXP4800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800gt\tDXP4800 GT\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp480tplus\tDXP480T Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800\tDXP6800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800plus\tDXP6800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800pro\tDXP6800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800ultra\tDXP6800 Ultra\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800\tDXP8800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800plus\tDXP8800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800pro\tDXP8800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800ultra\tDXP8800 Ultra\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\nidx6011pro\tiDX6011 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndh2300\tDH2300\trtc=hym8563\tfirmware-evidence; actual wake unverified\ndh4300plus\tDH4300 Plus\trtc=hym8563\tfirmware-evidence; actual wake unverified\n",
+          "stderr": "       478:\tfind library=libpthread.so.0 [0]; searching\n       478:\t search cache=/etc/ld.so.cache\n       478:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       478:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       478:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       478:\t\n       478:\tfind library=libc.so.6 [0]; searching\n       478:\t search cache=/etc/ld.so.cache\n       478:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       478:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       478:\t\n       478:\tfind library=libdl.so.2 [0]; searching\n       478:\t search cache=/etc/ld.so.cache\n       478:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       478:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       478:\t\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       478:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       478:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       478:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       478:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       478:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       478:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       478:\t\n       478:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       478:\t\n       478:\t\n       478:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       478:\t\n       478:\t\n       478:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       478:\t\n       478:\t\n       478:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       478:\t\n       478:\t\n       478:\tinitialize program: /usr/local/bin/ugreenctl\n       478:\t\n       478:\t\n       478:\ttransferring control: /usr/local/bin/ugreenctl\n       478:\t\n       478:\t\n       478:\tcalling fini:  [0]\n       478:\t\n       478:\t\n       478:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       478:\t\n       478:\t\n       478:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       478:\t\n       478:\t\n       478:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       478:\t\n       478:\t\n       478:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       478:\t\n"
+        },
+        "wol-catalog": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "network",
+            "wol",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dh2600\tDH2600\twol=explicit-interface-required\tactual wake unverified\ndx4600\tDX4600\twol=automatic-or-explicit\tactual wake unverified\ndx4600plus\tDX4600+\twol=automatic-or-explicit\tactual wake unverified\ndx4600pro\tDX4600 Pro\twol=automatic-or-explicit\tactual wake unverified\ndx4700\tDX4700\twol=explicit-interface-required\tactual wake unverified\ndx4700plus\tDX4700+\twol=explicit-interface-required\tactual wake unverified\ndxp2800\tDXP2800\twol=explicit-interface-required\tactual wake unverified\ndxp2800gt\tDXP2800 GT\twol=explicit-interface-required\tactual wake unverified\ndxp4800\tDXP4800\twol=automatic-or-explicit\tactual wake unverified\ndxp4800s\tDXP4800S\twol=automatic-or-explicit\tactual wake unverified\ndxp4800plus\tDXP4800 Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp4800pro\tDXP4800 Pro\twol=automatic-or-explicit\tactual wake unverified\ndxp4800gt\tDXP4800 GT\twol=explicit-interface-required\tactual wake unverified\ndxp480tplus\tDXP480T Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp6800\tDXP6800\twol=explicit-interface-required\tactual wake unverified\ndxp6800plus\tDXP6800 Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp6800pro\tDXP6800 Pro\twol=automatic-or-explicit\tactual wake unverified\ndxp6800ultra\tDXP6800 Ultra\twol=explicit-interface-required\tactual wake unverified\ndxp8800\tDXP8800\twol=explicit-interface-required\tactual wake unverified\ndxp8800plus\tDXP8800 Plus\twol=explicit-interface-required\tactual wake unverified\ndxp8800pro\tDXP8800 Pro\twol=explicit-interface-required\tactual wake unverified\ndxp8800ultra\tDXP8800 Ultra\twol=explicit-interface-required\tactual wake unverified\nidx6011pro\tiDX6011 Pro\twol=explicit-interface-required\tactual wake unverified\ndh2300\tDH2300\twol=explicit-interface-required\tactual wake unverified\ndh4300plus\tDH4300 Plus\twol=explicit-interface-required\tactual wake unverified\n",
+          "stderr": "       481:\tfind library=libpthread.so.0 [0]; searching\n       481:\t search cache=/etc/ld.so.cache\n       481:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       481:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       481:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       481:\t\n       481:\tfind library=libc.so.6 [0]; searching\n       481:\t search cache=/etc/ld.so.cache\n       481:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       481:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       481:\t\n       481:\tfind library=libdl.so.2 [0]; searching\n       481:\t search cache=/etc/ld.so.cache\n       481:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       481:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       481:\t\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       481:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       481:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       481:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       481:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       481:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       481:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       481:\t\n       481:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       481:\t\n       481:\t\n       481:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       481:\t\n       481:\t\n       481:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       481:\t\n       481:\t\n       481:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       481:\t\n       481:\t\n       481:\tinitialize program: /usr/local/bin/ugreenctl\n       481:\t\n       481:\t\n       481:\ttransferring control: /usr/local/bin/ugreenctl\n       481:\t\n       481:\t\n       481:\tcalling fini:  [0]\n       481:\t\n       481:\t\n       481:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       481:\t\n       481:\t\n       481:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       481:\t\n       481:\t\n       481:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       481:\t\n       481:\t\n       481:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       481:\t\n"
+        },
+        "ugreenctl-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "ugreenctl 0.2.0 - UGREEN NAS Hardware Management Utility\n\nUsage:\n  ugreenctl [options] models\n  ugreenctl [options] info\n  ugreenctl [options] thermal status\n  ugreenctl [options] fan status\n  ugreenctl [options] fan set <fan-id> <0-255>\n  ugreenctl [options] power startup get\n  ugreenctl [options] power startup set <on|off|restore>\n  ugreenctl [options] power rtc-wake models|get\n  ugreenctl [options] power rtc-wake set <unix-epoch>\n  ugreenctl [options] power rtc-wake clear\n  ugreenctl [options] network wol models|get [--interface NAME]\n  ugreenctl [options] network wol set <on|off> [--interface NAME]\n  ugreenctl led list\n  ugreenctl led status [all|power|netdev|diskN...] [--json]\n  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>\n              [--brightness <0-255|N%>] [--mode on|off|blink|breath]\n              [--on-ms N --off-ms N] [--force --apply]\n  ugreenctl led on|off <targets...> [--force --apply]\n  ugreenctl led identify <target> [--seconds N] [--force --apply]\n  ugreenctl disk list|map [--json]\n  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\nOptions (LED/disk options may also follow the command):\n  --model <id>        select an exact model (wake commands use independent profiles)\n  --plugin-dir <dir>  directory containing model .so files\n  --apply             perform a requested write (writes are dry runs otherwise)\n  --force             acknowledge an experimental model write\n  --json              structured output for LED/disk commands\n  --version           print the version\n  --help              print this help\n\nFan control prefers the Linux hwmon node named it8613. If it is absent,\na guarded direct Super I/O fallback is available only with no active owner.\nWrites require an exact DMI match and always select manual PWM mode.\n",
+          "stderr": "       484:\tfind library=libpthread.so.0 [0]; searching\n       484:\t search cache=/etc/ld.so.cache\n       484:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       484:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       484:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       484:\t\n       484:\tfind library=libc.so.6 [0]; searching\n       484:\t search cache=/etc/ld.so.cache\n       484:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       484:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       484:\t\n       484:\tfind library=libdl.so.2 [0]; searching\n       484:\t search cache=/etc/ld.so.cache\n       484:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       484:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       484:\t\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       484:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       484:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       484:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       484:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       484:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       484:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       484:\t\n       484:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       484:\t\n       484:\t\n       484:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       484:\t\n       484:\t\n       484:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       484:\t\n       484:\t\n       484:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       484:\t\n       484:\t\n       484:\tinitialize program: /usr/local/bin/ugreenctl\n       484:\t\n       484:\t\n       484:\ttransferring control: /usr/local/bin/ugreenctl\n       484:\t\n       484:\t\n       484:\tcalling fini:  [0]\n       484:\t\n       484:\t\n       484:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       484:\t\n       484:\t\n       484:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       484:\t\n       484:\t\n       484:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       484:\t\n       484:\t\n       484:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       484:\t\n"
+        },
+        "ugreen_leds_cli-help": {
+          "argv": [
+            "/usr/local/bin/ugreen_leds_cli",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "Usage: ugreen_leds_cli TARGET ... [ACTION ...] [--apply] [--force] [--json]\nTARGET: power, netdev, disk1..disk8, all (availability depends on model).\nActions, executed in the given order:\n  -on | -off\n  -color R G B          each component 0..255\n  -brightness N         0..255\n  -blink ON_MS OFF_MS | -breath ON_MS OFF_MS (total 1..65535 ms)\n  -status               query complete LED state\nNo action means -status. Put all targets before action flags.\n\nThis entry point provides argument compatibility with ugreen_leds_cli.\nWrites default to preview and require --apply; experimental profiles also\nrequire --force. Existing scripts must explicitly acknowledge these options.\nDMI, MCU identity, owner checks and locks always apply.\n",
+          "stderr": "       487:\tfind library=libpthread.so.0 [0]; searching\n       487:\t search cache=/etc/ld.so.cache\n       487:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       487:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       487:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       487:\t\n       487:\tfind library=libc.so.6 [0]; searching\n       487:\t search cache=/etc/ld.so.cache\n       487:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       487:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       487:\t\n       487:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       487:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       487:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       487:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       487:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       487:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       487:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       487:\t\n       487:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       487:\t\n       487:\t\n       487:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       487:\t\n       487:\t\n       487:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       487:\t\n       487:\t\n       487:\tinitialize program: /usr/local/bin/ugreen_leds_cli\n       487:\t\n       487:\t\n       487:\ttransferring control: /usr/local/bin/ugreen_leds_cli\n       487:\t\n       487:\t\n       487:\tcalling fini:  [0]\n       487:\t\n       487:\t\n       487:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       487:\t\n       487:\t\n       487:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       487:\t\n       487:\t\n       487:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       487:\t\n"
+        },
+        "ugreenctl-fand-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl-fand",
+            "--help"
+          ],
+          "exit_code": 1,
+          "expected_exit_code": 1,
+          "stdout": "",
+          "stderr": "       490:\tfind library=libpthread.so.0 [0]; searching\n       490:\t search cache=/etc/ld.so.cache\n       490:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       490:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       490:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       490:\t\n       490:\tfind library=libc.so.6 [0]; searching\n       490:\t search cache=/etc/ld.so.cache\n       490:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       490:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       490:\t\n       490:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       490:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       490:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       490:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       490:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       490:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       490:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       490:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       490:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       490:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       490:\t\n       490:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       490:\t\n       490:\t\n       490:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       490:\t\n       490:\t\n       490:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       490:\t\n       490:\t\n       490:\tinitialize program: /usr/local/bin/ugreenctl-fand\n       490:\t\n       490:\t\n       490:\ttransferring control: /usr/local/bin/ugreenctl-fand\n       490:\t\nUsage: ugreenctl-fand --config <file> --state <file> --ugreenctl <file>\n                      --plugin-dir <dir> [--once]\n\nRuns a software temperature curve and sends every PWM update through\nthe guarded ugreenctl model plugin. It is not a hardware auto mode.\n       490:\t\n       490:\tcalling fini:  [0]\n       490:\t\n       490:\t\n       490:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       490:\t\n       490:\t\n       490:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       490:\t\n       490:\t\n       490:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       490:\t\n"
+        },
+        "ugreenctl-ledd-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl-ledd",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "Usage: ugreenctl-ledd --force --apply [--takeover-flow]\nForeground LED holder for verified ARM GPIO models and DXP2800 GT.\nKeeps controller resources and locks until SIGINT/SIGTERM.\nRoot-only clients use /run/ugreenctl-ledd.sock through ugreenctl.\nNo kernel modules are loaded or unloaded; no implicit backgrounding.\nGPIO: stopping releases lines; output persistence is not guaranteed.\nGT: --takeover-flow explicitly disables global autonomous effects while running.\nGT: requires active Host2EC; restores all four LEDs and original FLOW on clean exit.\nThe original autonomous animation phase cannot be restored.\n",
+          "stderr": "       493:\tfind library=libpthread.so.0 [0]; searching\n       493:\t search cache=/etc/ld.so.cache\n       493:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       493:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       493:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       493:\t\n       493:\tfind library=libc.so.6 [0]; searching\n       493:\t search cache=/etc/ld.so.cache\n       493:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       493:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       493:\t\n       493:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       493:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       493:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       493:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       493:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       493:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       493:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       493:\t\n       493:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       493:\t\n       493:\t\n       493:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       493:\t\n       493:\t\n       493:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       493:\t\n       493:\t\n       493:\tinitialize program: /usr/local/bin/ugreenctl-ledd\n       493:\t\n       493:\t\n       493:\ttransferring control: /usr/local/bin/ugreenctl-ledd\n       493:\t\n       493:\t\n       493:\tcalling fini:  [0]\n       493:\t\n       493:\t\n       493:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       493:\t\n       493:\t\n       493:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       493:\t\n       493:\t\n       493:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       493:\t\n"
+        },
+        "models-default": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power, wol; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n",
+          "stderr": "       496:\tfind library=libpthread.so.0 [0]; searching\n       496:\t search cache=/etc/ld.so.cache\n       496:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       496:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       496:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       496:\t\n       496:\tfind library=libc.so.6 [0]; searching\n       496:\t search cache=/etc/ld.so.cache\n       496:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       496:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       496:\t\n       496:\tfind library=libdl.so.2 [0]; searching\n       496:\t search cache=/etc/ld.so.cache\n       496:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       496:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       496:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       496:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       496:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       496:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       496:\t\n       496:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       496:\t\n       496:\t\n       496:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       496:\t\n       496:\t\n       496:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       496:\t\n       496:\t\n       496:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       496:\t\n       496:\t\n       496:\tinitialize program: /usr/local/bin/ugreenctl\n       496:\t\n       496:\t\n       496:\ttransferring control: /usr/local/bin/ugreenctl\n       496:\t\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       496:\t\n       496:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       496:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       496:\t\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       496:\t\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       496:\t\n       496:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       496:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       496:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       496:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       496:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       496:\t\n       496:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       496:\t\n       496:\t\n       496:\tcalling fini:  [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       496:\t\n       496:\t\n       496:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       496:\t\n",
+          "allowed_optional_abi_probes": [
+            "       496:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       496:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       496:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       496:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ]
+        },
+        "models-explicit": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "--plugin-dir",
+            "/usr/local/lib/ugreenctl/models",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power, wol; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n",
+          "stderr": "       499:\tfind library=libpthread.so.0 [0]; searching\n       499:\t search cache=/etc/ld.so.cache\n       499:\t search path=/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls/x86_64:/lib/x86_64-linux-gnu/tls:/lib/x86_64-linux-gnu/x86_64/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu/x86_64:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       499:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/tls/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/tls/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/x86_64/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/x86_64/libpthread.so.0\n       499:\t  trying file=/lib/x86_64-linux-gnu/libpthread.so.0\n       499:\t\n       499:\tfind library=libc.so.6 [0]; searching\n       499:\t search cache=/etc/ld.so.cache\n       499:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       499:\t  trying file=/lib/x86_64-linux-gnu/libc.so.6\n       499:\t\n       499:\tfind library=libdl.so.2 [0]; searching\n       499:\t search cache=/etc/ld.so.cache\n       499:\t search path=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/tls/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls/x86_64:/usr/lib/x86_64-linux-gnu/tls:/usr/lib/x86_64-linux-gnu/x86_64/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu/x86_64:/usr/lib/x86_64-linux-gnu:/lib/tls/x86_64/x86_64:/lib/tls/x86_64:/lib/tls/x86_64:/lib/tls:/lib/x86_64/x86_64:/lib/x86_64:/lib/x86_64:/lib:/usr/lib/tls/x86_64/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls/x86_64:/usr/lib/tls:/usr/lib/x86_64/x86_64:/usr/lib/x86_64:/usr/lib/x86_64:/usr/lib\t\t(system search path)\n       499:\t  trying file=/lib/x86_64-linux-gnu/libdl.so.2\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.7' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.10' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.17' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.27' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       499:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       499:\tchecking for version `GLIBC_2.35' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       499:\tchecking for version `GLIBC_PRIVATE' in file /lib64/ld-linux-x86-64.so.2 [0] required by file /lib/x86_64-linux-gnu/libc.so.6 [0]\n       499:\tchecking for version `GLIBC_ABI_DT_RELR' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       499:\t\n       499:\tcalling init: /lib64/ld-linux-x86-64.so.2\n       499:\t\n       499:\t\n       499:\tcalling init: /lib/x86_64-linux-gnu/libc.so.6\n       499:\t\n       499:\t\n       499:\tcalling init: /lib/x86_64-linux-gnu/libdl.so.2\n       499:\t\n       499:\t\n       499:\tcalling init: /lib/x86_64-linux-gnu/libpthread.so.0\n       499:\t\n       499:\t\n       499:\tinitialize program: /usr/local/bin/ugreenctl\n       499:\t\n       499:\t\n       499:\ttransferring control: /usr/local/bin/ugreenctl\n       499:\t\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       499:\t\n       499:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       499:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       499:\t\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       499:\t\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       499:\t\n       499:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       499:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       499:\tchecking for version `GLIBC_2.2.5' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       499:\tchecking for version `GLIBC_2.3' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       499:\tchecking for version `GLIBC_2.14' in file /lib/x86_64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       499:\t\n       499:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       499:\t\n       499:\t\n       499:\tcalling fini:  [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /lib/x86_64-linux-gnu/libpthread.so.0 [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /lib/x86_64-linux-gnu/libdl.so.2 [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /lib/x86_64-linux-gnu/libc.so.6 [0]\n       499:\t\n       499:\t\n       499:\tcalling fini: /lib64/ld-linux-x86-64.so.2 [0]\n       499:\t\n",
+          "allowed_optional_abi_probes": [
+            "       499:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       499:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       499:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       499:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ]
+        }
+      }
+    },
+    "arm64": {
+      "passed": true,
+      "package": {
+        "url": "https://deb.debian.org/debian/pool/main/g/glibc/libc6_2.36-9+deb12u14_arm64.deb",
+        "checksum_source": "https://packages.debian.org/bookworm/arm64/libc6/download",
+        "input": "firmware-inbox/input/libc6_2.36-9+deb12u14_arm64.deb",
+        "bytes": 2324660,
+        "sha256": "01f4330719fd4f65580e16ea5a0527f372fca750e8f588d26deaf09f2d3b1cf4",
+        "architecture": "arm64",
+        "version": "2.36-9+deb12u14",
+        "data_tar": "arm64/data.tar.xz",
+        "data_tar_sha256": "6108d3883a58beecceb1534aa568b52f77787e451a517c7a00d35f0147ac5a9b"
+      },
+      "base_rootfs_sha256": "6bf491907b705caa5fc65773fbbc1d0954530b6c455d4446f670a4c1fdcea489",
+      "kernel_sha256": "dd37c4460f933ec909ff022c34944ff7e1a5300aff99750e3bdc02cd4074c332",
+      "qemu_sha256": "952f897511177803722efed6fefe79bc3e7e5a51a026112dfc40f9a37fb0dad2",
+      "initrd_sha256": "9522aa6be19932b06461e85ea31cb5f2e1c9fae35011de8c62bfb79c8c4aff7d",
+      "qemu_exit_code": 0,
+      "qemu_host_stderr_log": "arm64/qemu-host-stderr.log",
+      "qemu_host_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "serial_log": "arm64/serial.log",
+      "serial_log_sha256": "384facc680e9f36a463b6f4cbcc834e68dbe3c50d747adeae987bcfa491639cf",
+      "guest_package_file_sha256": {
+        "lib/aarch64-linux-gnu/libc.so.6": "e4ac8ae1d81e4865e3aadedb962879cf9415903b3f2ba81ec75e9962b86ab8b0",
+        "lib/aarch64-linux-gnu/ld-linux-aarch64.so.1": "17538b8f9889a470c061f69a8fea8124da89627311cd16546c133a89f09056df"
+      },
+      "glibc_overlay_source_only": "arm64/data.tar.xz",
+      "existing_glibc_overlay_included": false,
+      "payloads": {
+        "ugreenctl": {
+          "sha256": "b435549062a7c4e6b1a81359f4d30364a416a4b2e474d41a0ae3c9565c40316c",
+          "elf_runtime": {
+            "interpreter": "/lib/ld-linux-aarch64.so.1",
+            "needed_libraries": [
+              "libc.so.6",
+              "libdl.so.2",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17",
+                "GLIBC_2.27"
+              ],
+              "libdl.so.2": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.27",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreen_leds_cli": {
+          "sha256": "4f3154adf174ccb12df2bed0c286a6c8c3a33b89463af73b03b8b0405cb1fba7",
+          "elf_runtime": {
+            "interpreter": "/lib/ld-linux-aarch64.so.1",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreenctl-fand": {
+          "sha256": "a0105482faa3f9fb7c3b8b3279eb3bb9828e44671f411cb5d9251925d721bd27",
+          "elf_runtime": {
+            "interpreter": "/lib/ld-linux-aarch64.so.1",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17",
+                "GLIBC_2.27"
+              ]
+            },
+            "glibc_symbol_floor": "2.27",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "ugreenctl-ledd": {
+          "sha256": "0eb8395a309484c24d1c138ec346972b981ca5409ae6946b3365b3b71612bc66",
+          "elf_runtime": {
+            "interpreter": "/lib/ld-linux-aarch64.so.1",
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dx4600.so": {
+          "sha256": "d0fd4e7eece221d79f8ad2fbb887978b195e44c9199c36ea41f89cec995f8dba",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp2800.so": {
+          "sha256": "2baa757ecaae758e0f9bfa8181fe418464ffbc95988d5846e7db6865f8a116d7",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [],
+            "required_symbol_versions": {},
+            "glibc_symbol_floor": null,
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800.so": {
+          "sha256": "1c0cd8aaf5f278b04b7e5d05b6a6e7d6019c9460ea4ed625591e57011671526c",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800plus.so": {
+          "sha256": "9a08265b0bed10906e00e5f2e84070b09b98e3f445ca1a7ac9729a81758f7208",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp4800s.so": {
+          "sha256": "0431e8aa3ee2630fe21a5ec6f20ededa75adbaf5a94eb8b58e4ab85a0350216e",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp480tplus.so": {
+          "sha256": "17014c6ad1447cf793669e0bcd679c2390bd9c80c57636e475379712cd4ff02a",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp6800plus.so": {
+          "sha256": "4841143417c7da7641d028741739e6a02c49092d1b5a9f9c880272f651a3ac23",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp6800pro.so": {
+          "sha256": "37769ee47771f9eb80c2db8b0001ad3a88a2b9eaa52e37609473184700de3024",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [
+              "libc.so.6",
+              "libpthread.so.0"
+            ],
+            "required_symbol_versions": {
+              "libpthread.so.0": [
+                "GLIBC_2.17"
+              ],
+              "libc.so.6": [
+                "GLIBC_2.17"
+              ]
+            },
+            "glibc_symbol_floor": "2.17",
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        },
+        "models/dxp8800plus.so": {
+          "sha256": "fe85f2f0f94c4f5129cbda6876681b518df9ff9baa9571dda51826ff4497f1d1",
+          "elf_runtime": {
+            "interpreter": null,
+            "needed_libraries": [],
+            "required_symbol_versions": {},
+            "glibc_symbol_floor": null,
+            "glibc_extra_requirements": [],
+            "rpath": null,
+            "runpath": null
+          }
+        }
+      },
+      "checks": {
+        "package-hashes": {
+          "argv": [
+            "/bin/busybox",
+            "sha256sum",
+            "/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
+            "/lib/aarch64-linux-gnu/libc.so.6"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "17538b8f9889a470c061f69a8fea8124da89627311cd16546c133a89f09056df  /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1\ne4ac8ae1d81e4865e3aadedb962879cf9415903b3f2ba81ec75e9962b86ab8b0  /lib/aarch64-linux-gnu/libc.so.6\n",
+          "stderr": ""
+        },
+        "loader-version": {
+          "argv": [
+            "/lib/ld-linux-aarch64.so.1",
+            "--version"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "ld.so (Debian GLIBC 2.36-9+deb12u14) stable release version 2.36.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\n",
+          "stderr": ""
+        },
+        "libc-version": {
+          "argv": [
+            "/lib/aarch64-linux-gnu/libc.so.6"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "GNU C Library (Debian GLIBC 2.36-9+deb12u14) stable release version 2.36.\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 12.2.0.\nlibc ABIs: UNIQUE ABSOLUTE\nMinimum supported kernel: 3.7.0\nFor bug reporting instructions, please see:\n<http://www.debian.org/Bugs/>.\n",
+          "stderr": "       352:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       352:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       352:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       352:\t\n       352:\tcalling init: /lib/ld-linux-aarch64.so.1\n       352:\t\n"
+        },
+        "loader-list": {
+          "argv": [
+            "/lib/ld-linux-aarch64.so.1",
+            "--list",
+            "/usr/local/bin/ugreenctl"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "\t (0x0000000001000000)\n\tlinux-vdso.so.1 (0x0000ffff81036000)\n\tlibpthread.so.0 => /lib/aarch64-linux-gnu/libpthread.so.0 (0x0000ffff80fc0000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff80e10000)\n\tlibdl.so.2 => /lib/aarch64-linux-gnu/libdl.so.2 (0x0000ffff80de0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffff80ff0000)\n",
+          "stderr": "       355:\tfind library=libpthread.so.0 [0]; searching\n       355:\t search cache=/etc/ld.so.cache\n       355:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       355:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       355:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       355:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       355:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       355:\t\n       355:\tfind library=libc.so.6 [0]; searching\n       355:\t search cache=/etc/ld.so.cache\n       355:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       355:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       355:\t\n       355:\tfind library=libdl.so.2 [0]; searching\n       355:\t search cache=/etc/ld.so.cache\n       355:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       355:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       355:\t\n       355:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       355:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       355:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       355:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       355:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       355:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       355:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       355:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       355:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n"
+        },
+        "rtc-catalog": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "power",
+            "rtc-wake",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dh2600\tDH2600\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600\tDX4600\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600plus\tDX4600+\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4600pro\tDX4600 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4700\tDX4700\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndx4700plus\tDX4700+\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp2800\tDXP2800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp2800gt\tDXP2800 GT\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800\tDXP4800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800s\tDXP4800S\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800plus\tDXP4800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800pro\tDXP4800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp4800gt\tDXP4800 GT\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp480tplus\tDXP480T Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800\tDXP6800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800plus\tDXP6800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800pro\tDXP6800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp6800ultra\tDXP6800 Ultra\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800\tDXP8800\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800plus\tDXP8800 Plus\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800pro\tDXP8800 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndxp8800ultra\tDXP8800 Ultra\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\nidx6011pro\tiDX6011 Pro\trtc=rtc_cmos\tfirmware-evidence; actual wake unverified\ndh2300\tDH2300\trtc=hym8563\tfirmware-evidence; actual wake unverified\ndh4300plus\tDH4300 Plus\trtc=hym8563\tfirmware-evidence; actual wake unverified\n",
+          "stderr": "       358:\tfind library=libpthread.so.0 [0]; searching\n       358:\t search cache=/etc/ld.so.cache\n       358:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       358:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       358:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       358:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       358:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       358:\t\n       358:\tfind library=libc.so.6 [0]; searching\n       358:\t search cache=/etc/ld.so.cache\n       358:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       358:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       358:\t\n       358:\tfind library=libdl.so.2 [0]; searching\n       358:\t search cache=/etc/ld.so.cache\n       358:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       358:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       358:\t\n       358:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       358:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       358:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       358:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       358:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       358:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       358:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       358:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       358:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       358:\t\n       358:\tcalling init: /lib/ld-linux-aarch64.so.1\n       358:\t\n       358:\t\n       358:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       358:\t\n       358:\t\n       358:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       358:\t\n       358:\t\n       358:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       358:\t\n       358:\t\n       358:\tinitialize program: /usr/local/bin/ugreenctl\n       358:\t\n       358:\t\n       358:\ttransferring control: /usr/local/bin/ugreenctl\n       358:\t\n       358:\t\n       358:\tcalling fini:  [0]\n       358:\t\n       358:\t\n       358:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       358:\t\n       358:\t\n       358:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       358:\t\n       358:\t\n       358:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       358:\t\n       358:\t\n       358:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       358:\t\n"
+        },
+        "wol-catalog": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "network",
+            "wol",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dh2600\tDH2600\twol=explicit-interface-required\tactual wake unverified\ndx4600\tDX4600\twol=automatic-or-explicit\tactual wake unverified\ndx4600plus\tDX4600+\twol=automatic-or-explicit\tactual wake unverified\ndx4600pro\tDX4600 Pro\twol=automatic-or-explicit\tactual wake unverified\ndx4700\tDX4700\twol=explicit-interface-required\tactual wake unverified\ndx4700plus\tDX4700+\twol=explicit-interface-required\tactual wake unverified\ndxp2800\tDXP2800\twol=explicit-interface-required\tactual wake unverified\ndxp2800gt\tDXP2800 GT\twol=explicit-interface-required\tactual wake unverified\ndxp4800\tDXP4800\twol=automatic-or-explicit\tactual wake unverified\ndxp4800s\tDXP4800S\twol=automatic-or-explicit\tactual wake unverified\ndxp4800plus\tDXP4800 Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp4800pro\tDXP4800 Pro\twol=automatic-or-explicit\tactual wake unverified\ndxp4800gt\tDXP4800 GT\twol=explicit-interface-required\tactual wake unverified\ndxp480tplus\tDXP480T Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp6800\tDXP6800\twol=explicit-interface-required\tactual wake unverified\ndxp6800plus\tDXP6800 Plus\twol=automatic-or-explicit\tactual wake unverified\ndxp6800pro\tDXP6800 Pro\twol=automatic-or-explicit\tactual wake unverified\ndxp6800ultra\tDXP6800 Ultra\twol=explicit-interface-required\tactual wake unverified\ndxp8800\tDXP8800\twol=explicit-interface-required\tactual wake unverified\ndxp8800plus\tDXP8800 Plus\twol=explicit-interface-required\tactual wake unverified\ndxp8800pro\tDXP8800 Pro\twol=explicit-interface-required\tactual wake unverified\ndxp8800ultra\tDXP8800 Ultra\twol=explicit-interface-required\tactual wake unverified\nidx6011pro\tiDX6011 Pro\twol=explicit-interface-required\tactual wake unverified\ndh2300\tDH2300\twol=explicit-interface-required\tactual wake unverified\ndh4300plus\tDH4300 Plus\twol=explicit-interface-required\tactual wake unverified\n",
+          "stderr": "       361:\tfind library=libpthread.so.0 [0]; searching\n       361:\t search cache=/etc/ld.so.cache\n       361:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       361:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       361:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       361:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       361:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       361:\t\n       361:\tfind library=libc.so.6 [0]; searching\n       361:\t search cache=/etc/ld.so.cache\n       361:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       361:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       361:\t\n       361:\tfind library=libdl.so.2 [0]; searching\n       361:\t search cache=/etc/ld.so.cache\n       361:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       361:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       361:\t\n       361:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       361:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       361:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       361:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       361:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       361:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       361:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       361:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       361:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       361:\t\n       361:\tcalling init: /lib/ld-linux-aarch64.so.1\n       361:\t\n       361:\t\n       361:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       361:\t\n       361:\t\n       361:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       361:\t\n       361:\t\n       361:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       361:\t\n       361:\t\n       361:\tinitialize program: /usr/local/bin/ugreenctl\n       361:\t\n       361:\t\n       361:\ttransferring control: /usr/local/bin/ugreenctl\n       361:\t\n       361:\t\n       361:\tcalling fini:  [0]\n       361:\t\n       361:\t\n       361:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       361:\t\n       361:\t\n       361:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       361:\t\n       361:\t\n       361:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       361:\t\n       361:\t\n       361:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       361:\t\n"
+        },
+        "ugreenctl-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "ugreenctl 0.2.0 - UGREEN NAS Hardware Management Utility\n\nUsage:\n  ugreenctl [options] models\n  ugreenctl [options] info\n  ugreenctl [options] thermal status\n  ugreenctl [options] fan status\n  ugreenctl [options] fan set <fan-id> <0-255>\n  ugreenctl [options] power startup get\n  ugreenctl [options] power startup set <on|off|restore>\n  ugreenctl [options] power rtc-wake models|get\n  ugreenctl [options] power rtc-wake set <unix-epoch>\n  ugreenctl [options] power rtc-wake clear\n  ugreenctl [options] network wol models|get [--interface NAME]\n  ugreenctl [options] network wol set <on|off> [--interface NAME]\n  ugreenctl led list\n  ugreenctl led status [all|power|netdev|diskN...] [--json]\n  ugreenctl led set <targets...> --color <blue|#RRGGBB|R,G,B>\n              [--brightness <0-255|N%>] [--mode on|off|blink|breath]\n              [--on-ms N --off-ms N] [--force --apply]\n  ugreenctl led on|off <targets...> [--force --apply]\n  ugreenctl led identify <target> [--seconds N] [--force --apply]\n  ugreenctl disk list|map [--json]\n  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\nOptions (LED/disk options may also follow the command):\n  --model <id>        select an exact model (wake commands use independent profiles)\n  --plugin-dir <dir>  directory containing model .so files\n  --apply             perform a requested write (writes are dry runs otherwise)\n  --force             acknowledge an experimental model write\n  --json              structured output for LED/disk commands\n  --version           print the version\n  --help              print this help\n\nFan control prefers the Linux hwmon node named it8613. If it is absent,\na guarded direct Super I/O fallback is available only with no active owner.\nWrites require an exact DMI match and always select manual PWM mode.\n",
+          "stderr": "       364:\tfind library=libpthread.so.0 [0]; searching\n       364:\t search cache=/etc/ld.so.cache\n       364:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       364:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       364:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       364:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       364:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       364:\t\n       364:\tfind library=libc.so.6 [0]; searching\n       364:\t search cache=/etc/ld.so.cache\n       364:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       364:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       364:\t\n       364:\tfind library=libdl.so.2 [0]; searching\n       364:\t search cache=/etc/ld.so.cache\n       364:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       364:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       364:\t\n       364:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       364:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       364:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       364:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       364:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       364:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       364:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       364:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       364:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       364:\t\n       364:\tcalling init: /lib/ld-linux-aarch64.so.1\n       364:\t\n       364:\t\n       364:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       364:\t\n       364:\t\n       364:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       364:\t\n       364:\t\n       364:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       364:\t\n       364:\t\n       364:\tinitialize program: /usr/local/bin/ugreenctl\n       364:\t\n       364:\t\n       364:\ttransferring control: /usr/local/bin/ugreenctl\n       364:\t\n       364:\t\n       364:\tcalling fini:  [0]\n       364:\t\n       364:\t\n       364:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       364:\t\n       364:\t\n       364:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       364:\t\n       364:\t\n       364:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       364:\t\n       364:\t\n       364:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       364:\t\n"
+        },
+        "ugreen_leds_cli-help": {
+          "argv": [
+            "/usr/local/bin/ugreen_leds_cli",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "Usage: ugreen_leds_cli TARGET ... [ACTION ...] [--apply] [--force] [--json]\nTARGET: power, netdev, disk1..disk8, all (availability depends on model).\nActions, executed in the given order:\n  -on | -off\n  -color R G B          each component 0..255\n  -brightness N         0..255\n  -blink ON_MS OFF_MS | -breath ON_MS OFF_MS (total 1..65535 ms)\n  -status               query complete LED state\nNo action means -status. Put all targets before action flags.\n\nThis entry point provides argument compatibility with ugreen_leds_cli.\nWrites default to preview and require --apply; experimental profiles also\nrequire --force. Existing scripts must explicitly acknowledge these options.\nDMI, MCU identity, owner checks and locks always apply.\n",
+          "stderr": "       367:\tfind library=libpthread.so.0 [0]; searching\n       367:\t search cache=/etc/ld.so.cache\n       367:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       367:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       367:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       367:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       367:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       367:\t\n       367:\tfind library=libc.so.6 [0]; searching\n       367:\t search cache=/etc/ld.so.cache\n       367:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       367:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       367:\t\n       367:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       367:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreen_leds_cli [0]\n       367:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       367:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       367:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       367:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       367:\t\n       367:\tcalling init: /lib/ld-linux-aarch64.so.1\n       367:\t\n       367:\t\n       367:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       367:\t\n       367:\t\n       367:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       367:\t\n       367:\t\n       367:\tinitialize program: /usr/local/bin/ugreen_leds_cli\n       367:\t\n       367:\t\n       367:\ttransferring control: /usr/local/bin/ugreen_leds_cli\n       367:\t\n       367:\t\n       367:\tcalling fini:  [0]\n       367:\t\n       367:\t\n       367:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       367:\t\n       367:\t\n       367:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       367:\t\n       367:\t\n       367:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       367:\t\n"
+        },
+        "ugreenctl-fand-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl-fand",
+            "--help"
+          ],
+          "exit_code": 1,
+          "expected_exit_code": 1,
+          "stdout": "",
+          "stderr": "       370:\tfind library=libpthread.so.0 [0]; searching\n       370:\t search cache=/etc/ld.so.cache\n       370:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       370:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       370:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       370:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       370:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       370:\t\n       370:\tfind library=libc.so.6 [0]; searching\n       370:\t search cache=/etc/ld.so.cache\n       370:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       370:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       370:\t\n       370:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       370:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       370:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-fand [0]\n       370:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       370:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       370:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       370:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       370:\t\n       370:\tcalling init: /lib/ld-linux-aarch64.so.1\n       370:\t\n       370:\t\n       370:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       370:\t\n       370:\t\n       370:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       370:\t\n       370:\t\n       370:\tinitialize program: /usr/local/bin/ugreenctl-fand\n       370:\t\n       370:\t\n       370:\ttransferring control: /usr/local/bin/ugreenctl-fand\n       370:\t\nUsage: ugreenctl-fand --config <file> --state <file> --ugreenctl <file>\n                      --plugin-dir <dir> [--once]\n\nRuns a software temperature curve and sends every PWM update through\nthe guarded ugreenctl model plugin. It is not a hardware auto mode.\n       370:\t\n       370:\tcalling fini:  [0]\n       370:\t\n       370:\t\n       370:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       370:\t\n       370:\t\n       370:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       370:\t\n       370:\t\n       370:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       370:\t\n"
+        },
+        "ugreenctl-ledd-help": {
+          "argv": [
+            "/usr/local/bin/ugreenctl-ledd",
+            "--help"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "Usage: ugreenctl-ledd --force --apply [--takeover-flow]\nForeground LED holder for verified ARM GPIO models and DXP2800 GT.\nKeeps controller resources and locks until SIGINT/SIGTERM.\nRoot-only clients use /run/ugreenctl-ledd.sock through ugreenctl.\nNo kernel modules are loaded or unloaded; no implicit backgrounding.\nGPIO: stopping releases lines; output persistence is not guaranteed.\nGT: --takeover-flow explicitly disables global autonomous effects while running.\nGT: requires active Host2EC; restores all four LEDs and original FLOW on clean exit.\nThe original autonomous animation phase cannot be restored.\n",
+          "stderr": "       373:\tfind library=libpthread.so.0 [0]; searching\n       373:\t search cache=/etc/ld.so.cache\n       373:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       373:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       373:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       373:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       373:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       373:\t\n       373:\tfind library=libc.so.6 [0]; searching\n       373:\t search cache=/etc/ld.so.cache\n       373:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       373:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       373:\t\n       373:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       373:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl-ledd [0]\n       373:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       373:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       373:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       373:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       373:\t\n       373:\tcalling init: /lib/ld-linux-aarch64.so.1\n       373:\t\n       373:\t\n       373:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       373:\t\n       373:\t\n       373:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       373:\t\n       373:\t\n       373:\tinitialize program: /usr/local/bin/ugreenctl-ledd\n       373:\t\n       373:\t\n       373:\ttransferring control: /usr/local/bin/ugreenctl-ledd\n       373:\t\n       373:\t\n       373:\tcalling fini:  [0]\n       373:\t\n       373:\t\n       373:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       373:\t\n       373:\t\n       373:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       373:\t\n       373:\t\n       373:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       373:\t\n"
+        },
+        "models-default": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power, wol; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n",
+          "stderr": "       376:\tfind library=libpthread.so.0 [0]; searching\n       376:\t search cache=/etc/ld.so.cache\n       376:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       376:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       376:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       376:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       376:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       376:\t\n       376:\tfind library=libc.so.6 [0]; searching\n       376:\t search cache=/etc/ld.so.cache\n       376:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       376:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       376:\t\n       376:\tfind library=libdl.so.2 [0]; searching\n       376:\t search cache=/etc/ld.so.cache\n       376:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       376:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       376:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       376:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       376:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       376:\t\n       376:\tcalling init: /lib/ld-linux-aarch64.so.1\n       376:\t\n       376:\t\n       376:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       376:\t\n       376:\t\n       376:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       376:\t\n       376:\t\n       376:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       376:\t\n       376:\t\n       376:\tinitialize program: /usr/local/bin/ugreenctl\n       376:\t\n       376:\t\n       376:\ttransferring control: /usr/local/bin/ugreenctl\n       376:\t\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       376:\t\n       376:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       376:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       376:\t\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       376:\t\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       376:\t\n       376:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       376:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       376:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       376:\t\n       376:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       376:\t\n       376:\t\n       376:\tcalling fini:  [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       376:\t\n       376:\t\n       376:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       376:\t\n",
+          "allowed_optional_abi_probes": [
+            "       376:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       376:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       376:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       376:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ]
+        },
+        "models-explicit": {
+          "argv": [
+            "/usr/local/bin/ugreenctl",
+            "--plugin-dir",
+            "/usr/local/lib/ugreenctl/models",
+            "models"
+          ],
+          "exit_code": 0,
+          "expected_exit_code": 0,
+          "stdout": "dxp8800plus    UGREEN DXP8800 Plus                  none (profile only); led-profile=dxp8800plus-legacy (experimental)\ndxp6800pro     UGREEN DXP6800 Pro (firmware-reversed) fan, power, wol; led-profile=dxp6800pro-legacy (experimental)\ndxp6800plus    UGREEN DXP6800 Plus (firmware-reversed) fan, power, wol; led-profile=dxp6800plus-legacy (experimental)\ndxp480tplus    UGREEN DXP480T Plus (hardware-verified) fan, power, wol; led-profile=dxp480t-n76 (experimental)\ndxp4800s       UGREEN DXP4800S (firmware-reversed)  fan, power, wol; led-profile=dxp4800s-legacy (experimental)\ndxp4800plus    UGREEN DXP4800 Plus / DXP4800 Pro    fan, power, wol; led-profile=dxp4800plus-legacy (experimental); led-profile=dxp4800pro-legacy (experimental)\ndxp4800        UGREEN DXP4800 (firmware-reversed)   fan, power, wol; led-profile=dxp4800-legacy (experimental)\ndxp2800        UGREEN DXP2800                       none (profile only); led-profile=dxp2800-em-legacy (experimental, revision restricted); led-profile=dxp2800-v12-block (experimental, revision restricted)\ndx4600         UGREEN DX4600 / DX4600+ / DX4600 Pro (firmware-reversed) fan, power, wol; led-profile=dx4600-legacy (experimental); led-profile=dx4600plus-legacy (experimental); led-profile=dx4600pro-legacy (experimental)\n",
+          "stderr": "       379:\tfind library=libpthread.so.0 [0]; searching\n       379:\t search cache=/etc/ld.so.cache\n       379:\t search path=/lib/aarch64-linux-gnu/tls/aarch64:/lib/aarch64-linux-gnu/tls:/lib/aarch64-linux-gnu/aarch64:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       379:\t  trying file=/lib/aarch64-linux-gnu/tls/aarch64/libpthread.so.0\n       379:\t  trying file=/lib/aarch64-linux-gnu/tls/libpthread.so.0\n       379:\t  trying file=/lib/aarch64-linux-gnu/aarch64/libpthread.so.0\n       379:\t  trying file=/lib/aarch64-linux-gnu/libpthread.so.0\n       379:\t\n       379:\tfind library=libc.so.6 [0]; searching\n       379:\t search cache=/etc/ld.so.cache\n       379:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       379:\t  trying file=/lib/aarch64-linux-gnu/libc.so.6\n       379:\t\n       379:\tfind library=libdl.so.2 [0]; searching\n       379:\t search cache=/etc/ld.so.cache\n       379:\t search path=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu/tls/aarch64:/usr/lib/aarch64-linux-gnu/tls:/usr/lib/aarch64-linux-gnu/aarch64:/usr/lib/aarch64-linux-gnu:/lib/tls/aarch64:/lib/tls:/lib/aarch64:/lib:/usr/lib/tls/aarch64:/usr/lib/tls:/usr/lib/aarch64:/usr/lib\t\t(system search path)\n       379:\t  trying file=/lib/aarch64-linux-gnu/libdl.so.2\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/bin/ugreenctl [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       379:\tchecking for version `GLIBC_2.27' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/bin/ugreenctl [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libdl.so.2 [0] required by file /usr/local/bin/ugreenctl [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       379:\tchecking for version `GLIBC_2.35' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       379:\tchecking for version `GLIBC_PRIVATE' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/ld-linux-aarch64.so.1 [0] required by file /lib/aarch64-linux-gnu/libc.so.6 [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       379:\t\n       379:\tcalling init: /lib/ld-linux-aarch64.so.1\n       379:\t\n       379:\t\n       379:\tcalling init: /lib/aarch64-linux-gnu/libc.so.6\n       379:\t\n       379:\t\n       379:\tcalling init: /lib/aarch64-linux-gnu/libdl.so.2\n       379:\t\n       379:\t\n       379:\tcalling init: /lib/aarch64-linux-gnu/libpthread.so.0\n       379:\t\n       379:\t\n       379:\tinitialize program: /usr/local/bin/ugreenctl\n       379:\t\n       379:\t\n       379:\ttransferring control: /usr/local/bin/ugreenctl\n       379:\t\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp8800plus.so\n       379:\t\n       379:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       379:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800pro.so\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp6800plus.so\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp480tplus.so\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800s.so\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800plus.so\n       379:\t\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp4800.so\n       379:\t\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dxp2800.so\n       379:\t\n       379:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)\n       379:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libpthread.so.0 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       379:\tchecking for version `GLIBC_2.17' in file /lib/aarch64-linux-gnu/libc.so.6 [0] required by file /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       379:\t\n       379:\tcalling init: /usr/local/lib/ugreenctl/models/dx4600.so\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp8800plus.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800pro.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp6800plus.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp480tplus.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800s.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800plus.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp4800.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dxp2800.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /usr/local/lib/ugreenctl/models/dx4600.so [0]\n       379:\t\n       379:\t\n       379:\tcalling fini:  [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /lib/aarch64-linux-gnu/libpthread.so.0 [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /lib/aarch64-linux-gnu/libdl.so.2 [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /lib/aarch64-linux-gnu/libc.so.6 [0]\n       379:\t\n       379:\t\n       379:\tcalling fini: /lib/ld-linux-aarch64.so.1 [0]\n       379:\t\n",
+          "allowed_optional_abi_probes": [
+            "       379:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       379:\t/usr/local/lib/ugreenctl/models/dxp8800plus.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)",
+            "       379:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v5 (fatal)",
+            "       379:\t/usr/local/lib/ugreenctl/models/dxp2800.so: error: symbol lookup error: undefined symbol: ugreenctl_plugin_v4 (fatal)"
+          ]
+        }
+      }
+    }
+  },
+  "help_contract_note": "Existing ugreenctl-fand --help prints Usage to stderr and exits 1. This smoke requires that exact status, successful glibc initialization, and the usage output; it does not assert an exit-0 help contract.",
+  "optional_abi_probe_note": "Legacy dxp2800/dxp8800plus expose ABI v3. LD_DEBUG reports failed optional dlsym v5/v4 probes as fatal diagnostics even though the loader falls back and loads all nine plugins successfully. Only these exact optional probes are allowed; raw stderr remains recorded.",
+  "passed": true,
+  "harness_sha256": "c24989743e6f8abd4b1976b9a8ac5116a447984562ffd622fc13751aae59626c"
+}

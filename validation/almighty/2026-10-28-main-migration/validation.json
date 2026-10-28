@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-28",
+  "architecture": "Linux x86_64",
+  "execution": "isolated QEMU; no hardware passthrough",
+  "ctest": {
+    "passed": 33,
+    "failed": 0,
+    "log_sha256": "3f0b38b688bbf6b7fb6f03e7483dce4b83460b6f087738eab9c483d04197ae0a"
+  },
+  "physical_validation": "not-performed"
+}

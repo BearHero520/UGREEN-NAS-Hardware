@@ -84,7 +84,7 @@ with tempfile.TemporaryDirectory(prefix='almighty-packaging-') as temporary:
     with tarfile.open(fileobj=io.BytesIO(data), mode='r:gz') as archive:
         members = archive.getmembers()
         assert all(member.isfile() and 'firmware-inbox' not in member.name and '..' not in member.name.split('/') for member in members)
-        assert len([member for member in members if member.name.endswith('.so')]) == 9
+        assert len([member for member in members if member.name.endswith('.so')]) == len(p.PLUGINS)
         assert archive.extractfile(plans[0]['stem'] + '/manifest.json').read() == plans[0]['manifest']
     checks += 4
     output = root / 'out'

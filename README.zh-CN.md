@@ -1,5 +1,7 @@
 # ugreenctl
 
+配套应用迁移至 [UGreen-Control/main](https://github.com/BearHero520/UGreen-Control/tree/main)；本仓库 `Almighty` 可以并入 `main`，并在此次迁移中合入主线。LLLED_FPK 的 `almighty` 同步合入其 `main` 并发布 v3.0.5。详见[迁移说明](docs/UGREEN_CONTROL_MIGRATION.zh-CN.md)。
+
 N76 已改为显式用户态实验直控，不含驱动编译功能；见 [直控说明与未验证项](docs/N76_DIRECT_CONTROL.zh-CN.md)。
 
 ugreenctl 是一个面向绿联 NAS 的开源、用户态、插件化硬件管理工具。

@@ -19,7 +19,7 @@ import tarfile
 PROGRAMS = ("ugreenctl", "ugreen_leds_cli", "ugreenctl-fand", "ugreenctl-ledd")
 PLUGINS = (
     "dx4600", "dxp2800", "dxp4800", "dxp4800plus", "dxp4800s",
-    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp8800plus",
+    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp6800", "dxp8800plus",
 )
 ARCH_MACHINES = {"x86_64": 62, "aarch64": 183}
 EXCLUDED = {"DH2100", "DH2100+"}
@@ -49,10 +49,13 @@ DOCUMENTS = (
     "docs/ALL_MODELS_FIRMWARE_INTAKE.zh-CN.md",
     "docs/ALL_MODELS_LED_EVIDENCE.zh-CN.md",
     "docs/ALL_MODELS_DISK_EVIDENCE.zh-CN.md",
+    "docs/ALL_MODELS_WAKE_EVIDENCE.zh-CN.md",
+    "validation/almighty/2026-10-27-wake-audit/firmware-evidence.json",
     "docs/FIRMWARE_RUNTIME_TRACE_20261026.zh-CN.md",
     "docs/DH2100_FIRMWARE_SEARCH.zh-CN.md",
     "docs/DXP2800_GT_LED_REVERSE.zh-CN.md",
     "docs/DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md",
+    "docs/DXP6800_SUPPORT.zh-CN.md",
     "docs/DX4600_REVERSE_ENGINEERING.zh-CN.md",
     "docs/DXP4800_REVERSE_ENGINEERING.md",
     "docs/DXP4800S_REVERSE_ENGINEERING.md",
