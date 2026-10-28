@@ -322,16 +322,11 @@ CPU 或主板“看起来相近”就复用另一个机型的写寄存器映射�
 愿意的话，也可以请作者喝杯咖啡，为后续适配、测试和维护添一点动力。
 打赏完全自愿，量力随心；你的使用、反馈和分享，同样是很好的支持。谢谢你！
 
-<details>
-<summary>☕ 展开支付宝 / 微信打赏码</summary>
-
 | 支付宝 | 微信支付 |
 | --- | --- |
-| <a href="docs/assets/donate/alipay.jpg"><img src="docs/assets/donate/alipay.jpg" alt="支付宝自愿打赏二维码" width="260"></a> | <a href="docs/assets/donate/wechat.png"><img src="docs/assets/donate/wechat.png" alt="微信支付自愿打赏二维码" width="260"></a> |
+| ![支付宝自愿打赏二维码](https://raw.githubusercontent.com/BearHero520/UGREEN-NAS-Hardware/main/docs/assets/donate/alipay.jpg) | ![微信支付自愿打赏二维码](https://raw.githubusercontent.com/BearHero520/UGREEN-NAS-Hardware/main/docs/assets/donate/wechat.png) |
 
 点击图片可查看原图。
-
-</details>
 
 ## 许可、原厂固件与证据
 

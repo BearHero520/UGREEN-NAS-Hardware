@@ -347,16 +347,11 @@ If you would like, you can also buy the author a coffee to support continued
 model adaptation, testing, and maintenance. Donations are entirely optional;
 using the project, sharing feedback, and spreading the word also mean a lot. Thank you!
 
-<details>
-<summary>☕ Show Alipay / WeChat Pay donation codes</summary>
-
 | Alipay | WeChat Pay |
 | --- | --- |
-| <a href="docs/assets/donate/alipay.jpg"><img src="docs/assets/donate/alipay.jpg" alt="Optional donation via Alipay" width="260"></a> | <a href="docs/assets/donate/wechat.png"><img src="docs/assets/donate/wechat.png" alt="Optional donation via WeChat Pay" width="260"></a> |
+| ![Optional donation via Alipay](https://raw.githubusercontent.com/BearHero520/UGREEN-NAS-Hardware/main/docs/assets/donate/alipay.jpg) | ![Optional donation via WeChat Pay](https://raw.githubusercontent.com/BearHero520/UGREEN-NAS-Hardware/main/docs/assets/donate/wechat.png) |
 
 Click an image to view it at full size.
-
-</details>
 
 ## License, vendor firmware, and evidence
 
