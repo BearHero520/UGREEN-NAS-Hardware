@@ -418,6 +418,9 @@ void ugreenctl_fan_curve_config_defaults(struct ugreenctl_fan_curve_config *conf
     config->failsafe_pwm = 255;
     config->require_storage_sensor = false;
     config->allow_unvalidated_writes = false;
+    config->failure_threshold = 3;
+    config->beep_on_failure = false;
+    config->beep_repeat_seconds = 60;
     config->hdd_curve_enabled = true;
     config->ssd_curve_enabled = true;
     config->cpu = (struct ugreenctl_curve_thresholds){50, 55, 75, 80, 90};
@@ -656,6 +659,12 @@ int ugreenctl_fan_curve_load_config(const char *path,
             if (parse_boolean(value_text, &config->require_storage_sensor) != 0) goto invalid_value;
         } else if (strcmp(key, "allow_unvalidated_writes") == 0) {
             if (parse_boolean(value_text, &config->allow_unvalidated_writes) != 0) goto invalid_value;
+        } else if (strcmp(key, "failure_threshold") == 0) {
+            if (parse_unsigned(value_text, &config->failure_threshold) != 0) goto invalid_value;
+        } else if (strcmp(key, "beep_on_failure") == 0) {
+            if (parse_boolean(value_text, &config->beep_on_failure) != 0) goto invalid_value;
+        } else if (strcmp(key, "beep_repeat_seconds") == 0) {
+            if (parse_unsigned(value_text, &config->beep_repeat_seconds) != 0) goto invalid_value;
         } else if (strcmp(key, "hdd_curve_enabled") == 0) {
             if (parse_boolean(value_text, &config->hdd_curve_enabled) != 0) goto invalid_value;
         } else if (strcmp(key, "ssd_curve_enabled") == 0) {
@@ -715,6 +724,11 @@ int ugreenctl_fan_curve_validate_config(const struct ugreenctl_fan_curve_config 
     if (config->interval_seconds < 2 || config->interval_seconds > 300 ||
         config->downshift_delay_seconds > 3600) {
         set_error(error, error_size, "fan curve timing is outside the safe range");
+        return -ERANGE;
+    }
+    if (config->failure_threshold < 1 || config->failure_threshold > 1000 ||
+        config->beep_repeat_seconds < 1 || config->beep_repeat_seconds > 86400) {
+        set_error(error, error_size, "invalid failure alarm configuration");
         return -ERANGE;
     }
     if (config->minimum_pwm < 40 || config->minimum_pwm > 255 ||
