@@ -78,6 +78,9 @@ minimum_pwm=64                 # 40..255, custom mode
 failsafe_pwm=255
 require_storage_sensor=false
 allow_unvalidated_writes=false
+failure_threshold=3            # consecutive failed cycles, 1..1000
+beep_on_failure=false          # optional PC-speaker alarm
+beep_repeat_seconds=60         # minimum interval between attempts, 1..86400
 cpu=50,55,75,80,90             # custom mode
 hdd=40,45,50,55,70             # custom mode
 ssd=45,50,60,65,70             # custom mode
@@ -92,6 +95,15 @@ CPU temperature is mandatory; if it is unavailable, or storage is required
 but both storage sources are unavailable, the daemon writes the configured
 failsafe PWM (255 by default). A lower PWM must remain the desired value for
 `downshift_delay_seconds` before it is written, preventing rapid fan hunting.
+
+When enabled, the alarm sounds one 100 ms tone after the configured number of
+consecutive cycles with a temperature or PWM-write error. A successful cycle
+resets the count. Attempts, including failed attempts, are rate-limited using
+monotonic time in memory; restarting the daemon resets the limit. The speaker
+requires a writable `/dev/input/by-path/platform-pcspkr-event-spkr` and may not
+be available on every system. Alarm errors do not stop fan control. The tone
+adds up to 100 ms of intentional delay, and device I/O is not time-bounded.
+The alarm does not detect fan failures that the existing control loop cannot see.
 
 ## Runtime inputs and state output
 

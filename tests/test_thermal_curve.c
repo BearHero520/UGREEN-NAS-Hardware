@@ -25,7 +25,7 @@ static void write_file(const char *path, const char *content)
 
 int main(void)
 {
-    char temporary[] = "/tmp/ugreenctl-thermal-XXXXXX";
+    char temporary[] = "./ugreenctl-thermal-XXXXXX";
     char path[512];
     struct ugreenctl_fan_curve_config config;
     struct ugreenctl_thermal_snapshot snapshot;
@@ -115,6 +115,42 @@ int main(void)
     if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0) {
         fail("cannot load DXP4800 Plus stock profile");
     }
+    if (config.failure_threshold != 3 || config.beep_on_failure || config.beep_repeat_seconds != 60 ||
+        config.failsafe_pwm != 255) {
+        fail("legacy configuration defaults changed");
+    }
+    write_file(path, "profile=stock-4800plus\ninterval_seconds=2\n"
+                     "failure_threshold=5\nbeep_on_failure=true\n"
+                     "beep_repeat_seconds=42\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0 ||
+        config.failure_threshold != 5 || !config.beep_on_failure || config.beep_repeat_seconds != 42 ||
+        config.failsafe_pwm != 255) {
+        fail("failure options were not loaded");
+    }
+    write_file(path, "failure_threshold=1\nbeep_repeat_seconds=1\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0)
+        fail("minimum alarm values rejected");
+    write_file(path, "failure_threshold=1000\nbeep_repeat_seconds=86400\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0)
+        fail("maximum alarm values rejected");
+    write_file(path, "failure_threshold=0\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) == 0)
+        fail("zero failure threshold accepted");
+    write_file(path, "failure_threshold=1001\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) == 0)
+        fail("excessive failure threshold accepted");
+    write_file(path, "beep_repeat_seconds=0\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) == 0)
+        fail("zero alarm interval accepted");
+    write_file(path, "beep_repeat_seconds=86401\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) == 0)
+        fail("excessive alarm interval accepted");
+    write_file(path, "beep_on_failure=invalid\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) == 0)
+        fail("invalid alarm boolean accepted");
+    write_file(path, "profile=stock-4800plus\ninterval_seconds=2\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0)
+        fail("cannot reload DXP4800 Plus profile");
     snapshot = (struct ugreenctl_thermal_snapshot){
         .cpu_celsius = 65, .hdd_celsius = 42, .ssd_celsius = -1, .cpu_peak_celsius = 65
     };

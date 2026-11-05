@@ -50,6 +50,9 @@ struct ugreenctl_fan_curve_config {
     unsigned int failsafe_pwm;
     bool require_storage_sensor;
     bool allow_unvalidated_writes;
+    unsigned int failure_threshold;
+    bool beep_on_failure;
+    unsigned int beep_repeat_seconds;
     bool hdd_curve_enabled;
     bool ssd_curve_enabled;
     struct ugreenctl_curve_thresholds cpu;
