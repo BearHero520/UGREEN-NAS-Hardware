@@ -97,7 +97,8 @@ def run(args, runtime_root, timeout=45):
         if arm64: cmd += ['-cpu', 'cortex-a72']
         if not arm64 and os.environ.get('UGREENCTL_TEST_VM_DMI'):
             cmd += ['-smbios', 'type=1,manufacturer=UGREEN,product=' +
-                    os.environ['UGREENCTL_TEST_VM_DMI'] + ',version=EM_DXP2800_V1.0.24']
+                    os.environ['UGREENCTL_TEST_VM_DMI'] + ',version=' +
+                    os.environ.get('UGREENCTL_TEST_VM_DMI_VERSION', 'EM_DXP2800_V1.0.24')]
         try:
             completed = subprocess.run(cmd, cwd=runtime_root, stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT, timeout=timeout)

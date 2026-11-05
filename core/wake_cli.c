@@ -42,7 +42,7 @@ static bool model_option_matches(const char *requested, const char *id, const ch
 int ugreenctl_wake_cli(int argc, char **argv)
 {
     const char *positionals[4]={0}, *model=NULL, *interface=NULL;
-    bool apply=false,force=false,rtc=false,write=false;
+    bool apply=false,force=false,rtc=false,write=false,list_interfaces=false;
     size_t count=0,n;
     int i,command=-1,result=0,lock=-1;
     char error[256]={0};
@@ -88,8 +88,11 @@ int ugreenctl_wake_cli(int argc, char **argv)
         }
         return EXIT_SUCCESS;
     }
-    if (count<3) return wake_error("use get, set, clear (RTC), or models");
-    if (!strcmp(positionals[2],"set") && count==4) {
+    if (count<3) return wake_error("use get, set, clear (RTC), models, or interfaces (WOL)");
+    if (!rtc && count==3 && !strcmp(positionals[2],"interfaces")) {
+        if (interface || apply || force) return wake_error("interface listing takes no write/interface options");
+        list_interfaces=true;
+    } else if (!strcmp(positionals[2],"set") && count==4) {
         write=true;
         if (rtc) {
             const char *s=positionals[3];
@@ -113,8 +116,16 @@ int ugreenctl_wake_cli(int argc, char **argv)
         wp=ugreenctl_wol_match(&identity);
         if (!wp) return wake_error("WOL is not firmware-mapped for this exact machine");
         if (!model_option_matches(model,wp->id,wp->product)) return wake_error("selected WOL model does not match machine identity");
-        if (!interface && !wp->automatic_pci_count)
+        if (!list_interfaces && !interface && !wp->automatic_pci_count)
             return wake_error("automatic NIC mapping is unconfirmed; specify --interface <physical-ethernet-name>");
+    }
+    if (list_interfaces) {
+        char names[32][UGREENCTL_WOL_NAME_SIZE];
+        size_t total=0,index;
+        result=ugreenctl_wol_interfaces_at("/sys",wp,names,32,&total,error,sizeof(error));
+        if (result) return wake_error(error[0] ? error : "cannot enumerate physical Ethernet interfaces");
+        for (index=0;index<total;++index) (void)puts(names[index]);
+        return EXIT_SUCCESS;
     }
     if (write && !apply) {
         (void)puts("dry-run: wake request validated against exact model; no hardware access; use --force --apply");

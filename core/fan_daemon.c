@@ -34,6 +34,7 @@ struct model_route {
 };
 
 static const struct model_route model_routes[] = {
+    {"DXP2800", "dxp2800", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600+", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600 Pro", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
@@ -46,6 +47,7 @@ static const struct model_route model_routes[] = {
     {"DXP480T Plus", "dxp480tplus", {{"cpu", FAN_CHANNEL_CPU}, {"all", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, false},
     {"DXP6800", "dxp6800", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DXP6800 Plus", "dxp6800plus", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"DXP8800 Pro", "dxp8800pro", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DXP6800 Pro", "dxp6800pro", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true}
 };
 
@@ -123,6 +125,7 @@ static const char *stock_profile_for_route(const struct model_route *route)
     if (strcmp(route->id, "dxp4800plus") == 0) return "stock-4800plus";
     if (strcmp(route->id, "dxp480tplus") == 0) return "stock-480tplus";
     if (strcmp(route->id, "dxp6800") == 0) return "stock-6800";
+    if (strcmp(route->id, "dxp8800pro") == 0) return "stock-8800pro";
     if (strcmp(route->id, "dxp6800pro") == 0) return "stock-6800pro";
     if (strcmp(route->id, "dxp6800plus") == 0) return "stock-6800plus";
     return NULL;

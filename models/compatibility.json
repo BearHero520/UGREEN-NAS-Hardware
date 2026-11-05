@@ -1375,18 +1375,21 @@
       "dmi_product_names": [
         "DXP2800"
       ],
-      "support_level": "profile-only",
+      "support_level": "reverse-engineered",
       "controller": {
-        "transport": "unverified",
-        "chip": "unverified"
+        "transport": "hwmon-preferred/superio-direct-fallback",
+        "chip": "ITE IT8613",
+        "product_version": "EM_DXP2800_V1.0.26"
       },
       "capabilities": {
-        "fan": "unverified",
+        "fan": "reverse-engineered",
         "led": "unverified",
-        "power_recovery": "unverified"
+        "power_recovery": "reverse-engineered"
       },
       "known_conflicts": [],
-      "evidence": []
+      "evidence": [
+        "docs/DXP2800_EM26_SUPPORT.md"
+      ]
     },
     {
       "id": "dx4600",
@@ -1679,6 +1682,57 @@
           "module_sha256": "dbecee7bcd4920fdc685a3162e7b7402ac12ee0994e7a87f43d1ce08da87ed4b",
           "method": "Exact DXP6800 stock routing and seven-byte module branch; docs/DXP6800_SUPPORT.zh-CN.md",
           "scope": "Static firmware evidence; physical validation pending."
+        }
+      ]
+    },
+    {
+      "id": "dxp8800pro",
+      "plugin": "dxp8800pro.so",
+      "marketing_names": [
+        "UGREEN DXP8800 Pro"
+      ],
+      "dmi_product_names": [
+        "DXP8800 Pro"
+      ],
+      "support_level": "reverse-engineered",
+      "write_requirements": [
+        "exact DMI product name DXP8800 Pro",
+        "--force experimental acknowledgement",
+        "--apply",
+        "IT8613 identity check",
+        "vendor /proc/it86 driver must be inactive",
+        "manual fan PWM 40-255"
+      ],
+      "controller": {
+        "transport": "Linux hwmon with guarded direct Super I/O fallback",
+        "chip": "ITE IT8613",
+        "chip_id": "0x8613",
+        "hwmon_name": "it8613"
+      },
+      "capabilities": {
+        "fan_rpm": "reverse-engineered",
+        "fan_cpu_pwm_write": "reverse-engineered",
+        "fan_system_pair_pwm_write": "reverse-engineered",
+        "fan_system_individual_write": "blocked",
+        "fan_pwm_readback": "reverse-engineered",
+        "fan_automatic_service": "software-curve-1.17-recovered",
+        "fan_stop": "blocked",
+        "led": "not-implemented",
+        "power_recovery": "reverse-engineered",
+        "wake_on_lan": "explicit-interface-only",
+        "rtc_scheduled_wake": "reverse-engineered"
+      },
+      "known_conflicts": [
+        "The vendor /proc/it86 interface or ug_it86x_cpufan module must not access the controller concurrently.",
+        "The generic it87 driver may remain loaded while its name=it8613 hwmon node is used; it must be unloaded before direct fallback."
+      ],
+      "evidence": [
+        {
+          "firmware": "UGOS Pro 1.20.0.0142, kernel 6.18.15",
+          "input_sha256": "73862c9c619f3e8b2279252326654f4915234dc8f437a71eb9a0067a724062c5",
+          "module_sha256": "dbecee7bcd4920fdc685a3162e7b7402ac12ee0994e7a87f43d1ce08da87ed4b",
+          "method": "Exact DXP8800 firmware branch; docs/DXP8800_PRO_AUDIT.zh-CN.md",
+          "scope": "CPU and paired system PWM, three tachometers, AC recovery. Curve from 1.17 dxp8800.conf. No physical validation."
         }
       ]
     }

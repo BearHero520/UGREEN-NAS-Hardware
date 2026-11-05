@@ -49,9 +49,11 @@ add_library(ugreenctl_hardware STATIC
   fan/it8613_hwmon.c
   fan/it8613_fan.c
   fan/it8613_dx4600.c
+  fan/it8613_dxp2800.c
   fan/it8613_dxp4800.c
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
+  fan/it8613_dxp8800pro.c
   fan/it8613_dxp6800pro.c
   fan/it8613_dxp6800plus.c
   fan/it8613_dxp6800.c
@@ -135,9 +137,9 @@ add_model_plugin(dx4600 models/dx4600.c)
 add_model_plugin(dxp4800plus models/dxp4800plus.c)
 add_model_plugin(dxp4800s models/dxp4800s.c)
 add_model_plugin(dxp480tplus models/dxp480tplus.c)
-add_model_plugin(dxp2800 models/unsupported_model.c)
-target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
+add_model_plugin(dxp2800 models/dxp2800.c)
 add_model_plugin(dxp4800 models/dxp4800.c)
+add_model_plugin(dxp8800pro models/dxp8800pro.c)
 add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp6800plus models/dxp6800plus.c)
 add_model_plugin(dxp6800 models/dxp6800.c)
@@ -150,7 +152,7 @@ option(UGREENCTL_INSTALL_LED_COMPAT "Install the ugreen_leds_cli compatibility e
 if(UGREENCTL_INSTALL_LED_COMPAT)
   install(TARGETS ugreen_leds_cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
-install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp6800 dxp8800plus
+install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp6800 dxp8800plus dxp8800pro
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
@@ -169,6 +171,7 @@ install(FILES
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
+  docs/DXP8800_PRO_AUDIT.zh-CN.md
   docs/DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md
   docs/DXP4800S_1.19.md
   docs/DXP4800S_INTAKE.md
@@ -413,4 +416,22 @@ if(BUILD_TESTING)
   target_include_directories(test-dxp6800-plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
   target_compile_options(test-dxp6800-plugin PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME dxp6800-plugin COMMAND test-dxp6800-plugin)
+  add_executable(test-dxp2800-plugin tests/test_dxp2800_plugin.c models/dxp2800.c)
+  target_include_directories(test-dxp2800-plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-dxp2800-plugin PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME dxp2800-plugin COMMAND test-dxp2800-plugin)
+  add_executable(test-it8613-dxp2800 tests/test_it8613_dxp2800.c fan/it8613_dxp2800.c)
+  target_include_directories(test-it8613-dxp2800 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-it8613-dxp2800 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp2800 COMMAND test-it8613-dxp2800)
+endif()
+
+if(BUILD_TESTING)
+  add_executable(test-dxp8800pro-plugin tests/test_dxp8800pro_plugin.c models/dxp8800pro.c)
+  add_executable(test-it8613-dxp8800pro tests/test_it8613_dxp8800pro.c fan/it8613_dxp8800pro.c)
+  foreach(t test-dxp8800pro-plugin test-it8613-dxp8800pro)
+    target_include_directories(${t} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_options(${t} PRIVATE -Wall -Wextra -Wpedantic)
+    add_test(NAME ${t} COMMAND ${t})
+  endforeach()
 endif()

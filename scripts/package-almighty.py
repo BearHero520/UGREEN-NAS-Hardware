@@ -19,7 +19,7 @@ import tarfile
 PROGRAMS = ("ugreenctl", "ugreen_leds_cli", "ugreenctl-fand", "ugreenctl-ledd")
 PLUGINS = (
     "dx4600", "dxp2800", "dxp4800", "dxp4800plus", "dxp4800s",
-    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp6800", "dxp8800plus",
+    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp6800", "dxp8800plus", "dxp8800pro",
 )
 ARCH_MACHINES = {"x86_64": 62, "aarch64": 183}
 EXCLUDED = {"DH2100", "DH2100+"}
@@ -37,6 +37,7 @@ DOCUMENTS = (
     "docs/RELEASE_v0.3.0.zh-CN.md",
     "docs/UGREEN_CONTROL_MIGRATION.zh-CN.md",
     "docs/HARDWARE_SUPPORT.md", "docs/COMPATIBILITY.md",
+    "docs/DXP8800_PRO_AUDIT.zh-CN.md",
     "docs/COMPATIBILITY.zh-CN.md", "docs/FAN_CURVE.md",
     "docs/LED_CONTROL.zh-CN.md", "docs/LED_EVIDENCE_COLLECTION.zh-CN.md",
     "docs/LINUX_DEPLOYMENT.zh-CN.md",

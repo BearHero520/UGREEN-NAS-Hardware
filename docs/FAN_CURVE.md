@@ -34,6 +34,7 @@ and linearly interpolates between them; it never writes a stop/zero PWM.
 | DXP4800S | `stock-4800s` | 50 / 55 / 75 / 80 / 90 | 40 / 45 / 50 / 55 / 70 | 45 / 50 / 60 / 65 / 70 | 64 / 128 / 204 / 255 | same channel |
 | DXP4800 Plus / Pro | `stock-4800plus` | 42 / 50 / 70 / 78 / 90 | 30 / 40 / 46 / 52 / 55 | 50 / 55 / 60 / 65 / 70 | 65 / 125 / 200 / 235 | 60 / 125 / 205 / 230 |
 | DXP480T Plus | `stock-480tplus` | 25 / 55 / 75 / 85 / 95 | disabled (0 / 0 / 0 / 0 / 0) | 40 / 50 / 60 / 70 / 80 | 55 / 90 / 110 / 128 | 70 / 130 / 150 / 200 |
+| DXP8800 Pro (recovered UGOS 1.17 defaults) | `stock-8800pro` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 70 / 130 / 210 / 230 |
 | DXP6800 Pro | `stock-6800pro` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
 | DXP6800 Plus (Pro parameters, user-selected) | `stock-6800plus` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
 | DXP6800 (Pro parameters, user-selected) | `stock-6800` | 25 / 38 / 55 / 75 / 90 | 30 / 35 / 43 / 48 / 55 | 45 / 50 / 60 / 65 / 70 | 64 / 130 / 210 / 230 | 80 / 130 / 210 / 230 |
@@ -143,3 +144,8 @@ DXP4800S: UGOS Pro 1.19.1.0126 now uses `dxp4800s.conf`; its thresholds
 and PWM points reconfirm `stock-4800s` unchanged. See [firmware evidence](DXP4800S_1.19.md).
 
 On 2026-10-28 the user authorized using Plus/Pro curves when the native curve is missing. Exact DXP6800 uses the independent `stock-6800` compatibility preset with the same Pro points and CPU floor as Plus. This is a user-selected compatibility policy, not a recovered DXP6800 factory curve; model routing, ownership guards, safe minimum and temperature-loss failsafe remain unchanged.
+
+DXP8800 Pro uses the independently recovered `dxp8800.conf` (UGOS 1.17):
+CPU floor 65 C / PWM 135 to 90 C / PWM 210. The 1.20 daemon confirms the
+8800 config route; unchanged 1.20 defaults and physical validation are not claimed.
+See `DXP8800_PRO_AUDIT.zh-CN.md`.

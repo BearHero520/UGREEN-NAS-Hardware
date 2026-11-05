@@ -528,6 +528,7 @@ static bool profile_is_valid(const char *profile)
            strcmp(profile, "stock-4800s") == 0 ||
            strcmp(profile, "stock-4800plus") == 0 ||
            strcmp(profile, "stock-480tplus") == 0 ||
+           strcmp(profile, "stock-8800pro") == 0 ||
            strcmp(profile, "stock-6800pro") == 0 ||
            strcmp(profile, "stock-6800plus") == 0 ||
            strcmp(profile, "stock-6800") == 0;
@@ -586,6 +587,19 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
         config->ssd = (struct ugreenctl_curve_thresholds){40, 50, 60, 70, 80};
         config->system_pwm = (struct ugreenctl_curve_pwm_points){55, 90, 110, 128};
         config->cpu_pwm = (struct ugreenctl_curve_pwm_points){70, 130, 150, 200};
+    } else if (strcmp(config->profile, "stock-8800pro") == 0) {
+        /* Recovered 1.17 dxp8800.conf; 1.20 daemon confirms the same config
+         * route, not that its defaults are unchanged. See DXP8800 audit. */
+        config->cpu = (struct ugreenctl_curve_thresholds){25, 38, 55, 75, 90};
+        config->hdd = (struct ugreenctl_curve_thresholds){30, 35, 43, 48, 55};
+        config->ssd = (struct ugreenctl_curve_thresholds){45, 50, 60, 65, 70};
+        config->system_pwm = (struct ugreenctl_curve_pwm_points){64, 130, 210, 230};
+        config->cpu_pwm = (struct ugreenctl_curve_pwm_points){70, 130, 210, 230};
+        config->system_cpu_floor_enabled = true;
+        config->system_cpu_floor_start_celsius = 65;
+        config->system_cpu_floor_end_celsius = 90;
+        config->system_cpu_floor_start_pwm = 135;
+        config->system_cpu_floor_end_pwm = 210;
     } else if (strcmp(config->profile, "stock-6800pro") == 0 ||
                strcmp(config->profile, "stock-6800plus") == 0 ||
                strcmp(config->profile, "stock-6800") == 0) {

@@ -160,6 +160,15 @@ int main(void)
         config.system_cpu_floor_end_pwm != 220) {
         fail("DXP6800 compatibility preset must retain Pro points and CPU floor");
     }
+    write_file(path, "profile=stock-8800pro\ninterval_seconds=2\n");
+    snapshot.cpu_celsius = 38; snapshot.cpu_peak_celsius = 38;
+    snapshot.hdd_celsius = 30; snapshot.ssd_celsius = 40;
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0 ||
+        ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 70 || plan.system_pwm != 64 ||
+        config.system_cpu_floor_start_pwm != 135 || config.system_cpu_floor_end_pwm != 210) {
+        fail("DXP8800 Pro must retain its own CPU points and system floor");
+    }
     snapshot.cpu_celsius = -1;
     snapshot.cpu_peak_celsius = -1;
     if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != -ENODATA ||

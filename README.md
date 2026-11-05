@@ -87,7 +87,8 @@ not a promise that an untested firmware upgrade has the same behavior.
 | DXP6800 Pro (`dxp6800pro`) | UGOS Pro `1.17.0.0095`, build `20260630.111337`, kernel `6.12.30+` | CPU/paired-system fans, AC recovery, WOL, scheduled wake | Firmware-reversed; no physical write validation. Every write needs `--force --apply`. |
 | DXP6800 Plus (`dxp6800plus`) | UGOS Pro `1.20.0.0142` | CPU/paired-system fans, AC recovery, WOL, scheduled wake | Physical validation was reported by the user; detailed scope is unavailable. Guarded writes still require `--force --apply`; actual wake remains unverified. |
 | DXP6800 (`dxp6800`) | UGOS Pro `1.20.0.0142` | CPU/paired-system fans, AC recovery; independent built-in WOL/RTC commands | Firmware-reversed; physical validation pending. `stock-6800` adopts Pro parameters; the factory curve is unknown. Writes require `--force --apply`. |
-| DXP2800 / DXP8800 Plus | LED protocol and model records | Model detection and conditional built-in LED profiles | Fan/power plugins remain placeholders; LED writes are experimental. |
+| DXP2800 EM26 (`dxp2800`) | UGOS Pro 1.20.0.0142, exact `EM_DXP2800_V1.0.26` | Single sys fan PWM/RPM, AC recovery, custom curves; built-in explicit WOL/RTC | Firmware-reversed, physical validation pending; PWM 40..255, `--force --apply`. [Evidence](docs/DXP2800_EM26_SUPPORT.md). |
+| DXP8800 Plus | Model records | Model detection | Fan/power plugin remains a placeholder. |
 
 Fan/power writes require exact DMI matching. LED commands use their own
 compiled profiles with exact DMI or firmware-proven ARM device-tree identity,

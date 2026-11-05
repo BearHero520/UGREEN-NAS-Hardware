@@ -220,3 +220,14 @@ Exact DMI `DXP6800 Plus` has an independent firmware-reversed plugin from UGOS P
 ## DXP6800
 
 Exact DMI `DXP6800` has an independent firmware-reversed IT8613 plugin for CPU PWM, paired system PWM, three tachometers and AC recovery. hwmon takes priority; guarded direct fallback is allowed only on ENODEV. Writes require `--force --apply`, PWM 40..255. Custom software curves and the user-selected `stock-6800` Pro-parameter compatibility preset are available; the original factory curve and physical validation remain unknown. See [evidence](DXP6800_SUPPORT.zh-CN.md).
+
+## DXP8800 Pro
+
+The exact `DXP8800 Pro` DMI uses `dxp8800pro.so` (reverse-engineered).
+CPU PWM and the paired system PWM, three RPM readings, AC recovery
+(on/off/restore), and guarded software temperature curves are implemented.
+The independent register evidence is from UGOS 1.20.0.0142;
+`stock-8800pro` uses the recovered UGOS 1.17 `dxp8800.conf` defaults.
+All existing owner, locking, chip identity, PWM 40..255 and readback guards apply.
+Other 8800 variants are not aliases. Physical validation remains pending.
+See [DXP8800 Pro evidence and audit](DXP8800_PRO_AUDIT.zh-CN.md).
