@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 #include "fan/thermal_curve.h"
+#include "core/identity.h"
 
 enum fan_channel {
     FAN_CHANNEL_CPU,
@@ -34,6 +35,9 @@ struct model_route {
 };
 
 static const struct model_route model_routes[] = {
+    {"iDX6011/iDX6012 OEM V3.0", "idx6012", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"iDX6012", "idx6012", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"DXP4800 GT", "dxp4800gt", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DXP2800", "dxp2800", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600+", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
@@ -77,32 +81,11 @@ static void usage(FILE *stream)
 
 static int read_dmi_product(char *product, size_t product_size)
 {
-    static const char * const paths[] = {
-        "/sys/class/dmi/id/product_name",
-        "/sys/devices/virtual/dmi/id/product_name",
-        NULL
-    };
-    const char * const *path;
-
-    for (path = paths; *path != NULL; ++path) {
-        FILE *stream = fopen(*path, "r");
-        size_t length;
-
-        if (stream == NULL) {
-            continue;
-        }
-        if (fgets(product, (int)product_size, stream) == NULL) {
-            (void)fclose(stream);
-            continue;
-        }
-        (void)fclose(stream);
-        length = strlen(product);
-        while (length > 0 && (product[length - 1] == '\n' || product[length - 1] == '\r')) {
-            product[--length] = '\0';
-        }
-        return product[0] == '\0' ? -ENODEV : 0;
-    }
-    return -ENOENT;
+    struct ugreenctl_machine_identity identity;
+    int result = ugreenctl_identity_read(&identity, NULL, 0);
+    if (result != 0) return result;
+    int length = snprintf(product, product_size, "%s", ugreenctl_identity_model(&identity));
+    return length < 0 || (size_t)length >= product_size ? -ENAMETOOLONG : 0;
 }
 
 static const struct model_route *find_model_route(const char *product)
@@ -119,6 +102,8 @@ static const struct model_route *find_model_route(const char *product)
 
 static const char *stock_profile_for_route(const struct model_route *route)
 {
+    if (strcmp(route->id, "idx6012") == 0) return "stock-idx6012-compat";
+    if (strcmp(route->id, "dxp4800gt") == 0) return "stock-4800gt";
     if (strcmp(route->id, "dx4600") == 0) return "stock-4600";
     if (strcmp(route->id, "dxp4800") == 0) return "stock-4800";
     if (strcmp(route->id, "dxp4800s") == 0) return "stock-4800s";
@@ -136,6 +121,17 @@ static int profile_matches_route(const struct ugreenctl_fan_curve_config *config
 {
     const char *expected;
 
+    if (strcmp(route->id, "idx6012") == 0) {
+        /* Same custom policy, bounded by the verified paired EC output. */
+        const struct ugreenctl_curve_pwm_points *p = &config->pwm;
+        return (strcmp(config->profile, "custom") == 0 || strcmp(config->profile, "stock-idx6012-compat") == 0) &&
+            config->minimum_pwm >= 40 && config->minimum_pwm <= 198 &&
+            config->failsafe_pwm == 198 && p->idle <= 198 &&
+            p->mid <= 198 && p->full <= 198 && p->maximum <= 198 ? 0 : -EINVAL;
+    }
+    /* Generic custom curves permit 255; GT is limited to its validated stock policy. */
+    if (strcmp(route->id, "dxp4800gt") == 0)
+        return strcmp(config->profile, "stock-4800gt") == 0 ? 0 : -EINVAL;
     if (strcmp(config->profile, "custom") == 0) {
         return 0;
     }

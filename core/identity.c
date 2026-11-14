@@ -130,6 +130,11 @@ bool ugreenctl_identity_has_compatible(const struct ugreenctl_machine_identity *
 const char *ugreenctl_identity_model(const struct ugreenctl_machine_identity *identity)
 {
     if (!identity) return "";
+    if (!strcmp(identity->source, "dmi") &&
+        !strcmp(identity->manufacturer, "UGREEN") &&
+        !strcmp(identity->product_name, "Default string") &&
+        !strcmp(identity->product_version, "iDX6011_iDX6012 V3.0 241112"))
+        return "iDX6011/iDX6012 OEM V3.0";
     if (!strcmp(identity->source, "devicetree")) {
         if (!strcmp(identity->product_name, "UGREEN RK3576 DH2300 Board") &&
             ugreenctl_identity_has_compatible(identity, "rockchip,rk3576")) return "DH2300";

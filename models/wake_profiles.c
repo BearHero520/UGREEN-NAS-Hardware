@@ -29,6 +29,8 @@ static const struct ugreenctl_rtc_profile rtc_profiles[] = {
  * --interface is required. It does not mean the machine lacks WOL. */
 #define WOL(id, product, n) {id,product,NULL,NULL,NULL,NULL,n}
 static const struct ugreenctl_wol_profile wol_profiles[] = {
+    WOL("idx6012","iDX6012",2),
+    WOL("idx6012","iDX6011/iDX6012 OEM V3.0",2),
     WOL("dh2600","DH2600",0),
     WOL("dx4600","DX4600",2), WOL("dx4600plus","DX4600+",2), WOL("dx4600pro","DX4600 Pro",2),
     WOL("dx4700","DX4700",0), WOL("dx4700plus","DX4700+",0),
@@ -54,7 +56,7 @@ static int matches(const struct ugreenctl_machine_identity *i, const char *produ
     if (dt_model)
         return !strcmp(i->source,"devicetree") && !strcmp(i->product_name,dt_model) &&
             ugreenctl_identity_has_compatible(i,dt_compatible);
-    return !strcmp(i->source,"dmi") && !strcmp(i->product_name,product);
+    return !strcmp(i->source,"dmi") && !strcmp(ugreenctl_identity_model(i),product);
 }
 const struct ugreenctl_rtc_profile *ugreenctl_rtc_profiles(size_t *count)
 {

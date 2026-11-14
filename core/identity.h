@@ -24,7 +24,7 @@ int ugreenctl_identity_read_at(const char *sysfs_root,
                               char *error, size_t error_size);
 bool ugreenctl_identity_has_compatible(const struct ugreenctl_machine_identity *identity,
                                       const char *token);
-/* Canonical aliases require an exact firmware-proven DT model and compatible. */
+/* Canonical aliases require exact DT evidence or the documented compound OEM DMI identity. */
 const char *ugreenctl_identity_model(const struct ugreenctl_machine_identity *identity);
 
 #endif
