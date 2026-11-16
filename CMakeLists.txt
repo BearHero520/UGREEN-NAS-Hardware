@@ -106,6 +106,7 @@ target_include_directories(ugreenctl_cli PUBLIC
 target_link_libraries(ugreenctl_cli PUBLIC ugreenctl_hardware ugreenctl_core)
 
 add_executable(ugreenctl core/main.c)
+target_compile_definitions(ugreenctl PRIVATE UGREENCTL_VERSION="${PROJECT_VERSION}")
 target_include_directories(ugreenctl PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
