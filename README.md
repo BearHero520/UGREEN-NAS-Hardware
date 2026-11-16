@@ -44,10 +44,10 @@ and TrueNAS SCALE. Deployment instructions do not imply physical validation on e
 
 ## Download and quick start
 
-[v0.3.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0)
+[v0.4.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.4.0)
 provides Linux x86_64 and aarch64 archives, manifests and `SHA256SUMS`. This is a
 stable software release; the catalog covers 25 target models with model-specific
-experimental capabilities and physical validation still pending. See the [release notes](docs/RELEASE_v0.3.0.zh-CN.md).
+experimental capabilities and physical validation still pending. See the [release notes](docs/RELEASE_v0.4.0.zh-CN.md).
 
 Download the archive for your architecture and compare its `sha256sum` output
 with its entry in `SHA256SUMS`. For x86_64, extract and check without installing:

@@ -39,10 +39,10 @@ fnOS、Debian/Ubuntu、PVE、Unraid 和 TrueNAS SCALE 的运行库、持久目�
 
 ## 下载与快速开始
 
-[v0.3.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0)
+[v0.4.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.4.0)
 提供 Linux x86_64、aarch64 两种归档、manifest 和 `SHA256SUMS`。
 本版为正式软件发布；目录覆盖 25 款目标机型，仍保留逐机型实验能力与实机验证缺项，
-详见[更新说明](docs/RELEASE_v0.3.0.zh-CN.md)。
+详见[更新说明](docs/RELEASE_v0.4.0.zh-CN.md)。
 
 按架构下载归档，将 `sha256sum <归档文件>` 的输出与 `SHA256SUMS` 对应条目比较。
 以 x86_64 为例，解包后先执行只读检查：
