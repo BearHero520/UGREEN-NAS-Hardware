@@ -106,6 +106,23 @@ Windows 主机通过仓库 Zig Linux 工具链完成 Release 全量构建，使�
 上述均非实机验证；来电自动开机需要目标机器完成断电再供电验证。
 
 
+## 2026-11-16：fnOS 所有者排查
+
+`ugreen-led-diagnostics-20261116-092623.txt` 来自 BIOS `DXP4800 GT V1.0 20260429`、
+fnOS kernel `6.18.18.c1186-trim`。`info` 和 `power startup get` 均在 `controller owner check`
+返回 `EBUSY`，尚未到独占锁、端口权限或版本读取。日志确认 `/proc/it86` 不存在，
+但没有记录实际冲突项，因此不能据此断言是 ACPI EC 驱动。
+QEMU 启动内置 `ec_sys` 但无活动 EC 时也复现相同误报；[Linux 6.18 `ec_sys`](https://github.com/torvalds/linux/blob/v6.18/drivers/acpi/ec_sys.c#L123-L127)
+是可在 `first_ec` 为空时存在的调试组件，官方镜像也将其编译进内核。上游改为拒绝真实
+debugfs EC 节点、`/proc/ioports` 冲突、ACPI `PNP0C09`/`LNXEC` 设备或 `ECDT` 引导表，
+并保留原厂驱动及 proc 检查。资源或 ACPI 视图不可检查时拒绝进入端口事务。错误返回具体拦截项。
+当状态端口全为 `0xff` 时报告设备不可用，避免误报有未读响应。
+同一台 fnOS 实机的补充输出显示 `/sys/module/ec_sys` 存在，`/proc/it86` 和原厂 SIO 模块
+路径没有列出。附近只列出 `0060`、`0061` 和 `0064` 三个独立资源，内核日志筛选没有返回
+`ACPI: EC:`。旧版会在检查 `ec_sys` 节点时提前返回 `EBUSY`。这三条端口资源记录已用于
+回归测试。真实机器上的 EC 版本读取、写入和回读仍需要实测。
+若确认真实所有者占用，需要和它协调访问；不能通过 `--force` 或忽略资源区间来解锁控制。
+
 ## DXP4800 GT 八点自动温控（v3.1.3 应用接入）
 
 固件：DXP4800 GT.img / UGOS 1.21.1.0016，SHA-256

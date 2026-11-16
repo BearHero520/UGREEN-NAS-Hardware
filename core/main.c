@@ -48,7 +48,7 @@ static void usage(FILE *stream)
                   "              [--on-ms N --off-ms N] [--force --apply]\n"
                   "  ugreenctl led on|off <targets...> [--force --apply]\n"
                   "  ugreenctl led identify <target> [--seconds N] [--force --apply]\n"
-                  "  ugreenctl disk list|map [--json]\n"
+                  "  ugreenctl disk list|map [--json|--tsv]\n"
                   "  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\n"
                   "Options (LED/disk options may also follow the command):\n"
                   "  --model <id>        select an exact model (wake commands use independent profiles)\n"

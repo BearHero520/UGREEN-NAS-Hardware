@@ -377,6 +377,7 @@ static void execution_tests(void)
         "-status","-brightness","7","-off","--apply","--force","--json"};
     char *locate[]={"ugreenctl","disk","locate","/dev/sda","--seconds","7","--apply","--force","--json"};
     char *disk_list[]={"ugreenctl","disk","list","--map-file","/tmp/calibrated-map","--json"};
+    char *disk_tsv[]={"ugreenctl","disk","map","--tsv"};
     char *identify[]={"ugreenctl","led","identify","disk1","--seconds","7","--json"};
     char *legacy_silent[]={"ugreen_leds_cli","power","-on","--apply","--force"};
     char *legacy_status[]={"ugreen_leds_cli","power","disk1","-on","-status","--apply","--force"};
@@ -423,6 +424,13 @@ static void execution_tests(void)
     reset(); expected_map_file="/tmp/calibrated-map";
     expect(ugreenctl_hardware_cli(6,disk_list)==0 && scans==1 && detects==0,
            "disk list is read only and passes calibration path");
+    reset();
+    expect(capture_cli(4,disk_tsv,false,captured,sizeof(captured))==0 && scans==1 && opens==0 && writes==0 &&
+           !strcmp(captured,"device\tinterface\tslot_name\tled\n/dev/sda\tsata\tata1\tdisk1\n"),
+           "disk map TSV carries only physical mapping fields with no LED access");
+    reset(); mapped=false;
+    expect(capture_cli(4,disk_tsv,false,captured,sizeof(captured))==0 &&
+           strstr(captured,"/dev/sda\tsata\t-\t-\n"),"unmapped disks cannot emit a slot or LED");
     reset();
     expect(ugreenctl_hardware_cli(7,identify)==0 && identifies==0 && opens==0,
            "identify defaults to dry run");

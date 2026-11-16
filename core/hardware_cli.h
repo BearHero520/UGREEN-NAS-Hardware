@@ -41,7 +41,7 @@ struct ugreenctl_led_cli_action {
 
 struct ugreenctl_hardware_options {
     enum ugreenctl_hardware_command command;
-    bool json, apply, force, compatibility;
+    bool json, tsv, apply, force, compatibility;
     const char *targets[UGREENCTL_CLI_MAX_TARGETS];
     size_t target_count;
     struct ugreenctl_led_cli_action actions[UGREENCTL_CLI_MAX_ACTIONS];
