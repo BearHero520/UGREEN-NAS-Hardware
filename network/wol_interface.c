@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 #include "network/wol_interface.h"
 #include <ctype.h>
+#include <dirent.h>
 #include <errno.h>
 #include <linux/ethtool.h>
 #include <linux/sockios.h>
@@ -11,6 +12,37 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+
+static int compare_interface_names(const void *a, const void *b)
+{ return strcmp((const char *)a, (const char *)b); }
+
+int ugreenctl_wol_interfaces_at(const char *root, const struct ugreenctl_wol_profile *profile,
+                               char (*names)[UGREENCTL_WOL_NAME_SIZE], size_t capacity,
+                               size_t *count, char *error, size_t error_size)
+{
+    char path[1024], identity[256];
+    struct dirent *entry;
+    DIR *directory;
+    if (!root || !profile || !names || !count || !capacity) return -EINVAL;
+    *count = 0;
+    if (snprintf(path, sizeof(path), "%s/class/net", root) >= (int)sizeof(path)) return -ENAMETOOLONG;
+    directory = opendir(path);
+    if (!directory) return -errno;
+    while ((entry = readdir(directory)) != NULL) {
+        if (entry->d_name[0] == '.') continue;
+        if (ugreenctl_wol_interface_identity_at(root, profile, entry->d_name,
+                identity, sizeof(identity), error, error_size) != 0) continue;
+        if (*count == capacity) {
+            (void)closedir(directory);
+            (void)snprintf(error, error_size, "too many physical Ethernet interfaces");
+            return -E2BIG;
+        }
+        (void)snprintf(names[(*count)++], UGREENCTL_WOL_NAME_SIZE, "%s", entry->d_name);
+    }
+    (void)closedir(directory);
+    qsort(names, *count, sizeof(names[0]), compare_interface_names);
+    return 0;
+}
 
 int ugreenctl_wol_interface_identity_at(const char *root, const struct ugreenctl_wol_profile *profile,
                                        const char *name, char *identity, size_t size,

@@ -196,12 +196,59 @@ int main(void)
         config.system_cpu_floor_end_pwm != 220) {
         fail("DXP6800 compatibility preset must retain Pro points and CPU floor");
     }
+    write_file(path, "profile=stock-8800pro\ninterval_seconds=2\n");
+    snapshot.cpu_celsius = 38; snapshot.cpu_peak_celsius = 38;
+    snapshot.hdd_celsius = 30; snapshot.ssd_celsius = 40;
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != 0 ||
+        ugreenctl_fan_curve_evaluate_plan(&config, &snapshot, &plan, error, sizeof(error)) != 0 ||
+        plan.cpu_pwm != 70 || plan.system_pwm != 64 ||
+        config.system_cpu_floor_start_pwm != 135 || config.system_cpu_floor_end_pwm != 210) {
+        fail("DXP8800 Pro must retain its own CPU points and system floor");
+    }
     snapshot.cpu_celsius = -1;
     snapshot.cpu_peak_celsius = -1;
     if (ugreenctl_fan_curve_evaluate(&config, &snapshot, &pwm, error, sizeof(error)) != -ENODATA ||
         pwm != 255) {
         fail("missing CPU temperature did not use failsafe PWM");
     }
+    write_file(path, "profile=stock-4800gt\nfailure_threshold=0\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != -ERANGE)
+        fail("GT profile accepted an invalid failure threshold");
+    write_file(path, "profile=stock-4800gt\nbeep_repeat_seconds=86401\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) != -ERANGE)
+        fail("GT profile accepted an invalid alarm interval");
+    write_file(path, "profile=stock-4800gt\ninterval_seconds=2\nfailsafe_pwm=255\n");
+    if (ugreenctl_fan_curve_load_config(path, &config, error, sizeof(error)) ||
+        config.minimum_pwm != 40 || config.failsafe_pwm != 198)
+        fail("GT profile must normalize its safety limits");
+    /* Golden results from official eight-point configuration, including
+     * round-to-nearest and interpolation before upper/lower clamps. */
+    const int gt_cases[][5] = {
+        {0,0,0,40,68}, {70,40,50,40,80}, {72,42,52,43,100},
+        {75,45,55,53,131}, {80,50,60,70,144}, {85,55,65,98,169},
+        {90,58,70,126,194}, {95,60,75,159,198}, {100,65,80,187,198},
+        {80,59,0,70,198}, {80,0,71,70,197}, {100,0,0,187,68},
+        {0,-1,55,40,131}, {125,125,125,187,198}
+    };
+    for (size_t i=0; i<sizeof(gt_cases)/sizeof(gt_cases[0]); ++i) {
+        snapshot=(struct ugreenctl_thermal_snapshot){.cpu_celsius=gt_cases[i][0],
+            .cpu_peak_celsius=gt_cases[i][0],.hdd_celsius=gt_cases[i][1],.ssd_celsius=gt_cases[i][2]};
+        if (ugreenctl_fan_curve_evaluate_plan(&config,&snapshot,&plan,error,sizeof(error)) ||
+            plan.cpu_pwm!=(unsigned)gt_cases[i][3] || plan.system_pwm!=(unsigned)gt_cases[i][4])
+            fail("GT eight-point policy differs from golden firmware result");
+    }
+    snapshot=(struct ugreenctl_thermal_snapshot){.cpu_celsius=30,.cpu_peak_celsius=90,.hdd_celsius=40,.ssd_celsius=50};
+    if (ugreenctl_fan_curve_evaluate_plan(&config,&snapshot,&plan,error,sizeof(error)) || plan.cpu_pwm!=126)
+        fail("GT must use hottest CPU sample");
+    snapshot.cpu_celsius=snapshot.cpu_peak_celsius=-1;
+    if (ugreenctl_fan_curve_evaluate_plan(&config,&snapshot,&plan,error,sizeof(error))!=-ENODATA ||
+        plan.cpu_pwm!=198 || plan.system_pwm!=198) fail("GT CPU sensor failsafe must be 198");
+    snapshot.cpu_celsius=snapshot.cpu_peak_celsius=40;
+    snapshot.hdd_celsius=snapshot.ssd_celsius=-1; config.require_storage_sensor=true;
+    if (ugreenctl_fan_curve_evaluate_plan(&config,&snapshot,&plan,error,sizeof(error))!=-ENODATA ||
+        plan.cpu_pwm!=198 || plan.system_pwm!=198) fail("GT storage sensor failsafe must be 198");
+    config.failsafe_pwm=255;
+    if (!ugreenctl_fan_curve_validate_config(&config,error,sizeof(error))) fail("GT unsafe failsafe accepted");
     (void)unsetenv("UGREENCTL_THERMAL_HWMON_ROOT");
     (void)snprintf(path, sizeof(path), "%s/hwmon0/name", temporary); (void)unlink(path);
     (void)snprintf(path, sizeof(path), "%s/hwmon0/temp10_input", temporary); (void)unlink(path);

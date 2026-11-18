@@ -526,11 +526,13 @@ static char *trim(char *text)
 
 static bool profile_is_valid(const char *profile)
 {
-    return strcmp(profile, "custom") == 0 || strcmp(profile, "stock-4600") == 0 ||
+    return strcmp(profile, "stock-idx6012-compat") == 0 || strcmp(profile, "custom") == 0 || strcmp(profile, "stock-4600") == 0 ||
+           strcmp(profile, "stock-4800gt") == 0 ||
            strcmp(profile, "stock-4800") == 0 ||
            strcmp(profile, "stock-4800s") == 0 ||
            strcmp(profile, "stock-4800plus") == 0 ||
            strcmp(profile, "stock-480tplus") == 0 ||
+           strcmp(profile, "stock-8800pro") == 0 ||
            strcmp(profile, "stock-6800pro") == 0 ||
            strcmp(profile, "stock-6800plus") == 0 ||
            strcmp(profile, "stock-6800") == 0;
@@ -548,6 +550,10 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
     config->ssd_curve_enabled = true;
     config->system_cpu_floor_enabled = false;
 
+    if (strcmp(config->profile, "stock-4800gt") == 0) {
+        config->failsafe_pwm = 198;
+        return; /* Eight-point policy is evaluated separately below. */
+    }
     if (strcmp(config->profile, "stock-4600") == 0) {
         /* DX4600 ships with fan.conf mode 2.  The vendor daemon applies that
          * mode by lowering every stop/start point 5 C and raising the mid/full
@@ -589,7 +595,21 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
         config->ssd = (struct ugreenctl_curve_thresholds){40, 50, 60, 70, 80};
         config->system_pwm = (struct ugreenctl_curve_pwm_points){55, 90, 110, 128};
         config->cpu_pwm = (struct ugreenctl_curve_pwm_points){70, 130, 150, 200};
-    } else if (strcmp(config->profile, "stock-6800pro") == 0 ||
+    } else if (strcmp(config->profile, "stock-8800pro") == 0) {
+        /* Recovered 1.17 dxp8800.conf; 1.20 daemon confirms the same config
+         * route, not that its defaults are unchanged. See DXP8800 audit. */
+        config->cpu = (struct ugreenctl_curve_thresholds){25, 38, 55, 75, 90};
+        config->hdd = (struct ugreenctl_curve_thresholds){30, 35, 43, 48, 55};
+        config->ssd = (struct ugreenctl_curve_thresholds){45, 50, 60, 65, 70};
+        config->system_pwm = (struct ugreenctl_curve_pwm_points){64, 130, 210, 230};
+        config->cpu_pwm = (struct ugreenctl_curve_pwm_points){70, 130, 210, 230};
+        config->system_cpu_floor_enabled = true;
+        config->system_cpu_floor_start_celsius = 65;
+        config->system_cpu_floor_end_celsius = 90;
+        config->system_cpu_floor_start_pwm = 135;
+        config->system_cpu_floor_end_pwm = 210;
+    } else if (strcmp(config->profile, "stock-idx6012-compat") == 0 ||
+               strcmp(config->profile, "stock-6800pro") == 0 ||
                strcmp(config->profile, "stock-6800plus") == 0 ||
                strcmp(config->profile, "stock-6800") == 0) {
         config->cpu = (struct ugreenctl_curve_thresholds){25, 38, 55, 75, 90};
@@ -602,6 +622,14 @@ static void apply_stock_profile(struct ugreenctl_fan_curve_config *config)
         config->system_cpu_floor_end_celsius = 90;
         config->system_cpu_floor_start_pwm = 125;
         config->system_cpu_floor_end_pwm = 220;
+    }
+    if (strcmp(config->profile, "stock-idx6012-compat") == 0) {
+        /* Explicit user-requested 6800 Pro compatibility preset, not recovered iDX firmware. */
+        config->minimum_pwm = 64;
+        config->failsafe_pwm = 198;
+        config->system_pwm = (struct ugreenctl_curve_pwm_points){64,130,198,198};
+        config->cpu_pwm = config->system_pwm;
+        config->system_cpu_floor_end_pwm = 198;
     }
     config->pwm = config->system_pwm;
 }
@@ -730,6 +758,14 @@ int ugreenctl_fan_curve_validate_config(const struct ugreenctl_fan_curve_config 
         config->beep_repeat_seconds < 1 || config->beep_repeat_seconds > 86400) {
         set_error(error, error_size, "invalid failure alarm configuration");
         return -ERANGE;
+    }
+    if (strcmp(config->profile, "stock-4800gt") == 0) {
+        if (config->minimum_pwm != 40 || config->failsafe_pwm != 198 ||
+            !config->hdd_curve_enabled || !config->ssd_curve_enabled) {
+            set_error(error, error_size, "GT stock policy requires PWM 40..198 and all source curves");
+            return -ERANGE;
+        }
+        return 0;
     }
     if (config->minimum_pwm < 40 || config->minimum_pwm > 255 ||
         config->failsafe_pwm < config->minimum_pwm || config->failsafe_pwm > 255 ||
@@ -866,6 +902,33 @@ static int fan_curve_cpu_celsius(const struct ugreenctl_thermal_snapshot *snapsh
                                               snapshot->cpu_celsius;
 }
 
+/* UGOS 1.21.1.0016 dxp4800gt.conf; hwmonitor-amd temp_to_pwm at
+ * 0xca67 interpolates adjacent points and rounds the positive delta +0.5.
+ * Preserve raw 207 points: clamping endpoints BEFORE interpolation changes
+ * the recovered curve. Apply the EC's 198 limit only to the final target. */
+struct gt_point { unsigned int celsius, pwm; };
+static const struct gt_point gt_cpu[8] = {
+    {0,20},{70,37},{75,53},{80,70},{85,98},{90,126},{95,159},{100,187}};
+static const struct gt_point gt_system_hdd[8] = {
+    {0,68},{40,80},{45,131},{50,144},{55,169},{58,194},{60,207},{65,207}};
+static const struct gt_point gt_system_ssd[8] = {
+    {0,68},{50,80},{55,131},{60,144},{65,169},{70,194},{75,207},{80,207}};
+static unsigned int gt_interpolate(const struct gt_point points[8], int temperature)
+{
+    if (temperature <= (int)points[0].celsius) return points[0].pwm;
+    for (unsigned int i=1; i<8; ++i) {
+        if (temperature <= (int)points[i].celsius) {
+            unsigned int width=points[i].celsius-points[i-1].celsius;
+            unsigned int delta=(points[i].pwm-points[i-1].pwm)*
+                ((unsigned int)temperature-points[i-1].celsius);
+            return points[i-1].pwm+(2*delta+width)/(2*width);
+        }
+    }
+    return points[7].pwm;
+}
+static unsigned int gt_safe_pwm(unsigned int pwm)
+{ return pwm<40 ? 40 : pwm>198 ? 198 : pwm; }
+
 int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *config,
                                       const struct ugreenctl_thermal_snapshot *snapshot,
                                       struct ugreenctl_fan_curve_plan *plan,
@@ -891,6 +954,18 @@ int ugreenctl_fan_curve_evaluate_plan(const struct ugreenctl_fan_curve_config *c
         plan->system_pwm = config->failsafe_pwm;
         set_error(error, error_size, "storage temperature is unavailable; using failsafe PWM");
         return -ENODATA;
+    }
+    if (strcmp(config->profile, "stock-4800gt") == 0) {
+        /* has_cpu_fan=1: stock fan_set_limit skips sysfan_curve_cpu.
+         * The system output takes max(HDD, NVMe), with the idle 68 floor. */
+        system_target = gt_system_hdd[0].pwm;
+        if (snapshot->hdd_celsius >= 0)
+            system_target = maximum_of(system_target, gt_interpolate(gt_system_hdd, snapshot->hdd_celsius));
+        if (snapshot->ssd_celsius >= 0)
+            system_target = maximum_of(system_target, gt_interpolate(gt_system_ssd, snapshot->ssd_celsius));
+        plan->cpu_pwm = gt_safe_pwm(gt_interpolate(gt_cpu, cpu_celsius));
+        plan->system_pwm = gt_safe_pwm(system_target);
+        return 0;
     }
     system_target = evaluate_source(&config->cpu, &config->system_pwm, cpu_celsius);
     if (config->hdd_curve_enabled && snapshot->hdd_celsius >= 0) {

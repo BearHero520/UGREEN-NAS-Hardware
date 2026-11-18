@@ -19,7 +19,7 @@ import tarfile
 PROGRAMS = ("ugreenctl", "ugreen_leds_cli", "ugreenctl-fand", "ugreenctl-ledd")
 PLUGINS = (
     "dx4600", "dxp2800", "dxp4800", "dxp4800plus", "dxp4800s",
-    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp6800", "dxp8800plus",
+    "dxp480tplus", "dxp6800pro", "dxp6800plus", "dxp6800", "dxp8800plus", "dxp8800pro", "dxp4800gt", "idx6012",
 )
 ARCH_MACHINES = {"x86_64": 62, "aarch64": 183}
 EXCLUDED = {"DH2100", "DH2100+"}
@@ -37,6 +37,10 @@ DOCUMENTS = (
     "docs/RELEASE_v0.3.0.zh-CN.md",
     "docs/UGREEN_CONTROL_MIGRATION.zh-CN.md",
     "docs/HARDWARE_SUPPORT.md", "docs/COMPATIBILITY.md",
+    "docs/DXP8800_PRO_AUDIT.zh-CN.md",
+    "docs/DXP4800GT_HARDWARE_AUDIT.zh-CN.md",
+    "docs/IDX6012_EC_INTAKE.zh-CN.md",
+    "models/dxp4800gt-fan-curve.json",
     "docs/COMPATIBILITY.zh-CN.md", "docs/FAN_CURVE.md",
     "docs/LED_CONTROL.zh-CN.md", "docs/LED_EVIDENCE_COLLECTION.zh-CN.md",
     "docs/LINUX_DEPLOYMENT.zh-CN.md",
@@ -162,7 +166,7 @@ def verified_hashes(root: Path, entries: object, label: str, source: bool) -> di
 
 
 def source_inputs(root: Path) -> set[str]:
-    inputs = {".gitignore", ".gitattributes", "CMakeLists.txt", "scripts/package-almighty.py", "tests/test_package_runtime.py",
+    inputs = {".gitignore", ".gitattributes", "CMakeLists.txt", "scripts/probe_idx6012_ec.py", "scripts/package-almighty.py", "tests/test_package_runtime.py",
               "tests/test_package_almighty.py", *DOCUMENTS, *EXAMPLES,
               "models/compatibility.json", "models/official-products.json",
               "tests/test_startup_state.py"}

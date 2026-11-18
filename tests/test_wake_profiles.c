@@ -24,7 +24,7 @@ int main(void)
     const struct ugreenctl_wol_profile *w=ugreenctl_wol_profiles(&nw),*mac=NULL;
     struct ugreenctl_machine_identity id={0};
     char error[256],path[1024],identity[256],tmp[]="/tmp/wake-profiles-XXXXXX";
-    assert(nr==25 && nw==25);
+    assert(nr==25 && nw==27);
     for (i=0;i<nr;++i) {
         memset(&id,0,sizeof(id));
         strcpy(id.source,r[i].dt_model ? "devicetree" : "dmi");
@@ -38,6 +38,13 @@ int main(void)
     }
     for (i=0;i<nw;++i) if (!strcmp(w[i].id,"dh2300")) mac=&w[i];
     assert(arm && mac);
+    memset(&id,0,sizeof(id));strcpy(id.source,"dmi");strcpy(id.product_name,"Default string");
+    assert(!ugreenctl_wol_match(&id));
+    strcpy(id.manufacturer,"UGREEN");strcpy(id.product_version,"iDX6011_iDX6012 V3.0 241112");
+    assert(ugreenctl_wol_match(&id) && ugreenctl_wol_match(&id)->automatic_pci_count==2);
+    assert(!ugreenctl_rtc_match(&id));
+    strcpy(id.manufacturer,"Other");assert(!ugreenctl_wol_match(&id));
+
     strcpy(id.source,"dmi"); strcpy(id.product_name,"DH2300");
     assert(!ugreenctl_rtc_match(&id)); /* DT-only hardware cannot be asserted via DMI. */
     strcpy(id.product_name,"DH2100"); assert(!ugreenctl_rtc_match(&id));

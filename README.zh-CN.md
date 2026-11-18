@@ -39,10 +39,10 @@ fnOS、Debian/Ubuntu、PVE、Unraid 和 TrueNAS SCALE 的运行库、持久目�
 
 ## 下载与快速开始
 
-[v0.3.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.3.0)
+[v0.4.0](https://github.com/BearHero520/UGREEN-NAS-Hardware/releases/tag/v0.4.0)
 提供 Linux x86_64、aarch64 两种归档、manifest 和 `SHA256SUMS`。
 本版为正式软件发布；目录覆盖 25 款目标机型，仍保留逐机型实验能力与实机验证缺项，
-详见[更新说明](docs/RELEASE_v0.3.0.zh-CN.md)。
+详见[更新说明](docs/RELEASE_v0.4.0.zh-CN.md)。
 
 按架构下载归档，将 `sha256sum <归档文件>` 的输出与 `SHA256SUMS` 对应条目比较。
 以 x86_64 为例，解包后先执行只读检查：
@@ -76,7 +76,8 @@ ARM64 使用文件名和目录名中的 `aarch64` 版本。每包包含四个程
 | DXP6800 Pro (`dxp6800pro`) | UGOS Pro `1.17.0.0095`，Build `20260630.111337`，内核 `6.12.30+` | CPU/成对系统风扇、来电启动、WOL、计划唤醒 | 已按固件实现，尚无实机写入验证；所有写入均需 `--force --apply`。 |
 | DXP6800 Plus (`dxp6800plus`) | UGOS Pro `1.20.0.0142` | CPU/成对系统风扇、来电恢复、WOL、计划唤醒 | 用户报告已验证，但详细范围未知；写入仍需 `--force --apply`，实际唤醒尚未验证。 |
 | DXP6800 (`dxp6800`) | UGOS Pro `1.20.0.0142` | CPU/成对系统风扇、来电恢复；独立内置 WOL/RTC 命令 | 已按固件实现，实机验证待补；`stock-6800` 采用 Pro 参数，原厂曲线未知。写入需 `--force --apply`。 |
-| DXP2800 / DXP8800 Plus | LED 协议与机型记录 | 型号识别与有条件的内置 LED 档案 | 风扇/电源插件仍为占位；LED 写入为实验性。 |
+| DXP2800 EM26 (`dxp2800`) | UGOS Pro 1.20.0.0142；精确 `EM_DXP2800_V1.0.26` | 单系统风扇调速/转速、来电恢复、自定义温控；独立 WOL/RTC | 已按固件实现；实机验证待补；PWM 40..255，写入需 `--force --apply`。[证据](docs/DXP2800_EM26_SUPPORT.md)。 |
+| DXP8800 Plus | 机型记录 | 型号识别 | 风扇/电源插件仍为占位。 |
 
 风扇/电源写入要求精确 DMI；ARM 灯光使用经固件证实的精确设备树型号、
 compatible 和控制器身份。新增 LED 命令使用独立的内置协议档案，

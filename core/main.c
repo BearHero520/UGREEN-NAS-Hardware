@@ -10,9 +10,10 @@
 #include "led/led.h"
 #include "fan/thermal_curve.h"
 #include "core/wake_cli.h"
+#include "core/identity.h"
 #include "ugreenctl.h"
 
-#define UGREENCTL_VERSION "0.3.0"
+
 
 struct cli_options {
     const char *model_directory;
@@ -27,10 +28,12 @@ static void usage(FILE *stream)
                   "ugreenctl %s - UGREEN NAS Hardware Management Utility\n\n"
                   "Usage:\n"
                   "  ugreenctl [options] models\n"
+                  "  ugreenctl [options] model\n"
                   "  ugreenctl [options] info\n"
                   "  ugreenctl [options] thermal status\n"
                   "  ugreenctl [options] fan status\n"
                   "  ugreenctl [options] fan set <fan-id> <0-255>\n"
+                  "  ugreenctl [options] fan mode <fan-id> auto\n"
                   "  ugreenctl [options] power startup get\n"
                   "  ugreenctl [options] power startup set <on|off|restore>\n"
                   "  ugreenctl [options] power rtc-wake models|get\n"
@@ -45,7 +48,7 @@ static void usage(FILE *stream)
                   "              [--on-ms N --off-ms N] [--force --apply]\n"
                   "  ugreenctl led on|off <targets...> [--force --apply]\n"
                   "  ugreenctl led identify <target> [--seconds N] [--force --apply]\n"
-                  "  ugreenctl disk list|map [--json]\n"
+                  "  ugreenctl disk list|map [--json|--tsv]\n"
                   "  ugreenctl disk locate <device|serial|slotN> [--seconds N] [--force --apply]\n\n"
                   "Options (LED/disk options may also follow the command):\n"
                   "  --model <id>        select an exact model (wake commands use independent profiles)\n"
@@ -146,6 +149,12 @@ static int choose_plugin(const struct ugreenctl_plugin_set *set,
     char product_name[256];
     int dmi_result = ugreenctl_read_dmi_product(product_name, sizeof(product_name));
     const struct ugreenctl_plugin *plugin;
+
+    if (!dmi_result && !strcmp(product_name, "Default string")) {
+        struct ugreenctl_machine_identity identity;
+        if (!ugreenctl_identity_read(&identity, NULL, 0))
+            snprintf(product_name, sizeof(product_name), "%s", ugreenctl_identity_model(&identity));
+    }
 
     if (options->model_id != NULL) {
         plugin = ugreenctl_find_plugin(set, options->model_id);
@@ -415,7 +424,10 @@ int main(int argc, char **argv)
     }
     request.force = options.force;
 
-    if (strcmp(argv[arg], "thermal") == 0 && arg + 1 < argc &&
+    if (strcmp(argv[arg], "model") == 0 && arg + 1 == argc) {
+        puts(plugin->id);
+        result = EXIT_SUCCESS;
+    } else if (strcmp(argv[arg], "thermal") == 0 && arg + 1 < argc &&
                strcmp(argv[arg + 1], "status") == 0 && arg + 2 == argc) {
         struct ugreenctl_thermal_snapshot snapshot;
 
@@ -499,6 +511,18 @@ int main(int argc, char **argv)
                 result = report_plugin_error("set fan PWM", result, error);
             }
         }
+    } else if (strcmp(argv[arg], "fan") == 0 && arg + 4 == argc &&
+               strcmp(argv[arg + 1], "mode") == 0) {
+        if (strcmp(argv[arg + 3], "auto") || plugin->set_fan_mode == NULL) {
+            fprintf(stderr, "error: fan mode auto is unavailable for %s\n", plugin->id);
+            result = EXIT_FAILURE;
+        } else if (require_apply(&options, "restore automatic fan control") != 0) {
+            result = EXIT_SUCCESS;
+        } else {
+            result = plugin->set_fan_mode(&request, argv[arg + 2], true, error, sizeof(error));
+            if (result) result = report_plugin_error("restore automatic fan control", result, error);
+            else puts("fan automatic mode restored");
+        }
     } else if (strcmp(argv[arg], "power") == 0 && arg + 2 < argc &&
                strcmp(argv[arg + 1], "startup") == 0 &&
                strcmp(argv[arg + 2], "get") == 0 && arg + 3 == argc) {
@@ -523,7 +547,10 @@ int main(int argc, char **argv)
         } else {
             result = plugin->set_startup_policy(&request, policy, error, sizeof(error));
             if (result == 0) {
-                (void)printf("startup policy set to %s\n", startup_policy_name(policy));
+                if (!strcmp(plugin->id, "dxp4800gt"))
+                    (void)printf("startup %s command sent; persistent policy readback unavailable\n", startup_policy_name(policy));
+                else
+                    (void)printf("startup policy set to %s\n", startup_policy_name(policy));
                 result = EXIT_SUCCESS;
             } else {
                 result = report_plugin_error("set startup policy", result, error);

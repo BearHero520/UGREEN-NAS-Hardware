@@ -319,6 +319,7 @@ int ugreenctl_hardware_parse(int argc, char **argv, bool compatibility,
     if (args==NULL) return syntax(error,size,"out of memory");
     for (i=1;i<argc;++i) {
         if (strcmp(argv[i],"--json")==0) o->json=true;
+        else if (strcmp(argv[i],"--tsv")==0) o->tsv=true;
         else if (strcmp(argv[i],"--apply")==0) o->apply=true;
         else if (strcmp(argv[i],"--force")==0) o->force=true;
         else if (strcmp(argv[i],"--n76-direct")==0) {
@@ -359,6 +360,8 @@ int ugreenctl_hardware_parse(int argc, char **argv, bool compatibility,
     if (result==0 && o->map_file!=NULL &&
         o->command!=UGREENCTL_HW_DISK_LIST && o->command!=UGREENCTL_HW_DISK_LOCATE)
         result=syntax(error,size,"--map-file is only available for disk commands");
+    if (result==0 && o->tsv && (o->command!=UGREENCTL_HW_DISK_LIST || o->json || o->apply))
+        result=syntax(error,size,"--tsv is only available for disk list/map without --json or --apply");
     if (result==0 && o->n76_direct &&
         o->command!=UGREENCTL_HW_LED_LIST && o->command!=UGREENCTL_HW_LED_STATUS &&
         o->command!=UGREENCTL_HW_LED_SET && o->command!=UGREENCTL_HW_LED_COMPAT)
@@ -397,6 +400,7 @@ static const char help_text[] =
     "Identify restores the complete original LED state after its time limit\n"
     "or SIGINT/SIGTERM. Restoration is best effort if communication fails.\n"
     "Disk mapping uses physical PCI/ATA topology, never sdX enumeration order.\n"
+    "disk list/map --tsv emits device, interface, slot_name and led; '-' means absent.\n"
     "Unverified mappings remain unknown; locate refuses them. Calibrated physical\n"
     "maps are read from /etc/ugreenctl/disk-map.conf (or --map-file PATH).\n"
     "Calibration files must be root-owned and not group/world-writable:\n"
@@ -1002,6 +1006,18 @@ static int disk_execute(const struct ugreenctl_hardware_options *o)
         identify.command=UGREENCTL_HW_LED_IDENTIFY;
         identify.target_count=1; identify.targets[0]=disk->led_id;
         return led_execute(&identify);
+    }
+    if (o->tsv) {
+        /* Only fixed tokens and kernel block names: no drive-supplied model,
+         * serial, or free-form reason can turn into parts of a row. */
+        (void)puts("device\tinterface\tslot_name\tled");
+        for (i=0;i<scan.count;++i) {
+            disk=&scan.disks[i];
+            (void)printf("%s\t%s\t%s\t%s\n",disk->device,disk->interface_type,
+                disk->mapped ? disk->slot_name : "-",
+                disk->mapped && disk->led_supported && disk->led_id[0] ? disk->led_id : "-");
+        }
+        return 0;
     }
     if (o->json) {
         (void)fputs("{\"schema_version\":1,\"ok\":true,\"data\":{\"product\":",stdout); json_string(product);

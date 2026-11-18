@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(ugreenctl VERSION 0.3.0 LANGUAGES C)
+project(ugreenctl VERSION 0.4.0 LANGUAGES C)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   message(FATAL_ERROR "ugreenctl requires Linux hardware interfaces.")
@@ -28,6 +28,13 @@ endif()
 include(GNUInstallDirs)
 include(CTest)
 
+if(BUILD_TESTING)
+  add_executable(test-idx6012 tests/test_idx6012.c ec/idx6012.c core/identity.c)
+  target_include_directories(test-idx6012 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_compile_definitions(test-idx6012 PRIVATE UGREENCTL_IDX6012_TESTING)
+  add_test(NAME idx6012-ec COMMAND test-idx6012)
+endif()
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -43,15 +50,20 @@ target_link_libraries(ugreenctl_core PRIVATE dl)
 set_target_properties(ugreenctl_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(ugreenctl_hardware STATIC
+  power/idx6012_power.c
+  ec/idx6012.c
+  ec/it55_dxp4800gt.c
   ${UGREENCTL_SUPERIO_SOURCE}
   core/identity.c
   fan/it8613_direct.c
   fan/it8613_hwmon.c
   fan/it8613_fan.c
   fan/it8613_dx4600.c
+  fan/it8613_dxp2800.c
   fan/it8613_dxp4800.c
   fan/it8613_dxp4800s.c
   fan/it8613_dxp480t.c
+  fan/it8613_dxp8800pro.c
   fan/it8613_dxp6800pro.c
   fan/it8613_dxp6800plus.c
   fan/it8613_dxp6800.c
@@ -94,6 +106,7 @@ target_include_directories(ugreenctl_cli PUBLIC
 target_link_libraries(ugreenctl_cli PUBLIC ugreenctl_hardware ugreenctl_core)
 
 add_executable(ugreenctl core/main.c)
+target_compile_definitions(ugreenctl PRIVATE UGREENCTL_VERSION="${PROJECT_VERSION}")
 target_include_directories(ugreenctl PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -135,12 +148,14 @@ add_model_plugin(dx4600 models/dx4600.c)
 add_model_plugin(dxp4800plus models/dxp4800plus.c)
 add_model_plugin(dxp4800s models/dxp4800s.c)
 add_model_plugin(dxp480tplus models/dxp480tplus.c)
-add_model_plugin(dxp2800 models/unsupported_model.c)
-target_compile_definitions(dxp2800 PRIVATE MODEL_ID="dxp2800" MODEL_NAME="UGREEN DXP2800" MODEL_DMI_NAME="DXP2800")
+add_model_plugin(dxp2800 models/dxp2800.c)
 add_model_plugin(dxp4800 models/dxp4800.c)
+add_model_plugin(dxp8800pro models/dxp8800pro.c)
 add_model_plugin(dxp6800pro models/dxp6800pro.c)
 add_model_plugin(dxp6800plus models/dxp6800plus.c)
 add_model_plugin(dxp6800 models/dxp6800.c)
+add_model_plugin(dxp4800gt models/dxp4800gt.c)
+add_model_plugin(idx6012 models/idx6012.c)
 add_model_plugin(dxp8800plus models/unsupported_model.c)
 target_compile_definitions(dxp8800plus PRIVATE MODEL_ID="dxp8800plus" MODEL_NAME="UGREEN DXP8800 Plus" MODEL_DMI_NAME="DXP8800 Plus")
 
@@ -150,13 +165,15 @@ option(UGREENCTL_INSTALL_LED_COMPAT "Install the ugreen_leds_cli compatibility e
 if(UGREENCTL_INSTALL_LED_COMPAT)
   install(TARGETS ugreen_leds_cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
-install(TARGETS dx4600 dxp2800 dxp4800 dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp6800 dxp8800plus
+install(TARGETS dx4600 dxp2800 dxp4800 idx6012 dxp4800gt dxp4800plus dxp4800s dxp480tplus dxp6800pro dxp6800plus dxp6800 dxp8800plus dxp8800pro
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ugreenctl/models
 )
 install(FILES
   README.md
   README.zh-CN.md
   docs/HARDWARE_SUPPORT.md
+  docs/DXP4800GT_HARDWARE_AUDIT.zh-CN.md
+  docs/IDX6012_EC_INTAKE.zh-CN.md
   docs/COMPATIBILITY.md
   docs/COMPATIBILITY.zh-CN.md
   docs/DXP4800S_REVERSE_ENGINEERING.md
@@ -169,6 +186,7 @@ install(FILES
   docs/DXP4800S_REVERSE_ENGINEERING.zh-CN.md
   docs/DXP480T_PLUS_FAN_REVERSE_ENGINEERING.md
   docs/DXP6800_PRO_REVERSE_ENGINEERING.md
+  docs/DXP8800_PRO_AUDIT.zh-CN.md
   docs/DXP6800_1.20_FIRMWARE_CHECK.zh-CN.md
   docs/DXP4800S_1.19.md
   docs/DXP4800S_INTAKE.md
@@ -219,6 +237,7 @@ if(BUILD_TESTING)
   if(Python3_Interpreter_FOUND)
     add_test(NAME package-runtime COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_runtime.py)
     add_test(NAME package-policy COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_package_almighty.py)
+    add_test(NAME idx6012-probe COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_idx6012_probe.py)
     add_test(NAME startup-state COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_startup_state.py)
   endif()
   add_test(NAME cli-help COMMAND ugreenctl --help)
@@ -419,4 +438,46 @@ if(BUILD_TESTING)
   target_include_directories(test-dxp6800-plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
   target_compile_options(test-dxp6800-plugin PRIVATE -Wall -Wextra -Wpedantic)
   add_test(NAME dxp6800-plugin COMMAND test-dxp6800-plugin)
+  add_executable(test-dxp2800-plugin tests/test_dxp2800_plugin.c models/dxp2800.c)
+  target_include_directories(test-dxp2800-plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-dxp2800-plugin PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME dxp2800-plugin COMMAND test-dxp2800-plugin)
+  add_executable(test-it8613-dxp2800 tests/test_it8613_dxp2800.c fan/it8613_dxp2800.c)
+  target_include_directories(test-it8613-dxp2800 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_options(test-it8613-dxp2800 PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it8613-dxp2800 COMMAND test-it8613-dxp2800)
 endif()
+
+if(BUILD_TESTING)
+  add_executable(test-dxp8800pro-plugin tests/test_dxp8800pro_plugin.c models/dxp8800pro.c)
+  add_executable(test-it8613-dxp8800pro tests/test_it8613_dxp8800pro.c fan/it8613_dxp8800pro.c)
+  foreach(t test-dxp8800pro-plugin test-it8613-dxp8800pro)
+    target_include_directories(${t} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_options(${t} PRIVATE -Wall -Wextra -Wpedantic)
+    add_test(NAME ${t} COMMAND ${t})
+  endforeach()
+endif()
+
+if(BUILD_TESTING)
+  add_executable(test-it55-dxp4800gt tests/test_it55_dxp4800gt.c ec/it55_dxp4800gt.c core/identity.c)
+  target_include_directories(test-it55-dxp4800gt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_definitions(test-it55-dxp4800gt PRIVATE UGREENCTL_GT_TESTING)
+  target_compile_options(test-it55-dxp4800gt PRIVATE -Wall -Wextra -Wpedantic)
+  add_test(NAME it55-dxp4800gt COMMAND test-it55-dxp4800gt)
+endif()
+
+if(BUILD_TESTING)
+  add_executable(test-idx6012-curve tests/test_idx6012_curve.c)
+  target_include_directories(test-idx6012-curve PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(test-idx6012-curve PRIVATE ugreenctl_hardware)
+  add_test(NAME idx6012-curve COMMAND test-idx6012-curve)
+endif()
+
+if(BUILD_TESTING)
+ add_executable(test-idx6012-power tests/test_idx6012_power.c power/idx6012_power.c core/identity.c)
+ target_include_directories(test-idx6012-power PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+ target_compile_definitions(test-idx6012-power PRIVATE IDX6012_POWER_TESTING)
+ add_test(NAME idx6012-power COMMAND test-idx6012-power)
+endif()
+
+install(FILES models/dxp4800gt-fan-curve.json DESTINATION ${CMAKE_INSTALL_DOCDIR}/models)

@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <dirent.h>
 #include <net/if.h>
 #include <unistd.h>
 static FILE *test_fopen(const char *,const char *);
@@ -15,12 +16,14 @@ static int test_socket(int,int,int);
 static int test_ioctl(int,unsigned long,...);
 static int test_close(int);
 static unsigned test_ifindex(const char *);
+static DIR *test_opendir(const char *);
 #define fopen test_fopen
 #define access test_access
 #define socket test_socket
 #define ioctl test_ioctl
 #define close test_close
 #define if_nametoindex test_ifindex
+#define opendir test_opendir
 #undef _DEFAULT_SOURCE
 #include "network/wol_interface.c"
 #undef fopen
@@ -29,6 +32,7 @@ static unsigned test_ifindex(const char *);
 #undef ioctl
 #undef close
 #undef if_nametoindex
+#undef opendir
 static char root[256];
 static unsigned writes,queries,not_supported,bad_readback,write_error,changed;
 static unsigned current;
@@ -37,6 +41,7 @@ static const char *map(const char *p,char *out,size_t size)
     assert(!strncmp(p,"/sys",4));assert(snprintf(out,size,"%s%s",root,p+4)<(int)size);return out;
 }
 static FILE *test_fopen(const char *p,const char *mode) { char b[1024];return fopen(map(p,b,sizeof(b)),mode); }
+static DIR *test_opendir(const char *p) { char b[1024];return opendir(map(p,b,sizeof(b))); }
 static int test_access(const char *p,int mode) { char b[1024];return access(map(p,b,sizeof(b)),mode); }
 static int test_socket(int a,int b,int c) { (void)a;(void)b;(void)c;return 42; }
 static int test_close(int fd) { assert(fd==42);return 0; }
@@ -66,6 +71,13 @@ int main(void)
     assert(mkdtemp(tmp));strcpy(root,tmp);
     put("class/net/enp8s0/type","1\n");
     put("class/net/enp8s0/device/uevent","PCI_CLASS=020000\nPCI_SLOT_NAME=0000:08:00.0\n");
+    put("class/net/lo/type", "772\n");
+    put("class/net/br0/type", "1\n");
+    put("class/net/wlan0/type", "1\n");
+    put("class/net/wlan0/device/uevent", "PCI_CLASS=028000\nPCI_SLOT_NAME=0000:09:00.0\n");
+    char names[4][UGREENCTL_WOL_NAME_SIZE]; size_t count=0;
+    assert(!ugreenctl_wol_interfaces_at("/sys",&p,names,4,&count,error,sizeof(error)));
+    assert(count==1 && !strcmp(names[0],"enp8s0") && !writes && !queries);
     assert(!ugreenctl_wol_interface(&p,"enp8s0",true,&policy,error,sizeof(error)) && writes==1 && queries==2);
     assert(policy==UGREENCTL_WOL_ON);
     writes=queries=0;not_supported=1;

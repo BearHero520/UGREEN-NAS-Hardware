@@ -17,6 +17,7 @@
 #include <unistd.h>
 
 #include "fan/thermal_curve.h"
+#include "core/identity.h"
 
 enum fan_channel {
     FAN_CHANNEL_CPU,
@@ -36,6 +37,10 @@ struct model_route {
 };
 
 static const struct model_route model_routes[] = {
+    {"iDX6011/iDX6012 OEM V3.0", "idx6012", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"iDX6012", "idx6012", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"DXP4800 GT", "dxp4800gt", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"DXP2800", "dxp2800", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600+", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DX4600 Pro", "dx4600", {{"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
@@ -48,6 +53,7 @@ static const struct model_route model_routes[] = {
     {"DXP480T Plus", "dxp480tplus", {{"cpu", FAN_CHANNEL_CPU}, {"all", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, false},
     {"DXP6800", "dxp6800", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DXP6800 Plus", "dxp6800plus", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
+    {"DXP8800 Pro", "dxp8800pro", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true},
     {"DXP6800 Pro", "dxp6800pro", {{"cpu", FAN_CHANNEL_CPU}, {"sys", FAN_CHANNEL_SYSTEM}, {NULL, 0}}, true}
 };
 
@@ -77,32 +83,11 @@ static void usage(FILE *stream)
 
 static int read_dmi_product(char *product, size_t product_size)
 {
-    static const char * const paths[] = {
-        "/sys/class/dmi/id/product_name",
-        "/sys/devices/virtual/dmi/id/product_name",
-        NULL
-    };
-    const char * const *path;
-
-    for (path = paths; *path != NULL; ++path) {
-        FILE *stream = fopen(*path, "r");
-        size_t length;
-
-        if (stream == NULL) {
-            continue;
-        }
-        if (fgets(product, (int)product_size, stream) == NULL) {
-            (void)fclose(stream);
-            continue;
-        }
-        (void)fclose(stream);
-        length = strlen(product);
-        while (length > 0 && (product[length - 1] == '\n' || product[length - 1] == '\r')) {
-            product[--length] = '\0';
-        }
-        return product[0] == '\0' ? -ENODEV : 0;
-    }
-    return -ENOENT;
+    struct ugreenctl_machine_identity identity;
+    int result = ugreenctl_identity_read(&identity, NULL, 0);
+    if (result != 0) return result;
+    int length = snprintf(product, product_size, "%s", ugreenctl_identity_model(&identity));
+    return length < 0 || (size_t)length >= product_size ? -ENAMETOOLONG : 0;
 }
 
 static const struct model_route *find_model_route(const char *product)
@@ -119,12 +104,15 @@ static const struct model_route *find_model_route(const char *product)
 
 static const char *stock_profile_for_route(const struct model_route *route)
 {
+    if (strcmp(route->id, "idx6012") == 0) return "stock-idx6012-compat";
+    if (strcmp(route->id, "dxp4800gt") == 0) return "stock-4800gt";
     if (strcmp(route->id, "dx4600") == 0) return "stock-4600";
     if (strcmp(route->id, "dxp4800") == 0) return "stock-4800";
     if (strcmp(route->id, "dxp4800s") == 0) return "stock-4800s";
     if (strcmp(route->id, "dxp4800plus") == 0) return "stock-4800plus";
     if (strcmp(route->id, "dxp480tplus") == 0) return "stock-480tplus";
     if (strcmp(route->id, "dxp6800") == 0) return "stock-6800";
+    if (strcmp(route->id, "dxp8800pro") == 0) return "stock-8800pro";
     if (strcmp(route->id, "dxp6800pro") == 0) return "stock-6800pro";
     if (strcmp(route->id, "dxp6800plus") == 0) return "stock-6800plus";
     return NULL;
@@ -135,6 +123,17 @@ static int profile_matches_route(const struct ugreenctl_fan_curve_config *config
 {
     const char *expected;
 
+    if (strcmp(route->id, "idx6012") == 0) {
+        /* Same custom policy, bounded by the verified paired EC output. */
+        const struct ugreenctl_curve_pwm_points *p = &config->pwm;
+        return (strcmp(config->profile, "custom") == 0 || strcmp(config->profile, "stock-idx6012-compat") == 0) &&
+            config->minimum_pwm >= 40 && config->minimum_pwm <= 198 &&
+            config->failsafe_pwm == 198 && p->idle <= 198 &&
+            p->mid <= 198 && p->full <= 198 && p->maximum <= 198 ? 0 : -EINVAL;
+    }
+    /* Generic custom curves permit 255; GT is limited to its validated stock policy. */
+    if (strcmp(route->id, "dxp4800gt") == 0)
+        return strcmp(config->profile, "stock-4800gt") == 0 ? 0 : -EINVAL;
     if (strcmp(config->profile, "custom") == 0) {
         return 0;
     }
@@ -232,6 +231,7 @@ static int beep_alarm(const struct speaker_ops *ops)
     const struct timespec duration = {0, 100000000L};
     int fd = ops->open_device();
     int result = 0;
+    ssize_t stopped;
 
     if (fd < 0) return -1;
     event.type = EV_SND;
@@ -240,7 +240,10 @@ static int beep_alarm(const struct speaker_ops *ops)
     if (ops->write_event(fd, &event, sizeof(event)) != (ssize_t)sizeof(event)) result = -1;
     else if (ops->sleep_tone(&duration, NULL) != 0) result = -1;
     event.value = 0;
-    if (ops->write_event(fd, &event, sizeof(event)) != (ssize_t)sizeof(event)) result = -1;
+    do {
+        stopped = ops->write_event(fd, &event, sizeof(event));
+    } while (stopped < 0 && errno == EINTR);
+    if (stopped != (ssize_t)sizeof(event)) result = -1;
     if (ops->close_device(fd) != 0) result = -1;
     return result;
 }
@@ -387,7 +390,7 @@ static void applied_channels(const struct model_route *route,
     }
 }
 
-int main(int argc, char **argv)
+static int run_fan_daemon(int argc, char **argv, const struct speaker_ops *speaker)
 {
     const char *config_path = NULL;
     const char *state_path = NULL;
@@ -406,7 +409,6 @@ int main(int argc, char **argv)
     unsigned int consecutive_failures = 0;
     struct timespec last_beep = {0};
     bool beep_attempted = false;
-    const struct speaker_ops speaker = {open_speaker, write, nanosleep, close};
 
     for (argument = 1; argument < argc; ++argument) {
         if ((strcmp(argv[argument], "--config") == 0 || strcmp(argv[argument], "--state") == 0 ||
@@ -485,7 +487,6 @@ int main(int argc, char **argv)
                 target_states[index].applied_known = true;
             }
         }
-        count_cycle_failure(&consecutive_failures, temperature_result != 0 || write_result != 0);
         applied_channels(route, target_states, &applied_cpu_pwm, &applied_system_pwm);
         if (write_result == 0) {
             write_state(state_path, route->id, &config, &snapshot, &plan,
@@ -496,18 +497,19 @@ int main(int argc, char **argv)
             write_state(state_path, route->id, &config, &snapshot, &plan,
                         applied_cpu_pwm, applied_system_pwm, "error", error);
         }
+        if (once) {
+            (void)close(lock_fd);
+            return write_result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+        }
+        count_cycle_failure(&consecutive_failures, temperature_result != 0 || write_result != 0);
         if (daemon_running && config.beep_on_failure && consecutive_failures >= config.failure_threshold) {
             struct timespec now;
             if (clock_gettime(CLOCK_MONOTONIC, &now) != 0) {
                 (void)fprintf(stderr, "warning: cannot read monotonic clock for fan alarm\n");
             } else if (maybe_beep(consecutive_failures, config.failure_threshold,
                                   config.beep_repeat_seconds, &now, &last_beep,
-                                  &beep_attempted, &speaker) < 0)
+                                  &beep_attempted, speaker) < 0)
                 (void)fprintf(stderr, "warning: failed to sound fan failure alarm\n");
-        }
-        if (once) {
-            (void)close(lock_fd);
-            return write_result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         for (unsigned int waited = 0; daemon_running && waited < config.interval_seconds; ++waited) {
             (void)sleep(1);
@@ -523,4 +525,11 @@ int main(int argc, char **argv)
     }
     (void)close(lock_fd);
     return EXIT_SUCCESS;
+}
+
+int main(int argc, char **argv)
+{
+    const struct speaker_ops speaker = {open_speaker, write, nanosleep, close};
+
+    return run_fan_daemon(argc, argv, &speaker);
 }
