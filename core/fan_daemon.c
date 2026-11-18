@@ -2,6 +2,8 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/input.h>
+#include <limits.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -210,6 +212,67 @@ static void write_state(const char *path, const char *model,
     }
 }
 
+struct speaker_ops {
+    int (*open_device)(void);
+    ssize_t (*write_event)(int, const void *, size_t);
+    int (*sleep_tone)(const struct timespec *, struct timespec *);
+    int (*close_device)(int);
+};
+
+static int open_speaker(void)
+{
+    return open("/dev/input/by-path/platform-pcspkr-event-spkr",
+                O_WRONLY | O_CLOEXEC | O_NONBLOCK);
+}
+
+static int beep_alarm(const struct speaker_ops *ops)
+{
+    struct input_event event = {0};
+    const struct timespec duration = {0, 100000000L};
+    int fd = ops->open_device();
+    int result = 0;
+    ssize_t stopped;
+
+    if (fd < 0) return -1;
+    event.type = EV_SND;
+    event.code = SND_TONE;
+    event.value = 1000;
+    if (ops->write_event(fd, &event, sizeof(event)) != (ssize_t)sizeof(event)) result = -1;
+    else if (ops->sleep_tone(&duration, NULL) != 0) result = -1;
+    event.value = 0;
+    do {
+        stopped = ops->write_event(fd, &event, sizeof(event));
+    } while (stopped < 0 && errno == EINTR);
+    if (stopped != (ssize_t)sizeof(event)) result = -1;
+    if (ops->close_device(fd) != 0) result = -1;
+    return result;
+}
+
+static void count_cycle_failure(unsigned int *count, bool failed)
+{
+    if (!failed) *count = 0;
+    else if (*count < UINT_MAX) ++*count;
+}
+
+static bool beep_due(const struct timespec *now, const struct timespec *last,
+                     bool attempted, unsigned int repeat)
+{
+    if (!attempted) return true;
+    if (now->tv_sec < last->tv_sec) return false;
+    return (now->tv_sec - last->tv_sec > (time_t)repeat) ||
+           (now->tv_sec - last->tv_sec == (time_t)repeat && now->tv_nsec >= last->tv_nsec);
+}
+
+static int maybe_beep(unsigned int failures, unsigned int threshold, unsigned int repeat,
+                      const struct timespec *now, struct timespec *last, bool *attempted,
+                      const struct speaker_ops *ops)
+{
+    if (failures < threshold || !beep_due(now, last, *attempted, repeat)) return 0;
+    *last = *now;
+    *attempted = true;
+    return beep_alarm(ops) == 0 ? 1 : -1;
+}
+
 static int invoke_ugreenctl(const char *binary, const char *plugin_dir,
                             bool force, const char *target, unsigned int pwm)
 {
@@ -327,7 +390,7 @@ static void applied_channels(const struct model_route *route,
     }
 }
 
-int main(int argc, char **argv)
+static int run_fan_daemon(int argc, char **argv, const struct speaker_ops *speaker)
 {
     const char *config_path = NULL;
     const char *state_path = NULL;
@@ -343,6 +406,9 @@ int main(int argc, char **argv)
     char error[256] = {0};
     int lock_fd;
     int argument;
+    unsigned int consecutive_failures = 0;
+    struct timespec last_beep = {0};
+    bool beep_attempted = false;
 
     for (argument = 1; argument < argc; ++argument) {
         if ((strcmp(argv[argument], "--config") == 0 || strcmp(argv[argument], "--state") == 0 ||
@@ -435,6 +501,16 @@ int main(int argc, char **argv)
             (void)close(lock_fd);
             return write_result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
         }
+        count_cycle_failure(&consecutive_failures, temperature_result != 0 || write_result != 0);
+        if (daemon_running && config.beep_on_failure && consecutive_failures >= config.failure_threshold) {
+            struct timespec now;
+            if (clock_gettime(CLOCK_MONOTONIC, &now) != 0) {
+                (void)fprintf(stderr, "warning: cannot read monotonic clock for fan alarm\n");
+            } else if (maybe_beep(consecutive_failures, config.failure_threshold,
+                                  config.beep_repeat_seconds, &now, &last_beep,
+                                  &beep_attempted, speaker) < 0)
+                (void)fprintf(stderr, "warning: failed to sound fan failure alarm\n");
+        }
         for (unsigned int waited = 0; daemon_running && waited < config.interval_seconds; ++waited) {
             (void)sleep(1);
         }
@@ -449,4 +525,11 @@ int main(int argc, char **argv)
     }
     (void)close(lock_fd);
     return EXIT_SUCCESS;
+}
+
+int main(int argc, char **argv)
+{
+    const struct speaker_ops speaker = {open_speaker, write, nanosleep, close};
+
+    return run_fan_daemon(argc, argv, &speaker);
 }
